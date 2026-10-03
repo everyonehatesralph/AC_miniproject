@@ -1,0 +1,30 @@
+# --- participant recordings and any audio derived from them: personal data, NEVER commit ---
+data/raw/*.mov
+data/raw/*.MOV
+data/raw/*.mp4
+data/raw/*.m4a
+data/raw/*.wav
+data/raw/*.part
+*.wav
+*.mov
+*.MOV
+*.mp4
+
+# --- Python environment and caches ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# --- generated on every run (rebuild with run_pipeline.py / src/09b_build_html_report.py) ---
+reports/html/
+reports/logs/
+*.log
+
+# --- local tool settings ---
+.claude/
+
+# --- OS clutter ---
+Thumbs.db
+desktop.ini
+.DS_Store

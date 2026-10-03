@@ -1,0 +1,11 @@
+rating,value,metadata_n,metadata_pct,analysis_n,analysis_pct
+valence,1,1,2.5,1,3.125
+valence,2,2,5.0,1,3.125
+valence,3,15,37.5,12,37.5
+valence,4,11,27.5,9,28.125
+valence,5,11,27.5,9,28.125
+arousal,1,3,7.6923076923076925,2,6.25
+arousal,2,6,15.384615384615385,4,12.5
+arousal,3,13,33.333333333333336,13,40.625
+arousal,4,12,30.76923076923077,9,28.125
+arousal,5,5,12.820512820512821,4,12.5

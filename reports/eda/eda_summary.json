@@ -1,0 +1,265 @@
+{
+  "n_metadata": 40,
+  "n_analysis": 32,
+  "n_features": 108,
+  "valence_arousal_spearman": {
+    "analysis": [
+      0.7657137017858114,
+      3.2853045153040424e-07,
+      32
+    ],
+    "metadata": [
+      0.7106380773242148,
+      4.008814149141989e-07,
+      39
+    ]
+  },
+  "significant_features_fdr05": {
+    "valence": 0,
+    "arousal": 3
+  },
+  "top_features": {
+    "valence": [
+      {
+        "feature": "rms_db_iqr",
+        "spearman_rho": -0.4677676204986644,
+        "p_value": 0.0069413231125679785,
+        "q_value_bh": 0.37483144807867086
+      },
+      {
+        "feature": "mfcc_13_std",
+        "spearman_rho": 0.4677676204986644,
+        "p_value": 0.0069413231125679785,
+        "q_value_bh": 0.37483144807867086
+      },
+      {
+        "feature": "delta2_mfcc_13_std",
+        "spearman_rho": 0.4255412771807718,
+        "p_value": 0.015176322476453358,
+        "q_value_bh": 0.42230517040026627
+      },
+      {
+        "feature": "delta_mfcc_13_std",
+        "spearman_rho": 0.4238059480033242,
+        "p_value": 0.0156409322370469,
+        "q_value_bh": 0.42230517040026627
+      },
+      {
+        "feature": "delta_mfcc_2_mean",
+        "spearman_rho": -0.3973903816355101,
+        "p_value": 0.024309787539348336,
+        "q_value_bh": 0.4503337195788628
+      },
+      {
+        "feature": "rms_db_mean",
+        "spearman_rho": 0.39257002280926656,
+        "p_value": 0.026253990121674186,
+        "q_value_bh": 0.4503337195788628
+      },
+      {
+        "feature": "rms_db_min",
+        "spearman_rho": 0.38582152045252577,
+        "p_value": 0.029188296639370736,
+        "q_value_bh": 0.4503337195788628
+      },
+      {
+        "feature": "delta2_mfcc_2_std",
+        "spearman_rho": -0.37618080280003885,
+        "p_value": 0.03383937840935651,
+        "q_value_bh": 0.4568316085263129
+      },
+      {
+        "feature": "delta2_mfcc_9_std",
+        "spearman_rho": 0.31505865288327195,
+        "p_value": 0.07902448669317197,
+        "q_value_bh": 0.7336757685136419
+      },
+      {
+        "feature": "delta_mfcc_7_mean",
+        "spearman_rho": -0.3139017667649735,
+        "p_value": 0.08019132566609655,
+        "q_value_bh": 0.7336757685136419
+      }
+    ],
+    "arousal": [
+      {
+        "feature": "delta2_mfcc_13_std",
+        "spearman_rho": 0.6180048631530544,
+        "p_value": 0.00016387495088850376,
+        "q_value_bh": 0.013464921229549606
+      },
+      {
+        "feature": "delta_mfcc_13_std",
+        "spearman_rho": 0.6024200580735409,
+        "p_value": 0.0002639581642771395,
+        "q_value_bh": 0.013464921229549606
+      },
+      {
+        "feature": "mfcc_13_std",
+        "spearman_rho": 0.5904909480126788,
+        "p_value": 0.0003740255897097113,
+        "q_value_bh": 0.013464921229549606
+      },
+      {
+        "feature": "delta2_mfcc_10_std",
+        "spearman_rho": 0.46831377238933203,
+        "p_value": 0.00686705062824337,
+        "q_value_bh": 0.185410366962571
+      },
+      {
+        "feature": "mfcc_9_mean",
+        "spearman_rho": 0.4517669423049102,
+        "p_value": 0.009442270570871393,
+        "q_value_bh": 0.2039530443308221
+      },
+      {
+        "feature": "delta2_mfcc_9_std",
+        "spearman_rho": 0.42155935715079146,
+        "p_value": 0.016259999342483216,
+        "q_value_bh": 0.29267998816469787
+      },
+      {
+        "feature": "mfcc_10_std",
+        "spearman_rho": 0.39250620200256253,
+        "p_value": 0.02628056126815275,
+        "q_value_bh": 0.40547151670864245
+      },
+      {
+        "feature": "delta_mfcc_10_std",
+        "spearman_rho": 0.3817315219475903,
+        "p_value": 0.031093313695099392,
+        "q_value_bh": 0.4197597348838418
+      },
+      {
+        "feature": "rms_db_mean",
+        "spearman_rho": 0.3444049517571505,
+        "p_value": 0.053575305845478045,
+        "q_value_bh": 0.6255407428883267
+      },
+      {
+        "feature": "mfcc_1_mean",
+        "spearman_rho": 0.32227837664426096,
+        "p_value": 0.07203609661195685,
+        "q_value_bh": 0.6255407428883267
+      }
+    ]
+  },
+  "config_effect_features_fdr05": 20,
+  "config_label_association": {
+    "valence_2": {
+      "table": {
+        "A: mono": {
+          "NotPleasant": 10,
+          "Pleasant": 16
+        },
+        "B: stereo + 2nd track": {
+          "NotPleasant": 4,
+          "Pleasant": 2
+        }
+      },
+      "test": "Fisher exact",
+      "p_value": 0.36494252873563227
+    },
+    "arousal_2": {
+      "table": {
+        "A: mono": {
+          "High": 12,
+          "NotHigh": 14
+        },
+        "B: stereo + 2nd track": {
+          "High": 1,
+          "NotHigh": 5
+        }
+      },
+      "test": "Fisher exact",
+      "p_value": 0.36055273054716885
+    },
+    "arousal_3": {
+      "table": {
+        "A: mono": {
+          "High": 12,
+          "Low": 4,
+          "Moderate": 10
+        },
+        "B: stereo + 2nd track": {
+          "High": 1,
+          "Low": 2,
+          "Moderate": 3
+        }
+      },
+      "test": "permutation chi-square (20,000)",
+      "p_value": 0.512274386280686
+    }
+  },
+  "sbr_vs_rating_spearman": {
+    "valence": [
+      0.10577806189950674,
+      0.5644903094604764
+    ],
+    "arousal": [
+      0.1153679451778845,
+      0.5295064725388452
+    ]
+  },
+  "derived_targets": [
+    {
+      "task": "valence_5",
+      "classes": "1: 1 / 2: 1 / 3: 12 / 4: 9 / 5: 9",
+      "min_class": 1,
+      "viable": false
+    },
+    {
+      "task": "arousal_5",
+      "classes": "1: 2 / 2: 4 / 3: 13 / 4: 9 / 5: 4",
+      "min_class": 2,
+      "viable": false
+    },
+    {
+      "task": "valence_3",
+      "classes": "Unpleasant: 2 / Neutral: 12 / Pleasant: 18",
+      "min_class": 2,
+      "viable": false
+    },
+    {
+      "task": "arousal_3",
+      "classes": "Low: 6 / Moderate: 13 / High: 13",
+      "min_class": 6,
+      "viable": true
+    },
+    {
+      "task": "valence_2",
+      "classes": "NotPleasant: 14 / Pleasant: 18",
+      "min_class": 14,
+      "viable": true
+    },
+    {
+      "task": "arousal_2",
+      "classes": "NotHigh: 19 / High: 13",
+      "min_class": 13,
+      "viable": true
+    }
+  ],
+  "context": [
+    {
+      "variable": "Year Level",
+      "values": "2: 40",
+      "distinct_non_blank": 1
+    },
+    {
+      "variable": "Class Activity",
+      "values": "Lecture: 40",
+      "distinct_non_blank": 1
+    },
+    {
+      "variable": "Session",
+      "values": "Afternoon\u2013Evening: 40",
+      "distinct_non_blank": 1
+    },
+    {
+      "variable": "Subject",
+      "values": "Environmental Science: 30; (blank): 10",
+      "distinct_non_blank": 1
+    }
+  ],
+  "n_prosodic_pairs_abs_rho_ge_0_9": 6
+}

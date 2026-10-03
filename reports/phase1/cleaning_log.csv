@@ -1,0 +1,245 @@
+﻿participant_code,field,raw_value,cleaned_value,rule
+Y2-041,participant_code,Y2- 041,Y2-041,R1 remove whitespace
+Y2-041,year_level,2nd year,2,R3 year level to integer
+Y2-041,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-041,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-041,subject,Environmental Science ,Environmental Science,R2 strip spaces
+Y2-041,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-041,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-041,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-042,year_level,2nd year,2,R3 year level to integer
+Y2-042,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-042,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-042,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-042,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-042,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-043,year_level,2nd year,2,R3 year level to integer
+Y2-043,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-043,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-043,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-043,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-043,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-044,year_level,2nd year,2,R3 year level to integer
+Y2-044,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-044,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-044,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-044,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-044,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-045,year_level,2nd year,2,R3 year level to integer
+Y2-045,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-045,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-045,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-045,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-045,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-046,year_level,2nd year,2,R3 year level to integer
+Y2-046,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-046,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-046,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-046,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-046,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-047,year_level,2nd year,2,R3 year level to integer
+Y2-047,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-047,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-047,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-047,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-047,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-048,year_level,2nd year,2,R3 year level to integer
+Y2-048,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-048,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-048,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-048,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-048,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-049,year_level,2nd year,2,R3 year level to integer
+Y2-049,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-049,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-049,spoken_word,Okay ,Okay,R2 strip spaces
+Y2-049,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-049,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-049,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-050,year_level,2nd year,2,R3 year level to integer
+Y2-050,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-050,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-050,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-050,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-050,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-051,year_level,2nd year,2,R3 year level to integer
+Y2-051,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-051,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-051,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-051,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-051,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-052,year_level,2nd year,2,R3 year level to integer
+Y2-052,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-052,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-052,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-052,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-052,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-053,year_level,2nd year,2,R3 year level to integer
+Y2-053,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-053,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-053,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-053,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-053,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-054,year_level,2nd year,2,R3 year level to integer
+Y2-054,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-054,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-054,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-054,arousal,5 — Very High,5,R6 rating to integer (label verified)
+Y2-054,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-055,year_level,2nd year,2,R3 year level to integer
+Y2-055,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-055,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-055,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-055,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-055,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-056,year_level,2nd year,2,R3 year level to integer
+Y2-056,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-056,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-056,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-056,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-056,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-057,year_level,2nd year,2,R3 year level to integer
+Y2-057,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-057,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-057,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-057,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-057,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-058,year_level,2nd year,2,R3 year level to integer
+Y2-058,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-058,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-058,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-058,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-058,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-059,year_level,2nd year,2,R3 year level to integer
+Y2-059,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-059,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-059,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-059,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-059,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-060,year_level,2nd year,2,R3 year level to integer
+Y2-060,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-060,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-060,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-060,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-060,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-061,year_level,2nd year,2,R3 year level to integer
+Y2-061,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-061,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-061,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-061,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-061,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-062,year_level,2nd year,2,R3 year level to integer
+Y2-062,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-062,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-062,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-062,arousal,5 — Very High,5,R6 rating to integer (label verified)
+Y2-062,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-063,year_level,2nd year,2,R3 year level to integer
+Y2-063,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-063,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-063,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-063,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-063,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-064,year_level,2nd year,2,R3 year level to integer
+Y2-064,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-064,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-064,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-064,arousal,5 — Very High,5,R6 rating to integer (label verified)
+Y2-064,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-065,year_level,2nd year,2,R3 year level to integer
+Y2-065,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-065,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-065,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-065,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-065,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-066,year_level,2nd year,2,R3 year level to integer
+Y2-066,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-066,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-066,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-066,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-066,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-067,year_level,2nd year,2,R3 year level to integer
+Y2-067,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-067,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-067,valence,1 — Very Unpleasant ,1,R6 rating to integer (label verified)
+Y2-067,arousal,1 — Very Low,1,R6 rating to integer (label verified)
+Y2-067,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-068,year_level,2nd year,2,R3 year level to integer
+Y2-068,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-068,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-068,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-068,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-068,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-069,year_level,2nd year,2,R3 year level to integer
+Y2-069,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-069,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-069,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-069,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-069,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-070,year_level,2nd year,2,R3 year level to integer
+Y2-070,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-070,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-070,spoken_word,Kapoy ,Kapoy,R2 strip spaces
+Y2-070,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-070,arousal,3 — Moderate,3,R6 rating to integer (label verified)
+Y2-070,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-071,year_level,2nd year,2,R3 year level to integer
+Y2-071,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-071,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-071,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-071,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-071,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-072,year_level,2nd year,2,R3 year level to integer
+Y2-072,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-072,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-072,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-072,arousal,5 — Very High,5,R6 rating to integer (label verified)
+Y2-072,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-073,year_level,2nd year,2,R3 year level to integer
+Y2-073,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-073,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-073,valence,2 — Unpleasant,2,R6 rating to integer (label verified)
+Y2-073,arousal,1 — Very Low,1,R6 rating to integer (label verified)
+Y2-073,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-074,year_level,2nd year,2,R3 year level to integer
+Y2-074,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-074,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-074,valence,2 — Unpleasant,2,R6 rating to integer (label verified)
+Y2-074,arousal,1 — Very Low,1,R6 rating to integer (label verified)
+Y2-074,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-075,year_level,2nd year,2,R3 year level to integer
+Y2-075,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-075,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-075,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-075,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-075,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-076,year_level,2nd year,2,R3 year level to integer
+Y2-076,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-076,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-076,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-076,arousal,5 — Very High,,R7 struck-through rating not used
+Y2-076,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-077,year_level,2nd year,2,R3 year level to integer
+Y2-077,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-077,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-077,valence,4 — Pleasant,4,R6 rating to integer (label verified)
+Y2-077,arousal,2 — Low,2,R6 rating to integer (label verified)
+Y2-077,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-078,year_level,2nd year,2,R3 year level to integer
+Y2-078,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-078,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-078,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-078,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-078,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-079,year_level,2nd year,2,R3 year level to integer
+Y2-079,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-079,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-079,valence,3 — Neutral,3,R6 rating to integer (label verified)
+Y2-079,arousal,4 — High,4,R6 rating to integer (label verified)
+Y2-079,consent_obtained,Yes,Y,R8 consent to Y/N
+Y2-080,year_level,2nd year,2,R3 year level to integer
+Y2-080,class_activity_protocol,Lecture,Lecture/Discussion,R4 map to protocol category (confirm)
+Y2-080,session,Afternoon-Evening,Afternoon–Evening,R5 protocol spelling
+Y2-080,valence,5 — Very Pleasant,5,R6 rating to integer (label verified)
+Y2-080,arousal,5 — Very High,5,R6 rating to integer (label verified)
+Y2-080,consent_obtained,Yes,Y,R8 consent to Y/N

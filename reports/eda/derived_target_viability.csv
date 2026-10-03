@@ -1,0 +1,7 @@
+task,classes,min_class,viable
+valence_5,1: 1 / 2: 1 / 3: 12 / 4: 9 / 5: 9,1,False
+arousal_5,1: 2 / 2: 4 / 3: 13 / 4: 9 / 5: 4,2,False
+valence_3,Unpleasant: 2 / Neutral: 12 / Pleasant: 18,2,False
+arousal_3,Low: 6 / Moderate: 13 / High: 13,6,True
+valence_2,NotPleasant: 14 / Pleasant: 18,14,True
+arousal_2,NotHigh: 19 / High: 13,13,True

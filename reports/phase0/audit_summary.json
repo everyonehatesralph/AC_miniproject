@@ -1,0 +1,421 @@
+{
+  "generated_at_utc": "2026-10-02T20:35:11+00:00",
+  "inputs": {
+    "metadata_csv": "data/metadata_raw/G3_metadata_extracted_raw.csv",
+    "metadata_sha256": "9b756707dec72e5a34496d95334d3825fedb95719af7c1d94a00251940d50f6e"
+  },
+  "tool_availability": {
+    "ffmpeg": true,
+    "soundfile": true,
+    "librosa": true,
+    "parselmouth": true
+  },
+  "severity_scale": {
+    "BLOCKER": "observation/deliverable cannot count as valid until resolved",
+    "MAJOR": "blocks a required deliverable or analysis step (naming, lexical analysis, protocol compliance)",
+    "MINOR": "formatting/coding inconsistency with an obvious normalisation (Phase 1, raw kept)",
+    "REVIEW": "needs human confirmation; nothing is changed unless confirmed",
+    "INFO": "context for later phases"
+  },
+  "A_total_metadata_rows": 40,
+  "B_total_media_files": 38,
+  "C_unique_participant_codes": {
+    "metadata": 40,
+    "with_recordings": 32,
+    "recordings_and_metadata": 32
+  },
+  "D_metadata_codes_missing_recordings": [
+    "Y2-053",
+    "Y2-071",
+    "Y2-074",
+    "Y2-076",
+    "Y2-077",
+    "Y2-078",
+    "Y2-079",
+    "Y2-080"
+  ],
+  "E_recordings_without_matching_metadata": [],
+  "F_duplicate_participant_recordings": {
+    "Y2-044": 2,
+    "Y2-047": 2,
+    "Y2-056": 2,
+    "Y2-057": 3,
+    "Y2-064": 2
+  },
+  "G_missing_metadata_fields": {
+    "Participant Code": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Year Level": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Class Activity": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Subject": {
+      "n_missing": 10,
+      "codes": [
+        "Y2-071",
+        "Y2-072",
+        "Y2-073",
+        "Y2-074",
+        "Y2-075",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": false
+    },
+    "Session": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Spoken Word": {
+      "n_missing": 9,
+      "codes": [
+        "Y2-053",
+        "Y2-071",
+        "Y2-073",
+        "Y2-074",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": true
+    },
+    "Self-Reported Feeling": {
+      "n_missing": 2,
+      "codes": [
+        "Y2-071",
+        "Y2-080"
+      ],
+      "required_by_section_XI": true
+    },
+    "Valence (1-5)": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Arousal (1-5)": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": true
+    },
+    "Audio Filename": {
+      "n_missing": 40,
+      "codes": [
+        "Y2-041",
+        "Y2-042",
+        "Y2-043",
+        "Y2-044",
+        "Y2-045",
+        "Y2-046",
+        "Y2-047",
+        "Y2-048",
+        "Y2-049",
+        "Y2-050",
+        "Y2-051",
+        "Y2-052",
+        "Y2-053",
+        "Y2-054",
+        "Y2-055",
+        "Y2-056",
+        "Y2-057",
+        "Y2-058",
+        "Y2-059",
+        "Y2-060",
+        "Y2-061",
+        "Y2-062",
+        "Y2-063",
+        "Y2-064",
+        "Y2-065",
+        "Y2-066",
+        "Y2-067",
+        "Y2-068",
+        "Y2-069",
+        "Y2-070",
+        "Y2-071",
+        "Y2-072",
+        "Y2-073",
+        "Y2-074",
+        "Y2-075",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": true
+    },
+    "Consent Obtained (Y/N)": {
+      "n_missing": 0,
+      "codes": [],
+      "required_by_section_XI": false
+    },
+    "Date Collected": {
+      "n_missing": 40,
+      "codes": [
+        "Y2-041",
+        "Y2-042",
+        "Y2-043",
+        "Y2-044",
+        "Y2-045",
+        "Y2-046",
+        "Y2-047",
+        "Y2-048",
+        "Y2-049",
+        "Y2-050",
+        "Y2-051",
+        "Y2-052",
+        "Y2-053",
+        "Y2-054",
+        "Y2-055",
+        "Y2-056",
+        "Y2-057",
+        "Y2-058",
+        "Y2-059",
+        "Y2-060",
+        "Y2-061",
+        "Y2-062",
+        "Y2-063",
+        "Y2-064",
+        "Y2-065",
+        "Y2-066",
+        "Y2-067",
+        "Y2-068",
+        "Y2-069",
+        "Y2-070",
+        "Y2-071",
+        "Y2-072",
+        "Y2-073",
+        "Y2-074",
+        "Y2-075",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": false
+    },
+    "Collector Initials": {
+      "n_missing": 40,
+      "codes": [
+        "Y2-041",
+        "Y2-042",
+        "Y2-043",
+        "Y2-044",
+        "Y2-045",
+        "Y2-046",
+        "Y2-047",
+        "Y2-048",
+        "Y2-049",
+        "Y2-050",
+        "Y2-051",
+        "Y2-052",
+        "Y2-053",
+        "Y2-054",
+        "Y2-055",
+        "Y2-056",
+        "Y2-057",
+        "Y2-058",
+        "Y2-059",
+        "Y2-060",
+        "Y2-061",
+        "Y2-062",
+        "Y2-063",
+        "Y2-064",
+        "Y2-065",
+        "Y2-066",
+        "Y2-067",
+        "Y2-068",
+        "Y2-069",
+        "Y2-070",
+        "Y2-071",
+        "Y2-072",
+        "Y2-073",
+        "Y2-074",
+        "Y2-075",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": false
+    },
+    "Notes": {
+      "n_missing": 40,
+      "codes": [
+        "Y2-041",
+        "Y2-042",
+        "Y2-043",
+        "Y2-044",
+        "Y2-045",
+        "Y2-046",
+        "Y2-047",
+        "Y2-048",
+        "Y2-049",
+        "Y2-050",
+        "Y2-051",
+        "Y2-052",
+        "Y2-053",
+        "Y2-054",
+        "Y2-055",
+        "Y2-056",
+        "Y2-057",
+        "Y2-058",
+        "Y2-059",
+        "Y2-060",
+        "Y2-061",
+        "Y2-062",
+        "Y2-063",
+        "Y2-064",
+        "Y2-065",
+        "Y2-066",
+        "Y2-067",
+        "Y2-068",
+        "Y2-069",
+        "Y2-070",
+        "Y2-071",
+        "Y2-072",
+        "Y2-073",
+        "Y2-074",
+        "Y2-075",
+        "Y2-076",
+        "Y2-077",
+        "Y2-078",
+        "Y2-079",
+        "Y2-080"
+      ],
+      "required_by_section_XI": false
+    }
+  },
+  "H_invalid_or_out_of_range_values": [
+    {
+      "participant_code": "Y2-076",
+      "field": "Arousal (1-5)",
+      "status": "STRUCK_THROUGH",
+      "raw": "5 — Very High"
+    }
+  ],
+  "I_naming": {
+    "metadata_rows_without_audio_filename": 40,
+    "raw_files_not_following_convention": 38,
+    "rows_with_proposed_filename": 31
+  },
+  "J_formats": {
+    "QuickTime MOV": 38
+  },
+  "J_audio_streams": {
+    "aac 48000 Hz mono": 32,
+    "aac 48000 Hz stereo": 6
+  },
+  "K_consent": {
+    "metadata_values": {
+      "Yes": 40
+    },
+    "documentation": {
+      "consent_dir": "consent",
+      "n_files": 0,
+      "extensions": {},
+      "participant_codes_in_filenames": []
+    }
+  },
+  "L_audio_quality": "assessed in 03_prepare_audio.py (reports/data_quality_report.md)",
+  "M_eligible_after_phase0": [],
+  "N_blocked_at_phase0": 40,
+  "O_phase0_blockers": {
+    "Y2-041": "AUDIO_QA_PENDING",
+    "Y2-042": "AUDIO_QA_PENDING",
+    "Y2-043": "AUDIO_QA_PENDING",
+    "Y2-044": "DUPLICATE_RECORDING_REQUIRES_REVIEW",
+    "Y2-045": "AUDIO_QA_PENDING",
+    "Y2-046": "AUDIO_QA_PENDING",
+    "Y2-047": "DUPLICATE_RECORDING_REQUIRES_REVIEW",
+    "Y2-048": "AUDIO_QA_PENDING",
+    "Y2-049": "AUDIO_QA_PENDING",
+    "Y2-050": "AUDIO_QA_PENDING",
+    "Y2-051": "AUDIO_QA_PENDING",
+    "Y2-052": "AUDIO_QA_PENDING",
+    "Y2-053": "NO_RECORDING",
+    "Y2-054": "AUDIO_QA_PENDING",
+    "Y2-055": "AUDIO_QA_PENDING",
+    "Y2-056": "DUPLICATE_RECORDING_REQUIRES_REVIEW",
+    "Y2-057": "DUPLICATE_RECORDING_REQUIRES_REVIEW",
+    "Y2-058": "AUDIO_QA_PENDING",
+    "Y2-059": "AUDIO_QA_PENDING",
+    "Y2-060": "AUDIO_QA_PENDING",
+    "Y2-061": "AUDIO_QA_PENDING",
+    "Y2-062": "AUDIO_QA_PENDING",
+    "Y2-063": "AUDIO_QA_PENDING",
+    "Y2-064": "DUPLICATE_RECORDING_REQUIRES_REVIEW",
+    "Y2-065": "AUDIO_QA_PENDING",
+    "Y2-066": "AUDIO_QA_PENDING",
+    "Y2-067": "AUDIO_QA_PENDING",
+    "Y2-068": "AUDIO_QA_PENDING",
+    "Y2-069": "AUDIO_QA_PENDING",
+    "Y2-070": "AUDIO_QA_PENDING",
+    "Y2-071": "NO_RECORDING",
+    "Y2-072": "AUDIO_QA_PENDING",
+    "Y2-073": "AUDIO_QA_PENDING",
+    "Y2-074": "NO_RECORDING",
+    "Y2-075": "AUDIO_QA_PENDING",
+    "Y2-076": "NO_RECORDING;AROUSAL_STRUCK_THROUGH",
+    "Y2-077": "NO_RECORDING",
+    "Y2-078": "NO_RECORDING",
+    "Y2-079": "NO_RECORDING",
+    "Y2-080": "NO_RECORDING"
+  },
+  "recording_status_counts": {
+    "AUDIO_QA_PENDING": 27,
+    "DUPLICATE_RECORDING_REQUIRES_REVIEW": 5,
+    "NO_RECORDING": 8
+  },
+  "issue_counts_by_code": {
+    "ACTIVITY_NOT_PROTOCOL_LABEL": 40,
+    "AROUSAL_STRUCK_THROUGH": 1,
+    "AUDIO_FILENAME_MISSING": 40,
+    "AUDIO_QA_PENDING": 27,
+    "CODE_WHITESPACE": 1,
+    "COLLECTOR_INITIALS_MISSING": 40,
+    "CONSENT_CODING_NOT_Y_N": 40,
+    "CONSENT_DOCUMENTATION_NOT_SUPPLIED": 1,
+    "CONSTANT_ACTIVITY": 1,
+    "CONSTANT_SESSION": 1,
+    "CONSTANT_YEAR": 1,
+    "DATE_COLLECTED_MISSING": 40,
+    "DUPLICATE_RECORDING_REQUIRES_REVIEW": 5,
+    "EDGE_WHITESPACE": 4,
+    "FEELING_IDENTICAL_TO_WORD": 16,
+    "FEWER_RECORDED_PARTICIPANTS_THAN_MINIMUM": 1,
+    "FORMAT_NOT_WAV": 38,
+    "METADATA_SOURCE_IS_PDF_EXPORT": 1,
+    "NO_RECORDING": 8,
+    "RAW_NAME_NOT_CONVENTION": 38,
+    "SELF_REPORT_TEXT_MISSING": 2,
+    "SESSION_SPELLING_VARIANT": 40,
+    "SESSION_TOKEN_ASSUMED": 1,
+    "SPOKEN_WORD_MISSING": 9,
+    "SUBJECT_MISSING": 10,
+    "WORD_NOT_IN_PROTOCOL_LIST": 16
+  },
+  "issue_counts_by_severity": {
+    "BLOCKER": 43,
+    "INFO": 41,
+    "MAJOR": 67,
+    "MINOR": 163,
+    "REVIEW": 108
+  }
+}

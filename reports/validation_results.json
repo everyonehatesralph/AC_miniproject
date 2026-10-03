@@ -1,0 +1,127 @@
+[
+  {
+    "item": "40 valid unique participants available",
+    "status": "BLOCKED",
+    "evidence": "32 valid unique participants (recordings exist for 32 of 40 metadata participants; missing: Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080)"
+  },
+  {
+    "item": "consent requirements satisfied",
+    "status": "BLOCKED",
+    "evidence": "metadata records consent 'Y' for 40/40; consent documentation files supplied: 0"
+  },
+  {
+    "item": "no participant names/student IDs exposed",
+    "status": "PASS",
+    "evidence": "identifiers are pseudonymous codes (Y2-NNN): True; name/ID patterns found in: none; raw videos (faces, GPS tags) stay local in data/raw and are never copied into reports"
+  },
+  {
+    "item": "metadata cleaned (raw preserved)",
+    "status": "PASS",
+    "evidence": "40 rows; raw columns kept alongside cleaned ones; log: reports/phase1/cleaning_log.csv"
+  },
+  {
+    "item": "all eligible observations have recordings",
+    "status": "PASS",
+    "evidence": "32 included participants each have one processed WAV and one segment"
+  },
+  {
+    "item": "duplicates resolved",
+    "status": "WARNING",
+    "evidence": "5 participants had retakes (Y2-044, Y2-047, Y2-056, Y2-057, Y2-064); exactly one take selected each by the documented rule (unique selections: True); group confirmation pending"
+  },
+  {
+    "item": "raw files preserved",
+    "status": "PASS",
+    "evidence": "38 raw recordings match their download SHA-256: True; metadata PDF copy identical: True"
+  },
+  {
+    "item": "processed WAV files generated",
+    "status": "PASS",
+    "evidence": "64 WAV files (recordings + segments) checked: 16 kHz, mono, PCM 16-bit; problems: none"
+  },
+  {
+    "item": "filenames follow convention",
+    "status": "PASS",
+    "evidence": "32 names match ParticipantCode_YearLevel_Session_Word.wav; code consistent: True; word token UNVERIFIED (not inferred): ['Y2-073_Y2_PM_UNVERIFIED.wav']; session token PM is an assumption"
+  },
+  {
+    "item": "features extracted successfully",
+    "status": "PASS",
+    "evidence": "32 rows x 108 features; one row per included participant: True; features computed from the current segment files: True"
+  },
+  {
+    "item": "models trained on the current feature table",
+    "status": "PASS",
+    "evidence": "training_summary.json features_sha256 = current data/acoustic_features.csv: True; full (non-quick) run: True"
+  },
+  {
+    "item": "no lexical/context leakage in primary model",
+    "status": "PASS",
+    "evidence": "X = 108 acoustic features; metadata-like columns in X: none; saved models use exactly these features: True; preprocessing inside sklearn Pipelines (06_train_models.py)"
+  },
+  {
+    "item": "speaker independence protected",
+    "status": "PASS",
+    "evidence": "every participant is in exactly one test fold per repeat: True; predicted exactly once per repeat: True; grouping variable = participant_code (StratifiedGroupKFold)"
+  },
+  {
+    "item": "EDA completed",
+    "status": "PASS",
+    "evidence": "reports/exploratory_analysis.md"
+  },
+  {
+    "item": "data quality report",
+    "status": "PASS",
+    "evidence": "reports/data_quality_report.md"
+  },
+  {
+    "item": "model evaluation report",
+    "status": "PASS",
+    "evidence": "reports/model_evaluation.md"
+  },
+  {
+    "item": "lexical-control analysis attempted where possible",
+    "status": "PASS",
+    "evidence": "reports/lexical_control_analysis.md"
+  },
+  {
+    "item": "baseline model included",
+    "status": "PASS",
+    "evidence": "models evaluated: ['dummy_majority', 'dummy_stratified', 'logistic_regression', 'random_forest', 'svm_rbf']"
+  },
+  {
+    "item": "multiple models compared",
+    "status": "PASS",
+    "evidence": "corrected repeated k-fold t-tests in reports/evaluation/model_comparison.csv"
+  },
+  {
+    "item": "class imbalance addressed appropriately",
+    "status": "PASS",
+    "evidence": "class_weight='balanced' in every learned model; balanced accuracy and macro-F1 reported; no resampling"
+  },
+  {
+    "item": "confusion matrices created",
+    "status": "PASS",
+    "evidence": "3 figures + reports/evaluation/confusion_matrices_mean_per_repeat.csv"
+  },
+  {
+    "item": "metrics calculated",
+    "status": "PASS",
+    "evidence": "accuracy, balanced accuracy, macro precision/recall/F1, per-class metrics, bootstrap CIs, permutation p"
+  },
+  {
+    "item": "limitations documented",
+    "status": "PASS",
+    "evidence": "section 11 of the final report"
+  },
+  {
+    "item": "research report matches actual results",
+    "status": "PASS",
+    "evidence": "sample size 32 stated: True; significance statement consistent with evaluation_summary.json: True"
+  },
+  {
+    "item": "code reproducible",
+    "status": "PASS",
+    "evidence": "pinned requirements: True; run_pipeline.py present; fixed seeds (random_state=42); processed WAVs byte-identical across runs (verified during development)"
+  }
+]

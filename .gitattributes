@@ -1,0 +1,12 @@
+# The pipeline records and checks SHA-256 hashes of data files, so their bytes must be
+# identical on every operating system: no line-ending conversion for data and binaries.
+*.csv     -text
+*.json    -text
+*.pdf     binary
+*.png     binary
+*.jpg     binary
+*.joblib  binary
+
+# Source and documentation: normal text handling.
+*.py      text
+*.md      text

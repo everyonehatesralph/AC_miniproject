@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-10-03T12:18:26+08:00",
+  "total_files": 38,
+  "participants_with_recordings": 32,
+  "metadata_participants": 40,
+  "participants_without_recording": [
+    "Y2-053",
+    "Y2-071",
+    "Y2-074",
+    "Y2-076",
+    "Y2-077",
+    "Y2-078",
+    "Y2-079",
+    "Y2-080"
+  ],
+  "retake_participants": [
+    "Y2-044",
+    "Y2-047",
+    "Y2-056",
+    "Y2-057",
+    "Y2-064"
+  ],
+  "extra_takes": 6,
+  "unreadable_files": 0,
+  "no_speech_files": 0,
+  "valid_recordings": 32,
+  "excluded_files": 6,
+  "nonselected_retakes": 6,
+  "unusable_files": 0,
+  "selected_with_flags": 30,
+  "selected_segmentation_critical": 12,
+  "included_primary": 32,
+  "majority_config": "mono, 1 audio stream(s)",
+  "median_capture": "2026-10-01T18:18:26+08:00",
+  "flag_counts_selected": {
+    "BACKGROUND_VOICES": 27,
+    "COMPETING_EVENT": 8,
+    "RECORDING_CONFIG_DIFFERS": 6,
+    "LOW_SBR": 5,
+    "CAPTURE_TIME_OUTLIER": 5,
+    "LONG_CLIP": 4,
+    "EDGE_START": 3,
+    "TOO_SHORT_FOR_WORD": 2,
+    "LONG_SEGMENT": 2
+  },
+  "subsets": {
+    "subset_retake": 5,
+    "subset_config_or_time_anomaly": 6,
+    "subset_segmentation_critical": 12
+  }
+}

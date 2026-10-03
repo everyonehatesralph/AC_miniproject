@@ -1,0 +1,41 @@
+{
+  "input": "data/metadata_raw/G3_metadata_extracted_raw.csv",
+  "input_sha256": "9b756707dec72e5a34496d95334d3825fedb95719af7c1d94a00251940d50f6e",
+  "output": "data/metadata_cleaned.csv",
+  "rows": 40,
+  "changes_by_rule": {
+    "R1": 1,
+    "R2": 3,
+    "R3": 40,
+    "R4": 40,
+    "R5": 40,
+    "R6": 79,
+    "R7": 1,
+    "R8": 40
+  },
+  "verified_corrections_applied": 0,
+  "flags": {
+    "ACTIVITY_MAPPING_PENDING_CONFIRMATION": 40,
+    "AROUSAL_STRUCK_THROUGH": 1,
+    "FEELING_IDENTICAL_TO_WORD": 16,
+    "SELF_REPORT_TEXT_MISSING": 2,
+    "SPOKEN_WORD_MISSING": 9,
+    "SUBJECT_MISSING": 10,
+    "WORD_NOT_IN_PROTOCOL_LIST": 16
+  },
+  "valence_counts": {
+    "1": 1,
+    "2": 2,
+    "3": 15,
+    "4": 11,
+    "5": 11
+  },
+  "arousal_counts": {
+    "1": 3,
+    "2": 6,
+    "3": 13,
+    "4": 12,
+    "5": 5,
+    "<NA>": 1
+  }
+}

@@ -1,0 +1,109 @@
+feature,group,unit,definition
+utterance_duration_s,duration/voicing,s,duration of the located utterance segment (incl. 0.05 s context each side)
+voiced_duration_s,duration/voicing,s,number of Praat-voiced 10 ms frames x 0.01 s
+voiced_ratio,duration/voicing,ratio,voiced frames / all pitch frames in the segment
+f0_mean,F0 (pitch),Hz,"mean of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_std,F0 (pitch),Hz,"std of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_median,F0 (pitch),Hz,"median of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_min,F0 (pitch),Hz,"min of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_max,F0 (pitch),Hz,"max of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_iqr,F0 (pitch),Hz,"iqr of F0 over voiced frames (Praat ac, 75-500 Hz)"
+f0_std_st,F0 (pitch),st,std of F0 in semitones relative to the utterance median
+f0_range_st,F0 (pitch),st,"F0 range between the 5th and 95th percentile, in semitones"
+f0_slope_st_per_s,F0 (pitch),st/s,least-squares slope of the semitone F0 contour over time
+rms_db_mean,energy,dBFS,mean of frame RMS level (25 ms frames)
+rms_db_std,energy,dBFS,std of frame RMS level (25 ms frames)
+rms_db_median,energy,dBFS,median of frame RMS level (25 ms frames)
+rms_db_min,energy,dBFS,min of frame RMS level (25 ms frames)
+rms_db_max,energy,dBFS,max of frame RMS level (25 ms frames)
+rms_db_iqr,energy,dBFS,iqr of frame RMS level (25 ms frames)
+zcr_mean,zero-crossing rate,crossings/sample,mean of frame ZCR
+zcr_std,zero-crossing rate,crossings/sample,std of frame ZCR
+zcr_median,zero-crossing rate,crossings/sample,median of frame ZCR
+zcr_min,zero-crossing rate,crossings/sample,min of frame ZCR
+zcr_max,zero-crossing rate,crossings/sample,max of frame ZCR
+zcr_iqr,zero-crossing rate,crossings/sample,iqr of frame ZCR
+mfcc_1_mean,MFCC,a.u.,mean of MFCC 1 (c0)
+mfcc_1_std,MFCC,a.u.,std of MFCC 1 (c0)
+mfcc_2_mean,MFCC,a.u.,mean of MFCC 2 (c1)
+mfcc_2_std,MFCC,a.u.,std of MFCC 2 (c1)
+mfcc_3_mean,MFCC,a.u.,mean of MFCC 3 (c2)
+mfcc_3_std,MFCC,a.u.,std of MFCC 3 (c2)
+mfcc_4_mean,MFCC,a.u.,mean of MFCC 4 (c3)
+mfcc_4_std,MFCC,a.u.,std of MFCC 4 (c3)
+mfcc_5_mean,MFCC,a.u.,mean of MFCC 5 (c4)
+mfcc_5_std,MFCC,a.u.,std of MFCC 5 (c4)
+mfcc_6_mean,MFCC,a.u.,mean of MFCC 6 (c5)
+mfcc_6_std,MFCC,a.u.,std of MFCC 6 (c5)
+mfcc_7_mean,MFCC,a.u.,mean of MFCC 7 (c6)
+mfcc_7_std,MFCC,a.u.,std of MFCC 7 (c6)
+mfcc_8_mean,MFCC,a.u.,mean of MFCC 8 (c7)
+mfcc_8_std,MFCC,a.u.,std of MFCC 8 (c7)
+mfcc_9_mean,MFCC,a.u.,mean of MFCC 9 (c8)
+mfcc_9_std,MFCC,a.u.,std of MFCC 9 (c8)
+mfcc_10_mean,MFCC,a.u.,mean of MFCC 10 (c9)
+mfcc_10_std,MFCC,a.u.,std of MFCC 10 (c9)
+mfcc_11_mean,MFCC,a.u.,mean of MFCC 11 (c10)
+mfcc_11_std,MFCC,a.u.,std of MFCC 11 (c10)
+mfcc_12_mean,MFCC,a.u.,mean of MFCC 12 (c11)
+mfcc_12_std,MFCC,a.u.,std of MFCC 12 (c11)
+mfcc_13_mean,MFCC,a.u.,mean of MFCC 13 (c12)
+mfcc_13_std,MFCC,a.u.,std of MFCC 13 (c12)
+delta_mfcc_1_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 1
+delta_mfcc_1_std,delta MFCC,a.u.,std of 1st derivative of MFCC 1
+delta_mfcc_2_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 2
+delta_mfcc_2_std,delta MFCC,a.u.,std of 1st derivative of MFCC 2
+delta_mfcc_3_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 3
+delta_mfcc_3_std,delta MFCC,a.u.,std of 1st derivative of MFCC 3
+delta_mfcc_4_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 4
+delta_mfcc_4_std,delta MFCC,a.u.,std of 1st derivative of MFCC 4
+delta_mfcc_5_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 5
+delta_mfcc_5_std,delta MFCC,a.u.,std of 1st derivative of MFCC 5
+delta_mfcc_6_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 6
+delta_mfcc_6_std,delta MFCC,a.u.,std of 1st derivative of MFCC 6
+delta_mfcc_7_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 7
+delta_mfcc_7_std,delta MFCC,a.u.,std of 1st derivative of MFCC 7
+delta_mfcc_8_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 8
+delta_mfcc_8_std,delta MFCC,a.u.,std of 1st derivative of MFCC 8
+delta_mfcc_9_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 9
+delta_mfcc_9_std,delta MFCC,a.u.,std of 1st derivative of MFCC 9
+delta_mfcc_10_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 10
+delta_mfcc_10_std,delta MFCC,a.u.,std of 1st derivative of MFCC 10
+delta_mfcc_11_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 11
+delta_mfcc_11_std,delta MFCC,a.u.,std of 1st derivative of MFCC 11
+delta_mfcc_12_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 12
+delta_mfcc_12_std,delta MFCC,a.u.,std of 1st derivative of MFCC 12
+delta_mfcc_13_mean,delta MFCC,a.u.,mean of 1st derivative of MFCC 13
+delta_mfcc_13_std,delta MFCC,a.u.,std of 1st derivative of MFCC 13
+delta2_mfcc_1_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 1
+delta2_mfcc_1_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 1
+delta2_mfcc_2_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 2
+delta2_mfcc_2_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 2
+delta2_mfcc_3_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 3
+delta2_mfcc_3_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 3
+delta2_mfcc_4_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 4
+delta2_mfcc_4_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 4
+delta2_mfcc_5_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 5
+delta2_mfcc_5_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 5
+delta2_mfcc_6_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 6
+delta2_mfcc_6_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 6
+delta2_mfcc_7_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 7
+delta2_mfcc_7_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 7
+delta2_mfcc_8_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 8
+delta2_mfcc_8_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 8
+delta2_mfcc_9_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 9
+delta2_mfcc_9_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 9
+delta2_mfcc_10_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 10
+delta2_mfcc_10_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 10
+delta2_mfcc_11_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 11
+delta2_mfcc_11_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 11
+delta2_mfcc_12_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 12
+delta2_mfcc_12_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 12
+delta2_mfcc_13_mean,delta-delta MFCC,a.u.,mean of 2nd derivative of MFCC 13
+delta2_mfcc_13_std,delta-delta MFCC,a.u.,std of 2nd derivative of MFCC 13
+spectral_centroid_hz_mean,spectral,Hz,mean of the frame spectral centroid
+spectral_centroid_hz_std,spectral,Hz,std of the frame spectral centroid
+spectral_bandwidth_hz_mean,spectral,Hz,mean of the frame spectral bandwidth
+spectral_bandwidth_hz_std,spectral,Hz,std of the frame spectral bandwidth
+spectral_rolloff_hz_mean,spectral,Hz,mean of the frame spectral rolloff
+spectral_rolloff_hz_std,spectral,Hz,std of the frame spectral rolloff

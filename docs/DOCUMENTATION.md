@@ -1,0 +1,377 @@
+# Technical Documentation
+
+**Project:** Bisaya Post-Class Speech and Affective State Recognition Among Computer Science Students
+**Group 3:** Second-Year CS students, participant codes `Y2-041` to `Y2-080`
+**Scope:** the computational research pipeline (data audit → audio processing → features → speaker-independent
+machine learning → evaluation → report). There is deliberately no end-user application or UI.
+
+Companion documents:
+- [data_dictionary.md](data_dictionary.md): every column of every data file.
+- [decision_log.md](decision_log.md): every methodological decision, its rationale and its status.
+- [../reports/final_group_research_report.md](../reports/final_group_research_report.md): the research report.
+
+---
+
+## 1. Quick start
+
+```bash
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+.venv/Scripts/python.exe run_pipeline.py
+```
+
+`run_pipeline.py` runs steps 00–10 in order and stops at the first failure.
+- `--skip-fetch` does not contact Google Drive (use it when `data/raw/` is already filled).
+- `--from 05` resumes from a step.
+- `--quick` is a smoke test (2 CV repeats, 20 permutations; not for reporting).
+
+The full run takes about 1 hour on 16 cores; step 06 took 56 minutes, almost all of it random-forest
+permutation tests.
+
+## 2. Repository layout
+
+```
+run_pipeline.py                 one command for the whole pipeline
+requirements.txt                exact package versions
+RESEARCH MINI-PROJECT v2.docx.pdf, G3 - mini project - TEmplate.pdf, expected_output.jpg
+                                original inputs (never modified)
+data/
+  raw/                          original recordings (MOV), drive_manifest.csv, download_log.csv, recording_map.csv
+  metadata_raw/                 copy of the metadata PDF, verbatim CSV extraction + provenance
+  metadata_cleaned.csv          Phase 1 output (raw + cleaned columns)
+  metadata_corrections_TEMPLATE.csv   template for group-verified corrections
+  processed_audio/
+    recordings/                 selected take per participant: WAV PCM-16 mono 16 kHz, convention names
+    segments/                   located utterance cut from each WAV (the analysis unit)
+    file_mapping.csv            original file -> participant -> processed WAV -> status
+    segment_review_sheet.csv    for human verification by listening
+  analysis_manifest.csv         one row per participant: included or excluded, and why
+  acoustic_features.csv         32 x 108 feature table (participant_code = identifier only)
+  acoustic_features_dictionary.csv
+src/                            pipeline scripts (section 4) + common.py (constants) + viz.py (figure style)
+models/                         CV predictions, fold scores, splits, permutation tests, final fitted models
+figures/  qa/ eda/ evaluation/ lexical/
+reports/                        generated reports (markdown) + tables (csv/json) + logs/
+docs/                           this documentation
+consent/                        consent documentation (none supplied yet)
+```
+
+## 3. Data flow
+
+```
+Google Drive "CS2B" (38 MOV) --00_fetch--> data/raw (+ SHA-256 log)
+metadata PDF --00_extract--> verbatim CSV --02_clean--> metadata_cleaned.csv
+                     \--01_audit--> Phase 0 audit (inventory, matching, issues)
+data/raw + metadata_cleaned --03_prepare_audio--> QA table, retake selection, WAV (16 kHz mono PCM16),
+                                                  located utterance segments, file mapping, manifest
+segments --04_extract_features--> acoustic_features.csv (108 features)
+features + metadata --05_eda--> figures/eda, exploratory_analysis.md
+features + ratings --06_train--> OOF predictions, fold scores, permutation tests, final models
+models --07_evaluate--> model_evaluation.md      features + words --08_lexical--> lexical_control_analysis.md
+all outputs --09_build_final_report--> final_group_research_report.md --10_validate--> validation_report.md
+```
+
+## 4. Pipeline steps
+
+| Step | Script | Phase | Main outputs |
+|---|---|---|---|
+| 00 | `00_fetch_recordings.py` | data acquisition | `data/raw/*.mov`, `download_log.csv`, `recording_map.csv` |
+| 00 | `00_extract_metadata_pdf.py` | Phase 0 helper | `data/metadata_raw/G3_metadata_extracted_raw.csv` (+ provenance JSON) |
+| 01 | `01_audit_data.py` | Phase 0 | `reports/phase0_data_audit.md`, `reports/phase0/*` |
+| 02 | `02_clean_metadata.py` | Phase 1 | `data/metadata_cleaned.csv`, `reports/phase1/cleaning_log.csv` |
+| 03 | `03_prepare_audio.py` | Phases 2–5 | WAVs, segments, `file_mapping.csv`, `analysis_manifest.csv`, `reports/data_quality_report.md` |
+| 04 | `04_extract_features.py` | Phase 6 | `data/acoustic_features.csv`, feature dictionary |
+| 05 | `05_eda.py` | Phase 7 | `reports/exploratory_analysis.md`, `figures/eda/` |
+| 06 | `06_train_models.py` | Phases 8–11 | `models/*` |
+| 07 | `07_evaluate_models.py` | Phase 12 | `reports/model_evaluation.md`, `figures/evaluation/` |
+| 08 | `08_lexical_control.py` | Phase 13 | `reports/lexical_control_analysis.md`, `figures/lexical/` |
+| 09 | `09_build_final_report.py` | Phases 14–19 | `reports/final_group_research_report.md` |
+| 09 | `09b_build_html_report.py` | presentation | `reports/html/*.html` (self-contained pages, figures embedded) |
+| 10 | `10_validate_project.py` | Phase 20 | `reports/validation_report.md` (exit 1 if any check FAILS) |
+
+Every script writes a log (`reports/logs/`; steps 01 and 02 log to `reports/phase0/audit.log` and `reports/phase1/cleaning.log`) and raises an explicit error rather than continuing on bad input.
+Examples: an unexpected header, a raw file whose hash changed, a WAV that differs from the analysed samples,
+or a metadata column found in the feature matrix.
+
+## 5. Methods in detail
+
+### 5.1 Metadata extraction (step 00) and cleaning (step 02)
+
+The metadata exists only as a Google Sheets PDF export. The extractor rebuilds each cell character by character
+from the PDF text layer, locating cells by the drawn table grid, so empty cells stay empty. It records
+strikethrough (a horizontal line through the middle of a cell's text), coloured text and cell fills. It was
+checked against an independent visual transcription: 240 cells, 0 mismatches. Exactly one formatted cell exists:
+Y2-076's arousal is struck through.
+
+Cleaning rules (logged per change in `reports/phase1/cleaning_log.csv`):
+
+| Rule | Change |
+|---|---|
+| R1 | participant code: remove whitespace (`Y2- 041` → `Y2-041`) |
+| R2 | strip leading/trailing spaces (`Kapoy ` → `Kapoy`) |
+| R3 | `2nd year` → 2 |
+| R4 | `Lecture` → protocol category `Lecture/Discussion` (flagged: pending confirmation) |
+| R5 | `Afternoon-Evening` → protocol spelling `Afternoon–Evening` |
+| R6 | `4 — Pleasant` → 4, after verifying that the label matches the number |
+| R7 | a struck-through rating is not used (value missing, raw text kept, status `STRUCK_THROUGH`) |
+| R8 | consent `Yes` → `Y` |
+| R9 | group-verified corrections from `data/metadata_corrections.csv`, applied with source and verifier logged |
+
+Never done: inferring a spoken word from the feeling text, inferring ratings from text, correcting spellings,
+or filling blanks.
+
+### 5.2 Recording acquisition and provenance (step 00)
+
+The Drive folder was listed file by file, with Drive file ids, in `data/raw/drive_manifest.csv`. Files are
+saved as `<drive name>__<file id>.<ext>` because several files share a name (three are called `Y2-057`).
+Saving by name would silently overwrite recordings. Each file's container is identified from its signature,
+and its SHA-256 is logged. Step 03 re-verifies every hash before use.
+
+### 5.3 Audio quality metrics (step 03)
+
+These are measured on the **original** audio at its native rate and channels, before any processing:
+- peak level (dBFS)
+- clipping fraction (samples with |x| ≥ 0.999)
+- DC offset and RMS level
+- inter-channel correlation (stereo files)
+- capture time, device model and audio configuration from the container metadata
+
+GPS/location, author, title and comment tags are deliberately never copied out of the videos.
+
+Flags (thresholds are constants in `src/common.py`). Segmentation-critical flags (`SEG_CRITICAL`):
+
+| Flag | Rule |
+|---|---|
+| `EDGE_START` / `EDGE_END` | located event touches the clip boundary (word possibly cut off) |
+| `LONG_SEGMENT` | event > 1.5 s (probably more than one word) |
+| `TOO_SHORT_FOR_WORD` | energy event < 0.10 s per syllable of the recorded word (faster than 10 syllables/s), so it cannot hold the whole word; syllables = vowel letters (Cebuano spelling: y/w are glides; maayo = ma-a-yo) |
+| `COMPETING_EVENT` | another event within 3 dB of the peak and ≥ 0.3 s away (target ambiguous) |
+
+Quality notes:
+
+| Flag | Rule |
+|---|---|
+| `LOW_SBR` | event < 10 dB above the background floor |
+| `CLIPPING` | > 0.1 % of samples at full scale |
+| `BACKGROUND_VOICES` | ≥ 0.3 s of Praat voicing outside the event ± 0.1 s (other speakers) |
+| `NO_SPEECH` | < 5 voiced frames inside the event → take unusable |
+| `LONG_CLIP` | clip > 4 s |
+| `CAPTURE_TIME_OUTLIER` | capture time > 60 min from the median capture time of all recordings |
+| `RECORDING_CONFIG_DIFFERS` | channels or number of audio streams differ from the majority configuration |
+
+### 5.4 Standardisation (step 03)
+
+```
+ffmpeg -i <original.mov> -map 0:a:0 -vn -ac 1 -ar 16000 -c:a pcm_s16le -map_metadata -1 \
+       -fflags +bitexact -flags:a +bitexact <processed.wav>
+```
+
+The first audio stream is downmixed to mono by channel average, resampled to 16 kHz (swresample), and written
+as PCM 16-bit with metadata stripped. There is no filtering, denoising, loudness normalisation, pitch or speed
+change. Each WAV is read back and asserted bit-identical to the samples used for analysis. Re-running produces
+byte-identical WAVs (verified by comparing SHA-256 across runs).
+
+### 5.5 Target-utterance localisation (step 03, `common.locate_utterance`)
+
+**Why:** all recordings contain continuous background babble from the post-class hallway. Many also contain
+other speech: the researcher, conversation, laughter. Features computed over a whole clip would mostly
+describe the crowd.
+
+**Algorithm (label-blind, deterministic):**
+1. Frame RMS, 25 ms window, 10 ms hop, uncentred, converted to dBFS.
+2. Smooth with a 50 ms moving average, replicating the edges. Zero padding of dB values would make the clip
+   edges look loud; this was observed and corrected during development.
+3. Background floor = 20th percentile of the smoothed energy; peak = maximum.
+4. Threshold = max(floor + 6 dB, floor + ½·(peak − floor)).
+5. Grow the event outwards from the peak while energy ≥ threshold, bridging dips shorter than 0.25 s (syllable
+   gaps and stop closures).
+6. Add 0.05 s of context on each side.
+
+The located segment is the analysis unit for every acoustic feature. All parameters were fixed by inspecting
+segmentation plots, never by looking at affect labels.
+
+**Known failure modes:**
+- The dominant event may be the researcher, or only one syllable of a multi-syllable word (for example Y2-055).
+- Long clips may yield a multi-word event (for example Y2-059).
+
+These cases are flagged, excluded in a sensitivity analysis, and listed for human review (section 8).
+
+### 5.6 One take per participant (step 03, `select_take`): complete-word rule
+
+The protocol requires one observation per participant (§IV). For participants with several files, the take
+in which the **whole word is captured most clearly** is used. It is chosen without looking at the affect
+ratings:
+1. Only usable takes are candidates. A group decision in `data/processed_audio/take_overrides.csv` wins.
+2. **Completeness:** drop takes whose located word is cut off by the clip edge (`EDGE_START`/`EDGE_END`), too
+   long to be one word (`LONG_SEGMENT`) or too short to contain the recorded word (`TOO_SHORT_FOR_WORD`).
+3. **Unambiguous target:** if a remaining take has no `COMPETING_EVENT`, drop those that do.
+4. **Clarity vs naturalness:** the clearest remaining take (highest utterance-to-background ratio) replaces the
+   earliest only if it is ≥ 3 dB clearer; otherwise the earliest is kept (§X: natural first response).
+
+A take is never chosen for sounding more emotional; that would let the expected answer steer the data.
+This rule replaced an earlier "earliest clean take" rule on 2026-10-03. That rule had selected takes for
+Y2-047 and Y2-064 whose located word lasted only 0.20 s and 0.17 s (0.065 and 0.055 s per syllable), so they
+were fragments of three-syllable words. The spectrogram comparison for every retake is in
+`figures/qa/retakes/`, and a listening packet with a review sheet is in `data/processed_audio/retake_review/`.
+
+The five retake sets in this data are distinct recordings captured seconds apart, not copies (different
+SHA-256 and capture times). All takes stay in `data/raw/`.
+
+### 5.7 File naming (step 03)
+
+`ParticipantCode_YearLevel_Session_Word.wav`, for example `Y2-042_Y2_PM_Kapoy.wav` (§XII).
+- The session token `PM` for Afternoon–Evening is an **assumption** taken from the protocol's only example.
+- A missing spoken word is written `UNVERIFIED` (Y2-073) and never inferred.
+
+Because the filename contains the spoken word, filenames never enter the feature matrix.
+
+### 5.8 Acoustic features (step 04): 108 per utterance
+
+| Group | n | Definition |
+|---|---|---|
+| duration/voicing | 3 | utterance duration; voiced duration; voiced ratio (Praat voiced frames / all frames) |
+| F0 | 9 | Praat autocorrelation pitch on voiced frames (75–500 Hz, 10 ms): mean, std, median, min, max, IQR in Hz; std and p5–p95 range in semitones relative to the utterance median; least-squares slope of the semitone contour (st/s) |
+| RMS energy | 6 | frame RMS in dBFS: mean, std, median, min, max, IQR |
+| zero-crossing rate | 6 | mean, std, median, min, max, IQR |
+| MFCC | 26 | 13 coefficients (c0–c12; 40 mel bands 0–8 kHz; DCT-II orthonormal; n_fft 512, 25 ms Hann window, 10 ms hop): mean and std |
+| delta MFCC | 26 | first derivative (librosa `delta`, width 9): mean and std |
+| delta-delta MFCC | 26 | second derivative: mean and std |
+| spectral | 6 | centroid, bandwidth, 85 % roll-off: mean and std |
+
+Standard deviations use ddof = 0. Frames are uncentred, so no zero padding enters min/max statistics.
+
+**Why Praat and not librosa pYIN for F0.** In this noise, pYIN's voiced/unvoiced decision was unstable. The same
+segment gave 0 or 27 voiced frames depending only on the frame length, while its voicing probabilities stayed
+≤ 0.05. Praat's autocorrelation method (Boersma, 1993; via Parselmouth, Jadoul et al., 2018) gave voiced frames
+in every segment, with medians matching plain YIN (for example 142 vs 141 Hz for Y2-043), and was insensitive to
+the pitch ceiling (500 vs 600 Hz). All Praat parameters are passed explicitly (`common.PITCH`). F0 in Hz mostly
+reflects voice type; the semitone measures are scale-free.
+
+### 5.9 Classification targets (Phase 8)
+
+| Task | Grouping of the participant's own rating | Role |
+|---|---|---|
+| `valence_5`, `arousal_5` | original 1–5 | attempted (not viable) |
+| `valence_3` | 1–2 Unpleasant / 3 Neutral / 4–5 Pleasant | attempted (not viable) |
+| `arousal_3` | 1–2 Low / 3 Moderate / 4–5 High | **primary** |
+| `valence_2` | 1–3 NotPleasant / 4–5 Pleasant | **primary** (only valence split with adequate classes) |
+| `arousal_2` | 1–3 NotHigh / 4–5 High | secondary |
+
+**Viability rule (fixed in advance):** a task is modelled only if every class has ≥ 5 participants.
+Non-viable tasks are reported with their class counts, not forced.
+
+### 5.10 Machine-learning design (step 06)
+
+- **X:** the 108 acoustic features only. `check_no_leakage` aborts if any column is not in the feature
+  dictionary, or contains a metadata token (participant, code, file, word, feeling, year, subject, session,
+  activity, consent, valence, arousal, …).
+- **Groups:** `participant_code`.
+- **Outer CV:** `StratifiedGroupKFold(k = min(5, smallest class), shuffle=True)`, repeated 10 times with seeds
+  42–51. Each split is asserted to share no participant and to contain every class in every test fold; the
+  folds are asserted to partition the participants.
+- **Inner CV (tuning):** `GridSearchCV` with a `StratifiedGroupKFold(min(3, smallest training class))` inside
+  each outer training fold, scoring balanced accuracy.
+- **Pipelines:**
+  - `SimpleImputer(median) → StandardScaler → classifier` (the scaler is omitted for the random forest).
+  - All preprocessing is fitted on training folds only.
+  - No resampling or synthetic data; `class_weight='balanced'`.
+- **Models and grids:**
+
+| Model | Settings |
+|---|---|
+| `DummyClassifier` | `most_frequent`, and `stratified` (seed 42) |
+| `LogisticRegression` | L2, lbfgs, max_iter 10000; C ∈ {0.01, 0.1, 1, 10} |
+| `SVC` | RBF kernel, gamma = 'scale'; C ∈ {0.1, 1, 10} |
+| `RandomForestClassifier` | 300 trees, max_features = 'sqrt', seed 42; min_samples_leaf ∈ {1, 3} |
+
+- **Final models** (`models/final/*.joblib`) are refit on all data with inner-CV tuning, for reuse. Their
+  performance is the cross-validated estimate, not training accuracy.
+
+### 5.11 Evaluation statistics (step 07)
+
+- **Fold level:** mean ± SD (and min–max) over all 50 test folds for accuracy, balanced accuracy, macro
+  precision, macro recall and macro F1.
+- **Pooled out-of-fold:** within each repeat every participant is predicted once. Metrics are computed on the
+  pooled predictions and averaged over the 10 repeats.
+- **95% interval:** participant-level bootstrap, stratified by class, 2000 resamples, with each resample's
+  metric averaged over repeats.
+- **Permutation test:** labels are permuted 500 times and the full nested procedure is re-run each time.
+  - Statistic: pooled balanced accuracy of the repeat-0 split.
+  - p = (1 + #null ≥ observed) / (1 + 500).
+  - Holm-adjusted over all model-vs-chance tests.
+- **Model comparison:** corrected repeated k-fold t-test (Nadeau & Bengio, 2003) on paired fold-level balanced
+  accuracy. Folds are identical across models; this is asserted.
+- **Sensitivity analyses** (primary tasks): the same design after removing
+  1. retake participants
+  2. config-B / capture-time-outlier recordings
+  3. segmentation-critical recordings
+
+  Each subset passes through the same viability rule.
+
+### 5.12 Lexically controlled analysis (step 08)
+
+The spoken word only selects recordings; it is never a predictor.
+- **Within-word comparison:** for words with ≥ 8 recordings and rating variation (only *Kapoy*, n = 10),
+  Spearman correlations of the six pre-specified prosodic features with the ratings. Permutation p-values use
+  20,000 permutations, with BH-FDR; directions are compared with the full sample.
+- **Lexical-confound probe:** the same leakage-safe pipeline predicts *Kapoy* vs other words from the acoustic
+  features (10 × 5-fold grouped CV, 500-permutation test).
+- **Word–affect association:** Fisher exact or permutation chi-square, plus the affect models' out-of-fold
+  accuracy by word group.
+
+### 5.13 Validation (step 10)
+
+There are 25 automated checks; each re-derives its answer from the files. Examples:
+- raw hashes unchanged
+- WAV format and naming
+- one feature row per included participant
+- features computed from the current segments
+- no metadata columns in X or in the saved models' feature lists
+- each participant in exactly one test fold per repeat
+- reports present
+- the final report's sample size and significance statement match the data
+
+Statuses: PASS / FAIL / BLOCKED (cannot pass with the supplied data) / WARNING (passes with a caveat).
+The script exits with status 1 on any FAIL.
+
+## 6. Reproducibility
+
+- Exact versions are in `requirements.txt`: Python 3.12.10, numpy 2.5.3, pandas 3.0.6, scipy 1.18.1,
+  scikit-learn 1.9.1, librosa 1.0.0, soundfile 0.14.0, praat-parselmouth 0.4.7 (Praat 6.1.38), imageio-ffmpeg
+  0.6.0 (ffmpeg 7.1), matplotlib 3.11.2.
+- All randomness is seeded (`RANDOM_STATE = 42`; repeat r uses 42 + r).
+- Processed audio is byte-reproducible.
+- Relative paths only (`common.PROJECT_ROOT`).
+
+## 7. Inputs the group can add (human in the loop)
+
+| File | Purpose | Effect on re-run |
+|---|---|---|
+| `data/metadata_corrections.csv` | verified corrections (e.g. Y2-076 arousal, a spoken word heard on the recording) | applied in step 02, logged with source and verifier |
+| `data/processed_audio/take_overrides.csv` | which retake the group intended | replaces the earliest-clean-take rule |
+| `data/processed_audio/segment_overrides.csv` | word boundaries verified by listening | replaces automatic localisation |
+| `data/processed_audio/segment_review_sheet.csv` | the listening worksheet | (informational) |
+| `consent/` | consent log / clearance (keep signed forms elsewhere) | validation status of consent |
+| more recordings in `data/raw/` + rows in the metadata | additional participants | everything downstream recomputes |
+
+After adding any of these, run `run_pipeline.py --skip-fetch --from 02`.
+
+## 8. Privacy and ethics handling
+
+- Participants are identified only by pseudonymous codes.
+- The raw videos show faces and may carry GPS tags. They stay in `data/raw/`, and no frame or location tag is
+  ever extracted. Only audio is processed.
+- `reports/phase0/media_inventory.csv` lists raw file names; do not share it if any name identifies a person.
+- The consent audit counts consent files but never prints their names.
+- Consent documentation has **not** been supplied. Results must not be disseminated until it is verified
+  (Protocol §VI).
+
+## 9. Limitations of the pipeline itself
+
+- Utterance localisation is automatic and unverified by listening: 12 of 32 selected recordings carry a
+  segmentation-critical flag, including two single-take words too short to be complete (Y2-045, Y2-055).
+- Praat pitch can lock onto background voices in babble. Large F0 ranges (for example 24.5 semitones for
+  Y2-044) probably include tracking errors.
+- The retake rule and the `PM` token are documented assumptions awaiting group confirmation.
+- With n = 32, every estimate has wide uncertainty; the pipeline reports intervals and permutation tests for
+  that reason.

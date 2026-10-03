@@ -1,0 +1,56 @@
+{
+  "eligible_words": [
+    "Kapoy"
+  ],
+  "probe": {
+    "n": 31,
+    "n_kapoy": 10,
+    "n_other": 21,
+    "balanced_accuracy_mean_10_repeats": 0.7547619047619046,
+    "balanced_accuracy_min": 0.7047619047619047,
+    "balanced_accuracy_max": 0.8285714285714285,
+    "observed_repeat0": 0.7547619047619047,
+    "null_mean": 0.5021190476190476,
+    "null_p95": 0.680952380952381,
+    "permutation_p": 0.021956087824351298,
+    "n_permutations": 500,
+    "model": "LogisticRegression(C=0.1, class_weight='balanced') after median imputation + standardisation"
+  },
+  "word_affect_association": {
+    "valence_2": {
+      "table": {
+        "Kapoy": {
+          "NotPleasant": 8,
+          "Pleasant": 2
+        },
+        "other": {
+          "NotPleasant": 5,
+          "Pleasant": 16
+        }
+      },
+      "test": "Fisher exact",
+      "p_value": 0.005722944979123342,
+      "cramers_v": 0.532309762594754
+    },
+    "arousal_3": {
+      "table": {
+        "Kapoy": {
+          "High": 1,
+          "Low": 3,
+          "Moderate": 6
+        },
+        "other": {
+          "High": 12,
+          "Low": 2,
+          "Moderate": 7
+        }
+      },
+      "test": "permutation chi-square (20,000)",
+      "p_value": 0.04754762261886906,
+      "cramers_v": 0.457897728396123
+    }
+  },
+  "within_word_significant_q05": 0,
+  "within_word_tests": 12,
+  "within_word_same_direction_share": 0.6666666666666666
+}

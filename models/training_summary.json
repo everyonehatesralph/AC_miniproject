@@ -1,0 +1,327 @@
+{
+  "sklearn_version": "1.9.1",
+  "random_state": 42,
+  "n_repeats": 10,
+  "n_permutations": 500,
+  "min_class_size": 5,
+  "n_features": 108,
+  "features_sha256": "7e77b98c279e7fb1cd93bf7621daf7a21b685211c23f0765902a468500477889",
+  "tasks": {
+    "valence_5": {
+      "role": "attempted",
+      "n": 32,
+      "class_counts": {
+        "1": 1,
+        "2": 1,
+        "3": 12,
+        "4": 9,
+        "5": 9
+      },
+      "viable": false,
+      "outer_folds": null,
+      "reason": "smallest class has 1 < 5 participants"
+    },
+    "arousal_5": {
+      "role": "attempted",
+      "n": 32,
+      "class_counts": {
+        "1": 2,
+        "2": 4,
+        "3": 13,
+        "4": 9,
+        "5": 4
+      },
+      "viable": false,
+      "outer_folds": null,
+      "reason": "smallest class has 2 < 5 participants"
+    },
+    "valence_3": {
+      "role": "attempted",
+      "n": 32,
+      "class_counts": {
+        "Unpleasant": 2,
+        "Neutral": 12,
+        "Pleasant": 18
+      },
+      "viable": false,
+      "outer_folds": null,
+      "reason": "smallest class has 2 < 5 participants"
+    },
+    "arousal_3": {
+      "role": "primary",
+      "n": 32,
+      "class_counts": {
+        "Low": 6,
+        "Moderate": 13,
+        "High": 13
+      },
+      "viable": true,
+      "outer_folds": 5,
+      "reason": ""
+    },
+    "valence_2": {
+      "role": "primary",
+      "n": 32,
+      "class_counts": {
+        "NotPleasant": 14,
+        "Pleasant": 18
+      },
+      "viable": true,
+      "outer_folds": 5,
+      "reason": ""
+    },
+    "arousal_2": {
+      "role": "secondary",
+      "n": 32,
+      "class_counts": {
+        "NotHigh": 19,
+        "High": 13
+      },
+      "viable": true,
+      "outer_folds": 5,
+      "reason": ""
+    },
+    "sensitivity": {
+      "no_retakes": {
+        "arousal_3": {
+          "n": 27,
+          "removed": [
+            "Y2-044",
+            "Y2-047",
+            "Y2-056",
+            "Y2-057",
+            "Y2-064"
+          ],
+          "class_counts": {
+            "Low": 5,
+            "Moderate": 12,
+            "High": 10
+          },
+          "viable": true,
+          "outer_folds": 5
+        },
+        "valence_2": {
+          "n": 27,
+          "removed": [
+            "Y2-044",
+            "Y2-047",
+            "Y2-056",
+            "Y2-057",
+            "Y2-064"
+          ],
+          "class_counts": {
+            "NotPleasant": 13,
+            "Pleasant": 14
+          },
+          "viable": true,
+          "outer_folds": 5
+        }
+      },
+      "no_config_B": {
+        "arousal_3": {
+          "n": 26,
+          "removed": [
+            "Y2-050",
+            "Y2-063",
+            "Y2-068",
+            "Y2-069",
+            "Y2-070",
+            "Y2-075"
+          ],
+          "class_counts": {
+            "Low": 4,
+            "Moderate": 10,
+            "High": 12
+          },
+          "viable": false,
+          "outer_folds": null
+        },
+        "valence_2": {
+          "n": 26,
+          "removed": [
+            "Y2-050",
+            "Y2-063",
+            "Y2-068",
+            "Y2-069",
+            "Y2-070",
+            "Y2-075"
+          ],
+          "class_counts": {
+            "NotPleasant": 10,
+            "Pleasant": 16
+          },
+          "viable": true,
+          "outer_folds": 5
+        }
+      },
+      "high_confidence_segmentation": {
+        "arousal_3": {
+          "n": 20,
+          "removed": [
+            "Y2-041",
+            "Y2-045",
+            "Y2-046",
+            "Y2-047",
+            "Y2-048",
+            "Y2-049",
+            "Y2-051",
+            "Y2-052",
+            "Y2-055",
+            "Y2-059",
+            "Y2-062",
+            "Y2-066"
+          ],
+          "class_counts": {
+            "Low": 6,
+            "Moderate": 6,
+            "High": 8
+          },
+          "viable": true,
+          "outer_folds": 5
+        },
+        "valence_2": {
+          "n": 20,
+          "removed": [
+            "Y2-041",
+            "Y2-045",
+            "Y2-046",
+            "Y2-047",
+            "Y2-048",
+            "Y2-049",
+            "Y2-051",
+            "Y2-052",
+            "Y2-055",
+            "Y2-059",
+            "Y2-062",
+            "Y2-066"
+          ],
+          "class_counts": {
+            "NotPleasant": 11,
+            "Pleasant": 9
+          },
+          "viable": true,
+          "outer_folds": 5
+        }
+      }
+    }
+  },
+  "final_models": [
+    {
+      "task": "arousal_3",
+      "model": "logistic_regression",
+      "file": "models/final/arousal_3__logistic_regression.joblib",
+      "best_params": {
+        "clf__C": 0.01
+      },
+      "inner_cv_balanced_accuracy": 0.4166666666666667,
+      "n_train": 32
+    },
+    {
+      "task": "arousal_3",
+      "model": "svm_rbf",
+      "file": "models/final/arousal_3__svm_rbf.joblib",
+      "best_params": {
+        "clf__C": 1.0
+      },
+      "inner_cv_balanced_accuracy": 0.3444444444444444,
+      "n_train": 32
+    },
+    {
+      "task": "arousal_3",
+      "model": "random_forest",
+      "file": "models/final/arousal_3__random_forest.joblib",
+      "best_params": {
+        "clf__min_samples_leaf": 3
+      },
+      "inner_cv_balanced_accuracy": 0.4222222222222222,
+      "n_train": 32
+    },
+    {
+      "task": "valence_2",
+      "model": "logistic_regression",
+      "file": "models/final/valence_2__logistic_regression.joblib",
+      "best_params": {
+        "clf__C": 0.01
+      },
+      "inner_cv_balanced_accuracy": 0.5416666666666666,
+      "n_train": 32
+    },
+    {
+      "task": "valence_2",
+      "model": "svm_rbf",
+      "file": "models/final/valence_2__svm_rbf.joblib",
+      "best_params": {
+        "clf__C": 1.0
+      },
+      "inner_cv_balanced_accuracy": 0.5916666666666667,
+      "n_train": 32
+    },
+    {
+      "task": "valence_2",
+      "model": "random_forest",
+      "file": "models/final/valence_2__random_forest.joblib",
+      "best_params": {
+        "clf__min_samples_leaf": 1
+      },
+      "inner_cv_balanced_accuracy": 0.5805555555555556,
+      "n_train": 32
+    },
+    {
+      "task": "arousal_2",
+      "model": "logistic_regression",
+      "file": "models/final/arousal_2__logistic_regression.joblib",
+      "best_params": {
+        "clf__C": 0.01
+      },
+      "inner_cv_balanced_accuracy": 0.5801587301587302,
+      "n_train": 32
+    },
+    {
+      "task": "arousal_2",
+      "model": "svm_rbf",
+      "file": "models/final/arousal_2__svm_rbf.joblib",
+      "best_params": {
+        "clf__C": 1.0
+      },
+      "inner_cv_balanced_accuracy": 0.6444444444444444,
+      "n_train": 32
+    },
+    {
+      "task": "arousal_2",
+      "model": "random_forest",
+      "file": "models/final/arousal_2__random_forest.joblib",
+      "best_params": {
+        "clf__min_samples_leaf": 1
+      },
+      "inner_cv_balanced_accuracy": 0.5563492063492063,
+      "n_train": 32
+    }
+  ],
+  "grids": {
+    "dummy_majority": {},
+    "dummy_stratified": {},
+    "logistic_regression": {
+      "clf__C": [
+        0.01,
+        0.1,
+        1.0,
+        10.0
+      ]
+    },
+    "svm_rbf": {
+      "clf__C": [
+        0.1,
+        1.0,
+        10.0
+      ]
+    },
+    "random_forest": {
+      "clf__min_samples_leaf": [
+        1,
+        3
+      ]
+    }
+  },
+  "runtime_s": 3528.8,
+  "quick_mode": false
+}
