@@ -6,6 +6,8 @@ Input
     data/metadata_corrections.csv                     OPTIONAL, group-verified corrections:
         participant_code, field, new_value, source, verified_by, date_verified
         (template: data/metadata_corrections_TEMPLATE.csv)
+    data/review/metadata_corrections_from_review.csv  OPTIONAL, same columns, written by 01b: a missing spoken
+        word heard identically by every blind listener (at least two)
 
 Outputs
     data/metadata_cleaned.csv           one row per participant, raw + cleaned columns
@@ -23,8 +25,10 @@ Cleaning rules (nothing else is changed)
     R7  a struck-through rating is NOT used: value set to missing, raw text kept, status STRUCK_THROUGH
     R8  consent "Yes" -> "Y"
     R9  group-verified corrections (if supplied) applied with their source logged
+    R10 a MISSING spoken word filled from the blind listening review: only when at least two listeners
+        heard the same protocol word; a group-verified correction (R9) for the same cell wins
 Never done: inferring a spoken word from the feeling text, inferring ratings from
-text, correcting spellings, or filling blanks.
+text, correcting spellings, or filling any other blank.
 
 Usage: .venv/Scripts/python.exe src/02_clean_metadata.py
 """
@@ -43,7 +47,9 @@ from common import (AROUSAL_LABELS, CLEAN_METADATA_CSV, CODE_STRICT_RE, DATA, PR
 
 OUT_DIR = REPORTS / "phase1"
 CORRECTIONS = DATA / "metadata_corrections.csv"
+REVIEW_CORRECTIONS = DATA / "review" / "metadata_corrections_from_review.csv"
 CORRECTION_TEMPLATE = DATA / "metadata_corrections_TEMPLATE.csv"
+CORRECTION_COLUMNS = ["participant_code", "field", "new_value", "source", "verified_by", "date_verified"]
 CORRECTABLE = {"spoken_word", "self_reported_feeling", "valence", "arousal", "subject",
                "class_activity_protocol", "date_collected", "collector_initials"}
 RATING_RE = re.compile(r"^\s*(\d+)\s*(?:[‐-―−-]\s*(.*?))?\s*$")
@@ -164,14 +170,30 @@ def main() -> int:
     if df["participant_code"].duplicated().any():
         raise ValueError(f"duplicate participant codes: {df.loc[df['participant_code'].duplicated(), 'participant_code'].tolist()}")
 
-    # R9: group-verified corrections, applied with provenance (none exist unless the group adds the file)
-    n_corr = 0
-    if CORRECTIONS.is_file():
-        corr = pd.read_csv(CORRECTIONS, dtype=str, keep_default_na=False)
-        need = {"participant_code", "field", "new_value", "source", "verified_by", "date_verified"}
-        if not need <= set(corr.columns):
-            raise ValueError(f"{rel(CORRECTIONS)} needs columns {sorted(need)}")
-        for _, c in corr.iterrows():
+    # R9 group-verified corrections and R10 listening-review word fills, applied with provenance (none exist
+    # unless the group adds the file or completes the listening review)
+    n_corr = {"R9": 0, "R10": 0}
+    frames = []
+    for path, rule in ((CORRECTIONS, "R9"), (REVIEW_CORRECTIONS, "R10")):
+        if path.is_file():
+            c = pd.read_csv(path, dtype=str, keep_default_na=False)
+            if not set(CORRECTION_COLUMNS) <= set(c.columns):
+                raise ValueError(f"{rel(path)} needs columns {CORRECTION_COLUMNS}")
+            if c.duplicated(["participant_code", "field"]).any():
+                raise ValueError(f"{rel(path)}: more than one correction for the same participant and field")
+            frames.append(c.assign(_rule=rule))
+    if frames:
+        corr = pd.concat(frames, ignore_index=True)
+        superseded = corr.duplicated(["participant_code", "field"], keep="first")  # R9 rows come first and win
+        for _, c in corr[superseded].iterrows():
+            log.info("%s %s: the group-verified correction replaces the listening-review one", c["participant_code"],
+                     c["field"])
+        for _, c in corr[~superseded].iterrows():
+            if c["_rule"] == "R10":
+                idx = df.index[df["participant_code"] == c["participant_code"]]
+                if c["field"] != "spoken_word" or len(idx) != 1 or df.at[idx[0], "spoken_word"] != "":
+                    raise ValueError(f"listening-review correction for {c['participant_code']} {c['field']}: "
+                                     "the review may only fill a missing spoken word")
             if c["field"] not in CORRECTABLE:
                 raise ValueError(f"correction field {c['field']!r} is not correctable; allowed: {sorted(CORRECTABLE)}")
             if not (c["source"].strip() and c["verified_by"].strip()):
@@ -189,18 +211,18 @@ def main() -> int:
             if c["field"] == "spoken_word":
                 if not new.isalpha():
                     raise ValueError(f"{c['participant_code']}: spoken word must be letters only")
-                df.at[i, "spoken_word_source"] = "verified_correction"
+                df.at[i, "spoken_word_source"] = "verified_correction" if c["_rule"] == "R9" else "listening_review"
                 df.at[i, "spoken_word_in_protocol_list"] = new.casefold() in {w.casefold() for w in PROTOCOL_WORDS}
             before = df.at[i, c["field"]]
             df.at[i, c["field"]] = new
             df.at[i, "corrections_applied"] = ";".join(filter(None, [df.at[i, "corrections_applied"],
                                                                      f"{c['field']} ({c['source']}, {c['verified_by']})"]))
+            label = "verified correction" if c["_rule"] == "R9" else "listening review"
             change(c["participant_code"], c["field"], "" if before is None else str(before), str(new),
-                   f"R9 verified correction: {c['source']} / {c['verified_by']} / {c['date_verified']}")
-            n_corr += 1
+                   f"{c['_rule']} {label}: {c['source']} / {c['verified_by']} / {c['date_verified']}")
+            n_corr[c["_rule"]] += 1
     if not CORRECTION_TEMPLATE.is_file():
-        pd.DataFrame(columns=["participant_code", "field", "new_value", "source", "verified_by", "date_verified"]) \
-            .to_csv(CORRECTION_TEMPLATE, index=False)
+        pd.DataFrame(columns=CORRECTION_COLUMNS).to_csv(CORRECTION_TEMPLATE, index=False)
 
     for col in ("valence", "arousal", "year_level"):
         df[col] = df[col].astype("Int64")
@@ -211,14 +233,15 @@ def main() -> int:
         "input": rel(RAW_METADATA_CSV), "input_sha256": sha256_of(RAW_METADATA_CSV),
         "output": rel(CLEAN_METADATA_CSV), "rows": int(len(df)),
         "changes_by_rule": pd.Series([c["rule"].split(" ")[0] for c in changes]).value_counts().sort_index().to_dict(),
-        "verified_corrections_applied": n_corr,
+        "verified_corrections_applied": n_corr["R9"], "listening_review_fills_applied": n_corr["R10"],
         "flags": pd.Series([f for fl in df["qa_flags"] for f in fl.split(";") if f]).value_counts().sort_index().to_dict(),
         "valence_counts": df["valence"].value_counts(dropna=False).sort_index().rename(str).to_dict(),
         "arousal_counts": df["arousal"].value_counts(dropna=False).sort_index().rename(str).to_dict(),
     }
     summary = json.loads(json.dumps(summary, default=lambda o: int(o) if hasattr(o, "__int__") else str(o)))
     (OUT_DIR / "cleaning_summary.json").write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
-    log.info("cleaned %d rows; %d logged changes; %d verified corrections", len(df), len(changes), n_corr)
+    log.info("cleaned %d rows; %d logged changes; %d verified corrections; %d listening-review fills", len(df),
+             len(changes), n_corr["R9"], n_corr["R10"])
     log.info("flags: %s", summary["flags"])
     return 0
 

@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from common import (CLEAN_METADATA_CSV, DATA, FEATURES_CSV, MIN_VALID_OBSERVATIONS, MODELS, PROJECT_ROOT,
-                    PROTOCOL_WORDS, REPORTS, TARGETS, setup_logging)
+                    PROTOCOL_WORDS, REPORTS, TARGETS, load_consent_log, setup_logging)
 
 log = setup_logging("final_report", REPORTS / "logs" / "09_build_final_report.log")
 MODEL_LABEL = {"dummy_majority": "Dummy (majority)", "dummy_stratified": "Dummy (stratified)",
@@ -114,6 +114,32 @@ def main() -> int:
     outlier_caps = pd.to_datetime(sel.loc[sel["flags"].str.contains("CAPTURE_TIME_OUTLIER"), "capture_time"], format="%Y-%m-%dT%H:%M:%S%z")
     outlier_hours = ((outlier_caps - med_cap).dt.total_seconds() / 3600).round(1) if len(outlier_caps) else pd.Series(dtype=float)
     n_bg = int(dq["flag_counts_selected"].get("BACKGROUND_VOICES", 0))
+    runs: list[list[int]] = []  # cleaning rules applied, as compact ranges ("R1–R8, R10")
+    for k in sorted(int(r[1:]) for r in clean["changes_by_rule"]):
+        if runs and k == runs[-1][1] + 1:
+            runs[-1][1] = k
+        else:
+            runs.append([k, k])
+    rule_span = ", ".join(f"R{a}" if a == b else f"R{a}–R{b}" for a, b in runs)
+    # human listening verification so far (blind listening review, step 01b; or the group's own override files)
+    sel_qa = qa[qa["selected"] == "True"]
+    takes_human = int(((sel_qa["n_takes"].astype(int) > 1)
+                       & sel_qa["selection_reason"].str.startswith("group decision")).sum())
+    decisions_csv = REPORTS / "listening_review_decisions.csv"
+    decisions = (pd.read_csv(decisions_csv, dtype=str, keep_default_na=False) if decisions_csv.is_file()
+                 else pd.DataFrame(columns=["participant_code", "take", "judgement", "outcome"]))
+    confirmed = {(r.participant_code, str(r.take)) for r in decisions[decisions["judgement"] == "boundaries"].itertuples()
+                 if r.outcome.startswith("confirmed")}
+    takes_shown = sel_qa["review_take"].astype(str) if "review_take" in sel_qa else pd.Series("", index=sel_qa.index)
+    bounds_verified = int(sum(1 for code, take, source in zip(sel_qa["participant_code"], takes_shown,
+                                                              sel_qa["segmentation_source"])
+                              if source.startswith("human") or (code, take) in confirmed))
+    words_from_review = meta.loc[meta["spoken_word_source"] == "listening_review", "participant_code"].tolist()
+    bounds_text = (f"boundaries verified by listening for {bounds_verified} of {n} selected recordings"
+                   if bounds_verified else "segment boundaries not yet verified by listening")
+    retake_text = ("all confirmed by human listening" if takes_human == len(retakes) else
+                   f"{takes_human} confirmed by human listening, the rest pending" if takes_human else
+                   "pending listening confirmation")
     cfg = pd.read_csv(REPORTS / "eda" / "recording_configuration_effect.csv")
     cfg_dirs = [f"{'lower' if r.median_B < r.median_A else 'higher'} {r.feature}" for r in
                 cfg[(cfg["q_value_bh"] < 0.05) & cfg["feature"].isin(["zcr_mean", "spectral_centroid_hz_mean", "mfcc_1_mean"])].itertuples()]
@@ -187,22 +213,37 @@ def main() -> int:
     v35 = int(ana['valence'].astype(int).between(3, 5).sum())
     a35 = int(ana['arousal'].astype(int).between(3, 5).sum())
 
+    # ---- consent documentation status (consent/consent_log.csv) ------------------------------
+    clog = load_consent_log()
+    if clog is None:
+        consent_status = "BLOCKED"
+        consent_evidence = (f"sheet records consent 'Y' for {(meta['consent_obtained'] == 'Y').sum()}/{n_meta}; "
+                            "consent log not supplied")
+        consent_issue = ("fill consent/consent_log_TEMPLATE.csv (codes only, no names), save as consent_log.csv; "
+                         "keep signed forms outside the dataset")
+    else:
+        n_doc = sum(clog.values())
+        consent_status = "COMPLETE" if n_doc >= n_meta else "INCOMPLETE"
+        consent_evidence = f"documented consent for {n_doc} of {n_meta} metadata participants"
+        consent_issue = "—" if n_doc >= n_meta else f"{n_meta - n_doc} participants still undocumented"
+
     # ---- deliverable status matrix ------------------------------------------------------------
     status = [
         ("1. Minimum of 40 valid participant observations", "BLOCKED" if n < MIN_VALID_OBSERVATIONS else "COMPLETE",
          "data/analysis_manifest.csv", f"{n} valid unique participants; {len(missing_rec)} metadata participants have no recording",
          f"needs {max(0, MIN_VALID_OBSERVATIONS - n)} more valid observations: recordings for {', '.join(missing_rec)} (if they exist) or new consented participants"),
-        ("2. Required consent documentation", "BLOCKED", "consent/",
-         f"sheet records consent 'Y' for {(meta['consent_obtained'] == 'Y').sum()}/{n_meta}; 0 documentation files supplied",
-         "supply a de-identified consent log and ethics/data-privacy clearance; keep signed forms outside the dataset"),
+        ("2. Required consent documentation", consent_status, "consent/consent_log.csv", consent_evidence,
+         consent_issue),
         ("3. Properly coded research metadata", "COMPLETE", "data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv",
-         f"{n_meta} rows; raw kept beside cleaned; {sum(clean['changes_by_rule'].values())} logged changes (rules R1–R8)",
+         f"{n_meta} rows; raw kept beside cleaned; {sum(clean['changes_by_rule'].values())} logged changes (rules "
+         f"{rule_span})",
          "confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings"),
         ("4. Properly named audio recordings", "COMPLETE", "data/processed_audio/recordings/, file_mapping.csv",
          f"{n} WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all {dq['total_files']} originals",
          "Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption"),
         ("5. Data quality report", "COMPLETE", "reports/data_quality_report.md",
-         f"{dq['total_files']} recordings assessed; {dq['selected_with_flags']} selected takes with ≥1 flag", "segment boundaries await listening review"),
+         f"{dq['total_files']} recordings assessed; {dq['selected_with_flags']} selected takes with ≥1 flag",
+         "—" if bounds_verified == n else bounds_text + " (blind listening review, data/review/listening_review.html)"),
         ("6. Extracted acoustic feature dataset", "COMPLETE", "data/acoustic_features.csv",
          f"{len(feats)} × {fsum['n_features']} features, no missing values", "—"),
         ("7. Exploratory analysis", "COMPLETE", "reports/exploratory_analysis.md",
@@ -216,7 +257,8 @@ def main() -> int:
         ("10. Interpretation of findings", "COMPLETE", "this report, §10", "observations / statistics / performance / interpretation separated", "—"),
         ("11. Research limitations", "COMPLETE", "this report, §11", "sample, noise, device, lexical, self-report, duplicates, ethics", "—"),
         ("12. Group research report", "COMPLETE", "reports/final_group_research_report.md",
-         "generated from the pipeline outputs", "dissemination blocked until consent documentation is verified (item 2)"),
+         "generated from the pipeline outputs",
+         "—" if consent_status == "COMPLETE" else "dissemination blocked until consent documentation is complete (item 2)"),
     ]
     status_tab = pd.DataFrame(status, columns=["Deliverable", "Status", "File", "Evidence", "Remaining issue"])
 
@@ -290,10 +332,14 @@ def main() -> int:
         "",
         "### 4.2 Research Ethics",
         "",
-        f"The metadata records informed consent ('Yes') for all {n_meta} participants. **No consent documentation "
-        "(forms, consent log or institutional clearance) was supplied** to the analysts. Protocol §VI makes it a "
-        "requirement before the data can be used for publication, so the results in this report must not be "
-        "disseminated until it is verified.",
+        (f"The metadata records informed consent ('Yes') for all {n_meta} participants. **No consent documentation "
+         "(consent log or institutional clearance) has been supplied.** Protocol §VI makes it a requirement before "
+         "the data can be used for publication, so the results in this report must not be disseminated until it "
+         "is verified." if consent_status == "BLOCKED" else
+         f"Consent is documented in `consent/consent_log.csv` ({consent_evidence}). Participants without documented "
+         "consent are excluded from the analysis automatically."
+         + ("" if consent_status == "COMPLETE" else
+            " Dissemination should wait until every participant's consent is documented.")),
         "",
         "Participants are identified only by pseudonymous codes. The raw videos (faces, possible GPS tags) are kept "
         "locally and never copied into the analysis. Only audio is processed, and location metadata is never "
@@ -347,8 +393,8 @@ def main() -> int:
         "One take each was chosen by a label-blind *complete-word rule*: drop takes whose word is cut off by the "
         "clip edge, too long to be one word, or too short to contain the recorded word (< 0.10 s per syllable); "
         "prefer a take without a competing event; then use the clearest take if it is ≥ 3 dB clearer, otherwise "
-        "the earliest. Takes are never chosen for sounding more emotional. Spectrogram comparisons and a "
-        "listening packet are provided for the group to confirm.",
+        "the earliest. Takes are never chosen for sounding more emotional. A blind listening review (at least two "
+        f"listeners; only unanimous answers count) can confirm or replace each choice; so far: {retake_text}.",
         "5. **Naming:** `ParticipantCode_YearLevel_Session_Word.wav`. `PM` is assumed for Afternoon–Evening, and "
         "`UNVERIFIED` is used where no word was recorded.",
         "",
@@ -528,8 +574,8 @@ def main() -> int:
         "",
         "**Statistical results.**",
         f"- Valence and arousal co-vary strongly (ρ = {va[0]:.2f}).",
-        f"- After FDR correction, {fdr['arousal']} feature is associated with arousal and {fdr['valence']} with "
-        "valence.",
+        f"- After FDR correction, {fdr['arousal']} {'feature is' if fdr['arousal'] == 1 else 'features are'} "
+        f"associated with arousal and {fdr['valence']} with valence.",
         f"- The recording configuration changes {cfg_feats} features.",
         "",
         "**Model performance.**",
@@ -572,7 +618,7 @@ def main() -> int:
         f"3. **Single-word utterances** ({seg_min:.2f}–{seg_max:.2f} s located segments) carry limited prosodic information.",
         f"4. **Naturally occurring noise:** background voices detected in {n_bg} of {n} selected clips; low "
         f"utterance-to-background ratio (< 10 dB) in {dq['flag_counts_selected'].get('LOW_SBR', 0)}.",
-        f"5. **Automatic segmentation, not verified by listening**; {dq['selected_segmentation_critical']} recordings "
+        f"5. **Automatic segmentation** ({bounds_text}); {dq['selected_segmentation_critical']} recordings "
         "have segmentation-critical flags.",
         f"6. **Device/setting variability:** {subsets['subset_config_or_time_anomaly']} recordings with a different "
         f"audio configuration shift {cfg_feats} features. F0 in Hz is dominated by voice type (no speaker baseline).",
@@ -583,10 +629,13 @@ def main() -> int:
         f"9. **Self-report uncertainty:** single-item ratings; {n_feel_eq} rows with feeling text identical to the "
         f"word; {n_feel_missing} rows without a description; {n_struck} struck-through rating{'' if n_struck == 1 else 's'}.",
         f"10. **Duplicates and missing observations:** {len(retakes)} retake sets were resolved by the complete-word "
-        f"rule, pending listening confirmation; {len(missing_rec)} participants have no recording.",
+        f"rule ({retake_text}); {len(missing_rec)} participants have no recording.",
         "11. **No demographic variables were collected** (the protocol allows optional variables only when approved), "
         "so speaker characteristics such as sex confound F0.",
-        "12. **Consent documentation not supplied;** dissemination is blocked until it is verified.",
+        ("12. **Consent documentation not supplied;** dissemination is blocked until it is verified."
+         if consent_status == "BLOCKED" else
+         f"12. **Consent documentation:** {consent_evidence}"
+         + ("." if consent_status == "COMPLETE" else "; dissemination waits until it is complete.")),
         "13. **Limited generalisability:** one class session, one device model; a pilot study.",
         "",
         "## 12. Conclusion",
@@ -637,7 +686,9 @@ def main() -> int:
         "- 'Lecture' → 'Lecture/Discussion';",
         "- the `PM` token;",
         "- consent documentation;",
-        "- listening verification of utterance boundaries and of Y2-073's word.",
+        *([] if bounds_verified == n and "Y2-073" in words_from_review else
+          ["- the blind listening review (utterance boundaries, retakes, Y2-073's word): "
+           "`data/review/listening_review.html`, results in `reports/listening_review_report.md`."]),
         "",
         "### D. Reproduction",
         "",

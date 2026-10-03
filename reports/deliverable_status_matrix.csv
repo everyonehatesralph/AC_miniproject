@@ -1,13 +1,13 @@
 Deliverable,Status,File,Evidence,Remaining issue
 1. Minimum of 40 valid participant observations,BLOCKED,data/analysis_manifest.csv,32 valid unique participants; 8 metadata participants have no recording,"needs 8 more valid observations: recordings for Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080 (if they exist) or new consented participants"
-2. Required consent documentation,BLOCKED,consent/,sheet records consent 'Y' for 40/40; 0 documentation files supplied,supply a de-identified consent log and ethics/data-privacy clearance; keep signed forms outside the dataset
+2. Required consent documentation,BLOCKED,consent/consent_log.csv,sheet records consent 'Y' for 40/40; consent log not supplied,"fill consent/consent_log_TEMPLATE.csv (codes only, no names), save as consent_log.csv; keep signed forms outside the dataset"
 3. Properly coded research metadata,COMPLETE,"data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv",40 rows; raw kept beside cleaned; 244 logged changes (rules R1–R8),"confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings"
 4. Properly named audio recordings,COMPLETE,"data/processed_audio/recordings/, file_mapping.csv",32 WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all 38 originals,Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption
-5. Data quality report,COMPLETE,reports/data_quality_report.md,38 recordings assessed; 30 selected takes with ≥1 flag,segment boundaries await listening review
+5. Data quality report,COMPLETE,reports/data_quality_report.md,38 recordings assessed; 30 selected takes with ≥1 flag,"segment boundaries not yet verified by listening (blind listening review, data/review/listening_review.html)"
 6. Extracted acoustic feature dataset,COMPLETE,data/acoustic_features.csv,"32 × 108 features, no missing values",—
 7. Exploratory analysis,COMPLETE,reports/exploratory_analysis.md,"affect distributions, feature–affect statistics, confound analysis",context × affect (RQ2) not analysable within Group 3 (constant variables)
 8. Machine learning experiment,COMPLETE,"models/, src/06_train_models.py","3 viable tasks × 5 models, 10× repeated nested speaker-independent CV","tasks not modelled (sparse classes): valence_5, arousal_5, valence_3"
 9. Model evaluation,COMPLETE,reports/model_evaluation.md,"BA, macro-P/R/F1, accuracy, per-class, confusion matrices, bootstrap CIs, permutation tests, corrected t-tests",—
 10. Interpretation of findings,COMPLETE,"this report, §10",observations / statistics / performance / interpretation separated,—
 11. Research limitations,COMPLETE,"this report, §11","sample, noise, device, lexical, self-report, duplicates, ethics",—
-12. Group research report,COMPLETE,reports/final_group_research_report.md,generated from the pipeline outputs,dissemination blocked until consent documentation is verified (item 2)
+12. Group research report,COMPLETE,reports/final_group_research_report.md,generated from the pipeline outputs,dissemination blocked until consent documentation is complete (item 2)

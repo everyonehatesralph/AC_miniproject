@@ -6,6 +6,7 @@ Usage (from the project root, inside the project virtual environment):
     .venv/Scripts/python.exe run_pipeline.py              # everything
     .venv/Scripts/python.exe run_pipeline.py --skip-fetch # recordings already in data/raw
     .venv/Scripts/python.exe run_pipeline.py --from 05    # resume from a step
+    .venv/Scripts/python.exe run_pipeline.py --from 01b   # after adding listening-review answers
     .venv/Scripts/python.exe run_pipeline.py --quick      # smoke test (2 CV repeats, 20 permutations)
 
 Each step is a separate script in src/ (see docs/DOCUMENTATION.md). The run stops at the first
@@ -27,15 +28,18 @@ STEPS = [
     ("00", "00_fetch_recordings.py", "fetch recordings from Google Drive (verified, idempotent)"),
     ("00", "00_extract_metadata_pdf.py", "metadata PDF -> verbatim CSV"),
     ("01", "01_audit_data.py", "Phase 0: data audit"),
+    ("01b", "01b_merge_listening_reviews.py", "blind listening review: answers -> agreement -> decisions"),
     ("02", "02_clean_metadata.py", "Phase 1: metadata cleaning"),
     ("03", "03_prepare_audio.py", "Phases 2-5: matching, duplicates, WAV conversion, naming, quality report"),
+    ("03b", "03b_build_listening_review.py", "listening-review page (data/review/listening_review.html)"),
     ("04", "04_extract_features.py", "Phase 6: acoustic features"),
     ("05", "05_eda.py", "Phase 7: exploratory analysis"),
     ("06", "06_train_models.py", "Phases 8-11: speaker-independent training"),
     ("07", "07_evaluate_models.py", "Phase 12: evaluation"),
     ("08", "08_lexical_control.py", "Phase 13: lexically controlled analysis"),
     ("09", "09_build_final_report.py", "Phases 14-19: final group research report"),
-    ("09", "09b_build_html_report.py", "browser version of all reports (reports/html/index.html)"),
+    ("09b", "09b_build_html_report.py", "browser version of all reports (reports/html/index.html)"),
+    ("09c", "09c_build_presentation.py", "results presentation (reports/presentation/)"),
     ("10", "10_validate_project.py", "Phase 20: validation"),
 ]
 
@@ -43,7 +47,7 @@ STEPS = [
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--skip-fetch", action="store_true", help="do not contact Google Drive")
-    ap.add_argument("--from", dest="start", default="00", help="first step number to run (00-10)")
+    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 04 ... 09, 09b, 09c, 10")
     ap.add_argument("--quick", action="store_true", help="smoke test: fewer CV repeats/permutations in step 06")
     args = ap.parse_args()
     t_all = time.time()

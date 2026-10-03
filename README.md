@@ -20,6 +20,9 @@ number in every report is generated from the data, and the whole run is reproduc
 | how everything works | [docs/DOCUMENTATION.md](docs/DOCUMENTATION.md) |
 | what every column means | [docs/data_dictionary.md](docs/data_dictionary.md) |
 | why each methodological choice was made (and what still needs confirmation) | [docs/decision_log.md](docs/decision_log.md) |
+| slides to present the results (12 slides, speaker notes) | [reports/presentation/G3_results_presentation.pptx](reports/presentation/G3_results_presentation.pptx) |
+| the blind listening review (words, boundaries, retakes) | `data/review/listening_review.html` after a local run; results in [reports/listening_review_report.md](reports/listening_review_report.md) |
+| what to do next: collecting more data, the pre-registered plan, open questions | [docs/data_collection_checklist.md](docs/data_collection_checklist.md), [docs/analysis_plan_pooled_study.md](docs/analysis_plan_pooled_study.md), [docs/next_steps/](docs/next_steps/) |
 
 ## Results at a glance
 
@@ -64,6 +67,9 @@ number in every report is generated from the data, and the whole run is reproduc
 Additional outputs:
 - Phase 0 audit: `reports/phase0_data_audit.md`
 - Lexically controlled analysis: `reports/lexical_control_analysis.md`
+- Blind listening review: `reports/listening_review_report.md` (agreement between listeners and the decisions used)
+- Presentation: `reports/presentation/G3_results_presentation.pptx`
+- Pre-registered analysis plan for a larger study: `docs/analysis_plan_pooled_study.md`
 
 ## Run it
 
@@ -87,8 +93,16 @@ Google Drive folder.
 
 Options:
 - `--skip-fetch`: the recordings are already in `data/raw/`.
-- `--from 05`: resume from a step.
+- `--from 05`: resume from a step (`01b`, `03b`, `09b` and `09c` are steps too).
 - `--quick`: installation test only. It overwrites the results; see RUNNING.md.
+
+Unit tests (synthetic signals and small tables; no recordings needed). They also run on GitHub for every push
+(`.github/workflows/tests.yml`):
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.venv\Scripts\python.exe -m pytest
+```
 
 A full run takes about 1 hour on 16 cores; almost all of it is the random-forest permutation tests. Expected
 validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
@@ -96,33 +110,37 @@ validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 | Step | Script | Phase |
 |---|---|---|
 | 00 | `00_fetch_recordings.py` | download the 38 recordings from the shared Drive folder by file id (hash-logged) |
-| 00 | `00_extract_metadata_pdf.py` | metadata PDF → verbatim CSV |
+| 00 | `00_extract_metadata_pdf.py` | metadata PDF (or a CSV export of the sheet) → verbatim CSV |
 | 01 | `01_audit_data.py` | Phase 0 audit |
+| 01b | `01b_merge_listening_reviews.py` | blind listening review: answers → agreement → decisions |
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning |
 | 03 | `03_prepare_audio.py` | Phases 2–5: matching, retakes, WAV conversion, naming, quality report |
+| 03b | `03b_build_listening_review.py` | the listening-review page (`data/review/listening_review.html`) |
 | 04 | `04_extract_features.py` | Phase 6 features |
 | 05 | `05_eda.py` | Phase 7 EDA |
 | 06 | `06_train_models.py` | Phases 8–11 speaker-independent training |
 | 07 | `07_evaluate_models.py` | Phase 12 evaluation |
 | 08 | `08_lexical_control.py` | Phase 13 lexical control |
 | 09 | `09_build_final_report.py` | Phases 14–19 report |
-| 09 | `09b_build_html_report.py` | browser version of all reports (`reports/html/`) |
+| 09b | `09b_build_html_report.py` | browser version of all reports (`reports/html/`) |
+| 09c | `09c_build_presentation.py` | the results presentation (`reports/presentation/`) |
 | 10 | `10_validate_project.py` | Phase 20 validation |
 
 ## Things the group still has to do
 
 These cannot be done by code. See `docs/decision_log.md` (PENDING items).
 
-1. **Consent documentation:** supply a de-identified consent log and any ethics/data-privacy clearance. Results
-   must not be disseminated before this.
+1. **Consent documentation:** fill `consent/consent_log_TEMPLATE.csv` from the signed forms and save it as
+   `consent/consent_log.csv` (codes only, no names; see `consent/README.md`). Results must not be disseminated
+   before this. Once the log exists, undocumented participants are excluded automatically.
 2. **Missing recordings** for Y2-053, 071, 074, 076, 077, 078, 079, 080 (if they exist), or new participants.
-   32 < 40.
-3. **Listen** to `data/processed_audio/segments/*.wav` and fill
-   `data/processed_audio/segment_review_sheet.csv`: confirm each word and its boundaries, including Y2-073's
-   unrecorded word.
+   32 < 40. New participants: follow `docs/data_collection_checklist.md`; they enter the pipeline through a CSV
+   export of the sheet and one manifest row per recording (`docs/RUNNING.md`).
+3. **Blind listening review, by at least two group members independently:** open
+   `data/review/listening_review.html`. It covers every word, its boundaries, the retake choices (Y2-044, 047,
+   056, 057, 064) and Y2-073's unrecorded word. Save the answers into `data/review/answers/`. Only unanimous
+   answers become decisions; the rest is listed for a joint decision in `reports/listening_review_report.md`.
 4. **Confirm:**
-   - the retake choices (Y2-044, 047, 056, 057, 064): listen to every take in
-     `data/processed_audio/retake_review/` (instructions inside; spectrograms in `figures/qa/retakes/`)
    - how and when the six stereo recordings were made (five carry capture times about 9 h after the session)
    - Y2-076's struck-through arousal
 5. **Instructor rulings:**
@@ -131,7 +149,8 @@ These cannot be done by code. See `docs/decision_log.md` (PENDING items).
    - the `PM` session token
    - the session time boundary
 
-After adding corrections or files: `.venv/Scripts/python.exe run_pipeline.py --skip-fetch --from 02`.
+After adding corrections, listening answers or files: `.venv/Scripts/python.exe run_pipeline.py --skip-fetch --from 01b`.
+Drafts for the open questions: `docs/next_steps/01_email_to_instructor.md` and `docs/next_steps/02_message_to_collectors.md`.
 
 ## Privacy
 
@@ -139,3 +158,5 @@ After adding corrections or files: `.venv/Scripts/python.exe run_pipeline.py --s
 - The raw videos (faces, possible GPS tags) stay in `data/raw/`; only audio is analysed, and no frame or
   location tag is extracted.
 - Do not share `data/raw/` or `reports/phase0/media_inventory.csv` outside the research team.
+- No audio is in Git: `*.wav`, `*.mov` and `*.mp4` are ignored everywhere, including the listening-review copies in
+  `data/review/audio/`. Signed consent forms (names) never go into this repository.

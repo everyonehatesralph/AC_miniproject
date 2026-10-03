@@ -23,8 +23,14 @@ Research-relevant extraction rules
 * Non-black text and coloured cell fills are recorded too, because collectors
   sometimes use colour to mark problems.
 
-If the group later supplies a CSV/XLSX export of the original sheet, that file
-should replace this PDF-derived CSV as the raw metadata source.
+CSV export (adding participants)
+--------------------------------
+If data/metadata_raw/G3_metadata_export.csv exists (the Google Sheet saved with
+File > Download > CSV), it replaces the PDF as the source of cell values; the
+values are again kept verbatim. A CSV cannot carry strikethrough formatting, so
+the PDF stays the evidence for it: a cell struck through in the PDF stays marked
+while its text is unchanged in the export. A changed cell is used as the new
+value and logged.
 
 Usage (from the project root):
     .venv/Scripts/python.exe src/00_extract_metadata_pdf.py
@@ -47,6 +53,7 @@ import pymupdf
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PDF = PROJECT_ROOT / "data" / "metadata_raw" / "G3 - mini project - TEmplate.pdf"
 DEFAULT_OUT = PROJECT_ROOT / "data" / "metadata_raw" / "G3_metadata_extracted_raw.csv"
+DEFAULT_EXPORT = PROJECT_ROOT / "data" / "metadata_raw" / "G3_metadata_export.csv"
 
 # Header exactly as it appears in the Group 3 sheet. Extraction stops with an
 # error if the PDF header differs, rather than guessing a column mapping.
@@ -266,9 +273,89 @@ def extract(pdf_path: Path) -> tuple[pd.DataFrame, dict]:
     return df, provenance
 
 
+def squash(text: str) -> str:
+    return " ".join(text.split())
+
+
+def shown_path(path: Path) -> str:
+    """Project-relative path for the provenance record (absolute only for a file outside the project)."""
+    try:
+        return path.resolve().relative_to(PROJECT_ROOT).as_posix()
+    except ValueError:
+        return path.resolve().as_posix()
+
+
+def from_csv_export(export: Path, pdf_path: Path) -> tuple[pd.DataFrame, dict]:
+    """Raw metadata from a CSV export of the sheet, with the PDF's strikethrough evidence carried forward."""
+    if not pdf_path.is_file():
+        raise FileNotFoundError(f"{export.name} needs the metadata PDF for its strikethrough evidence "
+                                f"(a CSV cannot carry formatting): {pdf_path} not found")
+    raw = pd.read_csv(export, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+    header = [str(c).strip() for c in raw.columns]
+    if header[:len(EXPECTED_HEADER)] != EXPECTED_HEADER:
+        raise ValueError(f"{export.name}: the first {len(EXPECTED_HEADER)} columns must be exactly "
+                         f"{EXPECTED_HEADER}; found {header[:len(EXPECTED_HEADER)]}")
+    raw.columns = header
+    extra = [c for c in header[len(EXPECTED_HEADER):] if raw[c].str.strip().ne("").any()]
+    if extra:
+        raise ValueError(f"{export.name}: values in columns outside the template {extra}; "
+                         "move them into Notes or remove them, nothing is dropped silently")
+    df = raw[EXPECTED_HEADER].copy()
+    df["_source_page"] = ""
+    df["_source_row_on_page"] = [i + 2 for i in range(len(df))]  # the sheet's own row number (header = row 1)
+    for col in ("_wrapped_fields", "_struck_fields", "_struck_detail", "_nonblack_text_fields", "_filled_fields"):
+        df[col] = ""
+    blank = df[EXPECTED_HEADER].apply(lambda r: not any(v.strip() for v in r), axis=1)
+    df = df[~blank].reset_index(drop=True)
+    if df.empty:
+        raise ValueError(f"no participant rows in {export.name}")
+
+    pdf_df, pdf_prov = extract(pdf_path)
+    codes = df["Participant Code"].map(lambda v: "".join(v.split()))
+    carried, changed = [], []
+    for _, prow in pdf_df[pdf_df["_struck_fields"] != ""].iterrows():
+        code = "".join(prow["Participant Code"].split())
+        rows = df.index[codes == code]
+        if rows.empty:
+            log.warning("%s: has a struck-through cell in the PDF but is not in %s", code, export.name)
+        for field in prow["_struck_fields"].split(";"):
+            detail = next(d for d in prow["_struck_detail"].split(" | ") if d.startswith(f"{field}: "))
+            for i in rows:
+                if squash(df.at[i, field]) == squash(prow[field]):
+                    df.at[i, "_struck_fields"] = ";".join(filter(None, [df.at[i, "_struck_fields"], field]))
+                    df.at[i, "_struck_detail"] = " | ".join(filter(None, [df.at[i, "_struck_detail"],
+                                                                         f"{detail}, carried forward from the PDF"]))
+                    carried.append(f"{code} {field}")
+                else:
+                    log.warning("%s %s: struck through in the PDF (%r), now %r in %s; the new value is used",
+                                code, field, prow[field], df.at[i, field], export.name)
+                    changed.append({"participant_code": code, "field": field,
+                                    "pdf_value": prow[field], "export_value": df.at[i, field]})
+    provenance = {
+        "source_csv": shown_path(export),
+        "source_sha256": sha256_of(export),
+        "source_bytes": export.stat().st_size,
+        "strikethrough_evidence_pdf": pdf_prov["source_pdf"],
+        "strikethrough_evidence_pdf_sha256": pdf_prov["source_sha256"],
+        "strikethrough_carried_forward": carried,
+        "struck_cells_changed_in_export": changed,
+        "rows_extracted": len(df),
+        "extracted_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "rules": [
+            "cell values read as text and kept verbatim; no normalisation",
+            "empty rows skipped; values outside the template's columns stop the run",
+            "_source_row_on_page is the sheet's row number (header = row 1); _source_page is empty",
+            "a cell struck through in the PDF stays struck while its text is unchanged (ignoring whitespace)",
+        ],
+    }
+    return df, provenance
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--pdf", type=Path, default=DEFAULT_PDF)
+    ap.add_argument("--export", type=Path, default=DEFAULT_EXPORT,
+                    help="CSV export of the sheet; used instead of the PDF's cell values when the file exists")
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = ap.parse_args(argv)
     log_dir = PROJECT_ROOT / "reports" / "logs"
@@ -277,7 +364,11 @@ def main(argv: list[str] | None = None) -> int:
                         handlers=[logging.StreamHandler(sys.stdout),
                                   logging.FileHandler(log_dir / "00_extract_metadata_pdf.log", mode="w", encoding="utf-8")])
 
-    df, prov = extract(args.pdf)
+    if args.export.is_file():
+        log.info("cell values from the CSV export %s; strikethrough evidence from %s", args.export.name, args.pdf.name)
+        df, prov = from_csv_export(args.export, args.pdf)
+    else:
+        df, prov = extract(args.pdf)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     # utf-8-sig so Excel shows the em dash in "3 — Neutral" correctly.
     df.to_csv(args.out, index=False, encoding="utf-8-sig")

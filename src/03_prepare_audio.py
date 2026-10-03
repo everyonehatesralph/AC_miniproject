@@ -8,13 +8,18 @@ Inputs
     data/processed_audio/take_overrides.csv    OPTIONAL group decision on which take to use:
                                                participant_code, drive_file_id, reason, decided_by
     data/processed_audio/segment_overrides.csv OPTIONAL human-verified word boundaries:
-                                               participant_code, seg_start_s, seg_end_s, reviewer, note
+                                               participant_code, drive_file_id, seg_start_s, seg_end_s, reviewer, note
+                                               (drive_file_id may be blank only for a participant with one take)
+    data/review/*_overrides_from_review.csv    OPTIONAL, same formats, written by 01b from the blind listening
+                                               review; an entry in the group's own file wins
 
 Outputs
     data/processed_audio/recordings/<name>.wav  selected take, whole clip: WAV, PCM 16-bit, mono, 16 kHz
     data/processed_audio/segments/<name>.wav    the located utterance cut from that WAV (analysis unit)
     data/processed_audio/file_mapping.csv       original file -> participant -> processed file -> status
     data/processed_audio/segment_review_sheet.csv  for the group to verify words/boundaries by listening
+    data/review/audio/<code>_t<k>[_word].wav    every take under a neutral name for the blind listening review
+                                                (k = take order by capture time; no word, label or selection)
     data/analysis_manifest.csv                  one row per participant: included or excluded, and why
     reports/audio_quality_table.csv             per-recording QA (all files, all takes)
     reports/data_quality_report.md              generated report
@@ -51,12 +56,17 @@ from common import (BACKGROUND_VOICED_S, CLEAN_METADATA_CSV, CLEARER_TAKE_DB, CL
                     DOWNLOAD_LOG, FIGURES, FILENAME_RE, HOP_S, LOW_SBR_DB, MIN_SYLLABLE_S, MIN_VOICED_FRAMES,
                     PROCESSED_AUDIO_DIR, PROJECT_ROOT, REPORTS, SEG_COMPETING_DB, SEG_LONG_S, TARGET_SR,
                     UNVERIFIED_WORD_TOKEN, count_syllables, decode_audio, ffmpeg_exe, frame_energy_db,
+                    load_consent_log,
                     locate_utterance, praat_pitch, probe_media, rel, setup_logging, sha256_of)
 
 PROC_REC = PROCESSED_AUDIO_DIR / "recordings"
 PROC_SEG = PROCESSED_AUDIO_DIR / "segments"
 TAKE_OVERRIDES = PROCESSED_AUDIO_DIR / "take_overrides.csv"
 SEGMENT_OVERRIDES = PROCESSED_AUDIO_DIR / "segment_overrides.csv"
+REVIEW_DIR = DATA / "review"
+REVIEW_AUDIO = REVIEW_DIR / "audio"
+TAKE_OVERRIDES_REVIEW = REVIEW_DIR / "take_overrides_from_review.csv"
+SEGMENT_OVERRIDES_REVIEW = REVIEW_DIR / "segment_overrides_from_review.csv"
 MAPPING = PROCESSED_AUDIO_DIR / "file_mapping.csv"
 REVIEW_SHEET = PROCESSED_AUDIO_DIR / "segment_review_sheet.csv"
 MANIFEST = DATA / "analysis_manifest.csv"
@@ -65,6 +75,7 @@ QA_FIG = FIGURES / "qa"
 SEGMENTATION_CRITICAL = ("EDGE_START", "EDGE_END", "LONG_SEGMENT", "TOO_SHORT_FOR_WORD", "COMPETING_EVENT")
 INCOMPLETE_WORD = ("EDGE_START", "EDGE_END", "LONG_SEGMENT", "TOO_SHORT_FOR_WORD")
 RETAKE_DIR = PROCESSED_AUDIO_DIR / "retake_review"
+WORD_SOURCES_OK = ("metadata", "verified_correction", "listening_review")  # 02_clean_metadata.py spoken_word_source
 CAPTURE_OUTLIER_MIN = 60   # capture > 60 min from the median capture time of all recordings
 BACKGROUND_MARGIN_S = 0.10
 
@@ -78,13 +89,17 @@ Each folder holds every take of one participant who was recorded more than once:
 and `_SELECTED` marks the take chosen by the complete-word rule (src/03_prepare_audio.py, `select_take`).
 Comparison figures: figures/qa/retakes/<code>_takes.png.
 
-How to review (one Bisaya-speaking group member, ideally two independently):
+Preferred: the blind listening review, data/review/listening_review.html (docs/RUNNING.md section 6.1). It covers
+these takes without showing which one was selected, and unanimous choices of two or more listeners are applied
+automatically. This folder is for a joint session afterwards.
+
+How to review here (Bisaya-speaking group members, independently first):
 1. Do NOT look at the participant's valence/arousal or feeling text while listening.
 2. For each take, fill retake_review_sheet.csv: heard_word, whole_word_audible_Y_N, clarity_1_to_5,
    other_voice_over_word_Y_N.
 3. Choose the take in which the WHOLE word is heard most clearly. Never choose the take that "sounds more
    emotional" - that would let the expected answer steer the data (protocol Section X).
-4. If your choice differs from the automatic one, add a row to data/processed_audio/take_overrides.csv:
+4. Record a joint decision in data/processed_audio/take_overrides.csv (it wins over the listening review):
    participant_code,drive_file_id,reason,decided_by
    then re-run: .venv/Scripts/python.exe run_pipeline.py --skip-fetch --from 03
 """
@@ -241,6 +256,33 @@ def select_take(code: str, takes: list[dict], overrides: dict) -> tuple[dict | N
     return chosen, f"retake ({len(takes)} takes), complete-word rule: " + "; ".join(steps) + f". Others: {others}"
 
 
+def read_overrides(manual: Path, from_review: Path, key) -> dict:
+    """Override rows by key; an entry in the group's own file wins over one from the listening review."""
+    out = {}
+    for path in (from_review, manual):  # the manual file last, so it wins
+        if path.is_file():
+            table = pd.read_csv(path, dtype=str, keep_default_na=False)
+            keys = [key(r) for _, r in table.iterrows()]
+            if len(set(keys)) < len(keys):
+                raise ValueError(f"{rel(path)}: more than one row for the same participant/take")
+            for k, (_, r) in zip(keys, table.iterrows()):
+                if k in out:
+                    log.info("%s: the group's entry in %s replaces the listening-review entry", k, path.name)
+                out[k] = r
+    return out
+
+
+def write_review_audio(code: str, items: list) -> None:
+    """Every take under a neutral name for the blind listening review (src/03b_build_listening_review.py):
+    <code>_t<k>.wav is the whole clip and <code>_t<k>_word.wav the automatically located word, k = order of
+    capture. The names carry no word, label or selection, so listeners stay blind to them."""
+    for k, (rec, y16, _) in enumerate(sorted(items, key=lambda it: it[0]["capture_time"]), start=1):
+        rec["review_take"] = k
+        a, b = int(round(rec["auto_seg_start_s"] * TARGET_SR)), int(round(rec["auto_seg_end_s"] * TARGET_SR))
+        sf.write(REVIEW_AUDIO / f"{code}_t{k}.wav", y16, TARGET_SR, subtype="PCM_16")
+        sf.write(REVIEW_AUDIO / f"{code}_t{k}_word.wav", y16[a:b], TARGET_SR, subtype="PCM_16")
+
+
 def write_retake_packet(code: str, items: list, word: str) -> tuple[list[dict], str]:
     """Listening packet + comparison figure for one participant with several takes."""
     import librosa
@@ -380,6 +422,9 @@ def md_table(df: pd.DataFrame) -> str:
 def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: dict) -> None:
     s = summary
     retake_rows = qa[qa["n_takes"] > 1].sort_values(["participant_code", "capture_time"])
+    sel_qa = qa[qa["selected"]]
+    n_take_human = int(((sel_qa["n_takes"] > 1) & sel_qa["selection_reason"].str.startswith("group decision")).sum())
+    n_seg_human = int(sel_qa["segmentation_source"].str.startswith("human").sum())
     lines = [
         "# Data Quality Report (Phases 2–5)",
         "",
@@ -470,9 +515,14 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         "A take is **never** chosen for sounding more emotional: that would let the label steer the data. All takes "
         "stay untouched in `data/raw/`.",
         "",
-        "**Listening confirmation:** every take is in `data/processed_audio/retake_review/` (whole clip + located "
-        "word) with `retake_review_sheet.csv` and instructions. A choice made by listening goes into "
-        "`take_overrides.csv` and replaces the rule. A sensitivity analysis excludes these participants entirely.",
+        "**Listening confirmation:** "
+        + (f"{n_take_human} of {len(s['retake_participants'])} retake choices were made by human listening "
+           "(see the selection reasons below). " if n_take_human else "no retake choice has been confirmed by "
+           "listening yet. ")
+        + "The blind listening review (`data/review/listening_review.html`, at least two listeners; "
+        "`docs/RUNNING.md` §6.1) covers every take: unanimous choices replace the rule on the next run, and a joint "
+        "decision in `take_overrides.csv` wins. Every take is also in `data/processed_audio/retake_review/`. A "
+        "sensitivity analysis excludes these participants entirely.",
         "",
         md_table(retake_rows[["participant_code", "drive_name", "drive_file_id", "capture_time", "word",
                               "word_syllables", "event_duration_s", "event_s_per_syllable", "sbr_db", "flags",
@@ -498,10 +548,12 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         "",
         "## 7. Segmentation review (human verification needed)",
         "",
-        "The utterance location is automatic; nobody has listened to verify it. For each selected recording, a "
-        "Bisaya-speaking member should listen to `data/processed_audio/segments/<name>.wav` and fill "
-        "`data/processed_audio/segment_review_sheet.csv` (heard word, boundaries OK, corrected times). Corrected "
-        "boundaries go into `segment_overrides.csv` and are used automatically on the next run.",
+        "The utterance location is automatic and label-blind; "
+        + (f"{n_seg_human} of {len(sel_qa)} selected recordings use boundaries corrected by human listening. "
+           if n_seg_human else "nobody has listened to verify it yet. ")
+        + "Verify it with the blind listening review (`data/review/listening_review.html`, at least two "
+        "listeners; `docs/RUNNING.md` §6.1): unanimous corrections are applied automatically on the next run, and "
+        "a joint decision can go into `segment_overrides.csv` (per take).",
         "",
         *[f"![review page](../{p})" for p in figs["review_pages"]],
         "",
@@ -514,19 +566,16 @@ def main() -> int:
     downloads = pd.read_csv(DOWNLOAD_LOG, dtype=str, keep_default_na=False)
     meta = pd.read_csv(CLEAN_METADATA_CSV, dtype=str, keep_default_na=False, encoding="utf-8-sig")
     meta_by_code = meta.set_index("participant_code")
-    for p in (PROC_REC, PROC_SEG, QA_FIG):
+    for p in (PROC_REC, PROC_SEG, QA_FIG, REVIEW_AUDIO):
         p.mkdir(parents=True, exist_ok=True)
     # remove stale outputs so the folders always match the current selection
-    for folder in (PROC_REC, PROC_SEG):
+    for folder in (PROC_REC, PROC_SEG, REVIEW_AUDIO):
         for old in folder.glob("*.wav"):
             old.unlink()
     for old in list(RETAKE_DIR.glob("*/*.wav")) + list((QA_FIG / "retakes").glob("*.png")):
         old.unlink()
 
-    take_over = ({r["participant_code"]: r for _, r in pd.read_csv(TAKE_OVERRIDES, dtype=str, keep_default_na=False).iterrows()}
-                 if TAKE_OVERRIDES.is_file() else {})
-    seg_over = ({r["participant_code"]: r for _, r in pd.read_csv(SEGMENT_OVERRIDES, dtype=str, keep_default_na=False).iterrows()}
-                if SEGMENT_OVERRIDES.is_file() else {})
+    take_over = read_overrides(TAKE_OVERRIDES, TAKE_OVERRIDES_REVIEW, lambda r: r["participant_code"])
 
     # verify raw files are untouched before using them
     for _, d in downloads.iterrows():
@@ -546,14 +595,38 @@ def main() -> int:
     configs = pd.Series([(r["orig_channels"], r["orig_audio_streams"]) for r, _, _ in analysed])
     majority_config = configs.value_counts().index[0]
 
+    file_ids: dict[str, list[str]] = {}
+    for r, _, _ in analysed:
+        file_ids.setdefault(r["participant_code"], []).append(r["drive_file_id"])
+
+    def take_key(row) -> tuple[str, str]:
+        """A segment override belongs to one take; a blank drive_file_id is allowed only for a single take."""
+        code, file_id = row["participant_code"], row.get("drive_file_id", "")
+        ids = file_ids.get(code, [])
+        if file_id and file_id not in ids:
+            raise ValueError(f"segment override for {code} names an unknown file id {file_id}")
+        if not file_id:
+            if len(ids) != 1:
+                raise ValueError(f"segment override for {code} must give drive_file_id: {len(ids)} recordings")
+            file_id = ids[0]
+        return code, file_id
+
+    seg_over = read_overrides(SEGMENT_OVERRIDES, SEGMENT_OVERRIDES_REVIEW, take_key)
     for rec, y16, pitch in analysed:
         code = rec["participant_code"]
+        # the label-blind automatic boundaries are kept even when a human override replaces them: the listening
+        # review shows and judges these, so applying its correction never makes its own answers look stale
+        rec["auto_seg_start_s"], rec["auto_seg_end_s"] = rec["seg_start_s"], rec["seg_end_s"]
         m = meta_by_code.loc[code]
-        word = m["spoken_word"] if m["spoken_word_source"] in ("metadata", "verified_correction") else ""
+        word = m["spoken_word"] if m["spoken_word_source"] in WORD_SOURCES_OK else ""
         rec["word"], rec["word_syllables"] = word, count_syllables(word)
-        if code in seg_over:  # human-verified boundaries replace the automatic ones
-            o = seg_over[code]
-            rec["seg_start_s"], rec["seg_end_s"] = float(o["seg_start_s"]), float(o["seg_end_s"])
+        o = seg_over.get((code, rec["drive_file_id"]))
+        if o is not None:  # human-verified boundaries replace the automatic ones, for this take only
+            start, end = float(o["seg_start_s"]), float(o["seg_end_s"])
+            if not 0 <= start < end <= rec["proc_duration_s"]:
+                raise ValueError(f"segment override for {code} [{rec['drive_file_id'][:6]}]: {start}-{end} s is "
+                                 f"outside the {rec['proc_duration_s']} s clip")
+            rec["seg_start_s"], rec["seg_end_s"] = start, end
             rec["seg_duration_s"] = round(rec["seg_end_s"] - rec["seg_start_s"], 3)
             rec["event_duration_s"] = rec["seg_duration_s"]  # human boundaries have no added context
             rec["segmentation_source"] = f"human ({o['reviewer']})"
@@ -571,14 +644,16 @@ def main() -> int:
     for item in analysed:
         by_code.setdefault(item[0]["participant_code"], []).append(item)
 
+    consent_log = load_consent_log()  # None until the group supplies consent/consent_log.csv
     mapping_rows, review_entries, manifest_rows = [], [], []
     for code in meta["participant_code"]:
         m = meta_by_code.loc[code]
         items = by_code.get(code, [])
+        write_review_audio(code, items)
         takes = [it[0] for it in items]
         n = len(takes)
         chosen, reason = select_take(code, takes, take_over) if takes else (None, "no recording supplied")
-        word_ok = m["spoken_word"] != "" and m["spoken_word_source"] in ("metadata", "verified_correction")
+        word_ok = m["spoken_word"] != "" and m["spoken_word_source"] in WORD_SOURCES_OK
         word_token = m["spoken_word"] if word_ok else UNVERIFIED_WORD_TOKEN
         if not word_token.isalpha():
             raise ValueError(f"{code}: spoken word '{word_token}' is not letters only; cannot build a filename")
@@ -612,16 +687,22 @@ def main() -> int:
                 "segmentation_source", "processed_sha256", "segment_sha256")} | {
                 "status": "SELECTED" if rec["selected"] else rec["duplicate_status"] if rec["usable"] else "UNUSABLE"})
 
-        include = chosen is not None and chosen["usable"] and m["consent_obtained"] == "Y"
+        # once a consent log exists, documented consent is required (Protocol Section VI)
+        documented = consent_log.get(code, False) if consent_log is not None else None
+        include = (chosen is not None and chosen["usable"] and m["consent_obtained"] == "Y"
+                   and documented is not False)
         if chosen is None:
             excl = "NO_RECORDING" if n == 0 else "NO_USABLE_RECORDING"
         elif m["consent_obtained"] != "Y":
             excl = "NO_CONSENT"
+        elif documented is False:
+            excl = "CONSENT_NOT_DOCUMENTED"
         else:
             excl = ""
         flags = chosen["flags"] if chosen is not None else []
         manifest_rows.append({
             "participant_code": code, "n_takes": n, "include_primary": include, "exclusion_reason": excl,
+            "consent_documented": "" if documented is None else documented,
             "selected_drive_file_id": chosen["drive_file_id"] if chosen else "",
             "selected_file": chosen["standardized_filename"] if chosen else "",
             "processed_file": chosen["processed_file"] if chosen else "",

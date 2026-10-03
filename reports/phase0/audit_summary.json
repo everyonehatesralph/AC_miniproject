@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-10-02T20:35:11+00:00",
+  "generated_at_utc": "2026-10-03T06:47:35+00:00",
   "inputs": {
     "metadata_csv": "data/metadata_raw/G3_metadata_extracted_raw.csv",
     "metadata_sha256": "9b756707dec72e5a34496d95334d3825fedb95719af7c1d94a00251940d50f6e"
@@ -329,6 +329,7 @@
     "documentation": {
       "consent_dir": "consent",
       "n_files": 0,
+      "consent_log_present": false,
       "extensions": {},
       "participant_codes_in_filenames": []
     }

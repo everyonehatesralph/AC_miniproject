@@ -48,7 +48,7 @@ The assigned population is Second-Year CS students (protocol §IV). The Group 3 
 
 ### 4.2 Research Ethics
 
-The metadata records informed consent ('Yes') for all 40 participants. **No consent documentation (forms, consent log or institutional clearance) was supplied** to the analysts. Protocol §VI makes it a requirement before the data can be used for publication, so the results in this report must not be disseminated until it is verified.
+The metadata records informed consent ('Yes') for all 40 participants. **No consent documentation (consent log or institutional clearance) has been supplied.** Protocol §VI makes it a requirement before the data can be used for publication, so the results in this report must not be disseminated until it is verified.
 
 Participants are identified only by pseudonymous codes. The raw videos (faces, possible GPS tags) are kept locally and never copied into the analysis. Only audio is processed, and location metadata is never extracted.
 
@@ -77,7 +77,7 @@ Y2-076's arousal rating is struck through in the sheet and is not used. Y2-076 h
 1. **Original-audio QA:** peak, clipping, DC offset, level and configuration, measured before processing.
 2. **Standardisation:** ffmpeg first audio stream → mono → 16 kHz → WAV PCM 16-bit, metadata stripped. There is no filtering, denoising, normalisation, pitch or speed change. Output is byte-reproducible.
 3. **Target-utterance localisation.** The clips contain continuous hallway babble and sometimes other speech, so the participant's word was located as the dominant short-time-energy event. This is deterministic and blind to labels. Segments touching the clip edge, longer than 1.5 s, or with a competing event within 3 dB are flagged.
-4. **Duplicates.** 5 participants (Y2-044, Y2-047, Y2-056, Y2-057, Y2-064) had retakes captured seconds apart. One take each was chosen by a label-blind *complete-word rule*: drop takes whose word is cut off by the clip edge, too long to be one word, or too short to contain the recorded word (< 0.10 s per syllable); prefer a take without a competing event; then use the clearest take if it is ≥ 3 dB clearer, otherwise the earliest. Takes are never chosen for sounding more emotional. Spectrogram comparisons and a listening packet are provided for the group to confirm.
+4. **Duplicates.** 5 participants (Y2-044, Y2-047, Y2-056, Y2-057, Y2-064) had retakes captured seconds apart. One take each was chosen by a label-blind *complete-word rule*: drop takes whose word is cut off by the clip edge, too long to be one word, or too short to contain the recorded word (< 0.10 s per syllable); prefer a take without a competing event; then use the clearest take if it is ≥ 3 dB clearer, otherwise the earliest. Takes are never chosen for sounding more emotional. A blind listening review (at least two listeners; only unanimous answers count) can confirm or replace each choice; so far: pending listening confirmation.
 5. **Naming:** `ParticipantCode_YearLevel_Session_Word.wav`. `PM` is assumed for Afternoon–Evening, and `UNVERIFIED` is used where no word was recorded.
 
 ### 4.7 Acoustic Feature Extraction
@@ -299,7 +299,7 @@ Full detail: `reports/lexical_control_analysis.md`.
 
 **Statistical results.**
 - Valence and arousal co-vary strongly (ρ = 0.77).
-- After FDR correction, 3 feature is associated with arousal and 0 with valence.
+- After FDR correction, 3 features are associated with arousal and 0 with valence.
 - The recording configuration changes 20 features.
 
 **Model performance.**
@@ -324,12 +324,12 @@ Full detail: `reports/lexical_control_analysis.md`.
 2. **Class imbalance and sparse categories:** unpleasant valence n = 2; valence_5, arousal_5, valence_3 could not be modelled; derived groupings merge categories.
 3. **Single-word utterances** (0.23–2.87 s located segments) carry limited prosodic information.
 4. **Naturally occurring noise:** background voices detected in 27 of 32 selected clips; low utterance-to-background ratio (< 10 dB) in 5.
-5. **Automatic segmentation, not verified by listening**; 12 recordings have segmentation-critical flags.
+5. **Automatic segmentation** (segment boundaries not yet verified by listening); 12 recordings have segmentation-critical flags.
 6. **Device/setting variability:** 6 recordings with a different audio configuration shift 20 features. F0 in Hz is dominated by voice type (no speaker baseline).
 7. **Limited contextual variation:** one year level, one activity, one session; RQ2 is not answerable within Group 3.
 8. **Possible lexical influence:** 16 of 31 words are off the protocol list and words differ phonetically, so acoustic features can encode word identity.
 9. **Self-report uncertainty:** single-item ratings; 16 rows with feeling text identical to the word; 2 rows without a description; 1 struck-through rating.
-10. **Duplicates and missing observations:** 5 retake sets were resolved by the complete-word rule, pending listening confirmation; 8 participants have no recording.
+10. **Duplicates and missing observations:** 5 retake sets were resolved by the complete-word rule (pending listening confirmation); 8 participants have no recording.
 11. **No demographic variables were collected** (the protocol allows optional variables only when approved), so speaker characteristics such as sex confound F0.
 12. **Consent documentation not supplied;** dissemination is blocked until it is verified.
 13. **Limited generalisability:** one class session, one device model; a pilot study.
@@ -363,17 +363,17 @@ They do identify concrete requirements for the consolidated study: reach the pla
 | Deliverable | Status | File | Evidence | Remaining issue |
 |---|---|---|---|---|
 | 1. Minimum of 40 valid participant observations | BLOCKED | data/analysis_manifest.csv | 32 valid unique participants; 8 metadata participants have no recording | needs 8 more valid observations: recordings for Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080 (if they exist) or new consented participants |
-| 2. Required consent documentation | BLOCKED | consent/ | sheet records consent 'Y' for 40/40; 0 documentation files supplied | supply a de-identified consent log and ethics/data-privacy clearance; keep signed forms outside the dataset |
+| 2. Required consent documentation | BLOCKED | consent/consent_log.csv | sheet records consent 'Y' for 40/40; consent log not supplied | fill consent/consent_log_TEMPLATE.csv (codes only, no names), save as consent_log.csv; keep signed forms outside the dataset |
 | 3. Properly coded research metadata | COMPLETE | data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv | 40 rows; raw kept beside cleaned; 244 logged changes (rules R1–R8) | confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings |
 | 4. Properly named audio recordings | COMPLETE | data/processed_audio/recordings/, file_mapping.csv | 32 WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all 38 originals | Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption |
-| 5. Data quality report | COMPLETE | reports/data_quality_report.md | 38 recordings assessed; 30 selected takes with ≥1 flag | segment boundaries await listening review |
+| 5. Data quality report | COMPLETE | reports/data_quality_report.md | 38 recordings assessed; 30 selected takes with ≥1 flag | segment boundaries not yet verified by listening (blind listening review, data/review/listening_review.html) |
 | 6. Extracted acoustic feature dataset | COMPLETE | data/acoustic_features.csv | 32 × 108 features, no missing values | — |
 | 7. Exploratory analysis | COMPLETE | reports/exploratory_analysis.md | affect distributions, feature–affect statistics, confound analysis | context × affect (RQ2) not analysable within Group 3 (constant variables) |
 | 8. Machine learning experiment | COMPLETE | models/, src/06_train_models.py | 3 viable tasks × 5 models, 10× repeated nested speaker-independent CV | tasks not modelled (sparse classes): valence_5, arousal_5, valence_3 |
 | 9. Model evaluation | COMPLETE | reports/model_evaluation.md | BA, macro-P/R/F1, accuracy, per-class, confusion matrices, bootstrap CIs, permutation tests, corrected t-tests | — |
 | 10. Interpretation of findings | COMPLETE | this report, §10 | observations / statistics / performance / interpretation separated | — |
 | 11. Research limitations | COMPLETE | this report, §11 | sample, noise, device, lexical, self-report, duplicates, ethics | — |
-| 12. Group research report | COMPLETE | reports/final_group_research_report.md | generated from the pipeline outputs | dissemination blocked until consent documentation is verified (item 2) |
+| 12. Group research report | COMPLETE | reports/final_group_research_report.md | generated from the pipeline outputs | dissemination blocked until consent documentation is complete (item 2) |
 
 ### B. Validation
 
@@ -389,7 +389,7 @@ See `docs/decision_log.md` (items marked PENDING):
 - 'Lecture' → 'Lecture/Discussion';
 - the `PM` token;
 - consent documentation;
-- listening verification of utterance boundaries and of Y2-073's word.
+- the blind listening review (utterance boundaries, retakes, Y2-073's word): `data/review/listening_review.html`, results in `reports/listening_review_report.md`.
 
 ### D. Reproduction
 

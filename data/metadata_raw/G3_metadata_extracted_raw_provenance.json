@@ -11,7 +11,7 @@
   "rows_extracted": 40,
   "text_outside_grid": [],
   "pymupdf_version": "1.28.2",
-  "extracted_at_utc": "2026-10-02T21:21:26+00:00",
+  "extracted_at_utc": "2026-10-03T06:43:25+00:00",
   "rules": [
     "cell text rebuilt from PDF characters; internal spaces preserved; no normalisation",
     "cells located by drawn grid lines; empty cells stay empty",

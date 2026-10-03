@@ -46,6 +46,25 @@ PAGES = [  # (file stem, navigation label, source markdown, one-line description
     ("decisions", "Decision log", DOCS / "decision_log.md", "every methodological decision and its status"),
     ("data_dictionary", "Data dictionary", DOCS / "data_dictionary.md", "every column of every data file"),
 ]
+GUIDES = [  # pages listed on the overview under "Guides and next steps" (kept out of the navigation bar)
+    ("running", "How to run it", DOCS / "RUNNING.md", "the team guide: install, run, check, troubleshoot"),
+    ("listening_review", "Listening review", REPORTS / "listening_review_report.md",
+     "blind listening review: agreement between listeners and the decisions used"),
+    ("collection_checklist", "Data collection checklist", DOCS / "data_collection_checklist.md",
+     "one page to bring to every recording session"),
+    ("analysis_plan", "Pre-registered analysis plan", DOCS / "analysis_plan_pooled_study.md",
+     "hypotheses, power and tests for a larger or pooled study"),
+    ("consent", "Consent documentation", PROJECT_ROOT / "consent" / "README.md", "how to supply the consent log"),
+    ("email_instructor", "Questions for the instructor", DOCS / "next_steps" / "01_email_to_instructor.md",
+     "draft email with the open protocol questions"),
+    ("message_collectors", "Requests to the collectors", DOCS / "next_steps" / "02_message_to_collectors.md",
+     "draft message: missing words, recordings, dates"),
+]
+LOCAL_LINKS = [  # (label, path relative to reports/html, description): files that exist only after a local run
+    ("Listening review tool", "../../data/review/listening_review.html",
+     "the blind listening page (needs the audio from a local pipeline run)"),
+    ("Presentation slides", "../presentation/G3_results_presentation.pptx", "12 slides with speaker notes (PowerPoint)"),
+]
 
 CSS = """
 :root { color-scheme: light; --bg:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
@@ -162,6 +181,10 @@ def overview(page_of: dict[Path, str]) -> str:
              "<th>Remaining issue</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>")
     cards = "".join(f'<a class="card" href="{s}.html"><b>{html.escape(lbl)}</b><span>{html.escape(desc)}</span></a>'
                     for s, lbl, _, desc in PAGES if s != "index")
+    guides = "".join(f'<a class="card" href="{s}.html"><b>{html.escape(lbl)}</b><span>{html.escape(desc)}</span></a>'
+                     for s, lbl, _, desc in GUIDES)
+    guides += "".join(f'<a class="card" href="{href}"><b>{html.escape(lbl)}</b><span>{html.escape(desc)}</span></a>'
+                      for lbl, href, desc in LOCAL_LINKS)
     figs = REPORTS.parent / "figures"
     fig_html = "".join(
         f"<h3>{html.escape(title)}</h3><img alt='{html.escape(title)}' src='{embed_image(str(path), Path('.'))}'>"
@@ -173,6 +196,7 @@ def overview(page_of: dict[Path, str]) -> str:
             f"<p class='note'>Group 3 · Second-Year Computer Science students · pilot study. Start with the cards below, "
             f"or read the <a href='final_report.html'>final report</a>.</p>"
             f"<div class='cards'>{cards}</div>"
+            f"<h2>Guides and next steps</h2><div class='cards'>{guides}</div>"
             f"<h2>Results at a glance</h2>{results_html}"
             f"<h2>Expected research outputs: status</h2>{table}"
             f"<h2>Key figures</h2>{fig_html}")
@@ -181,10 +205,10 @@ def overview(page_of: dict[Path, str]) -> str:
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")
-    page_of = {src.resolve(): stem for stem, _, src, _ in PAGES if src is not None}
+    page_of = {src.resolve(): stem for stem, _, src, _ in PAGES + GUIDES if src is not None}
     md = markdown.Markdown(extensions=["tables", "sane_lists", "fenced_code", "toc"])
     written = []
-    for stem, label, src, _ in PAGES:
+    for stem, label, src, _ in PAGES + GUIDES:
         if src is None:
             body = overview(page_of)
         else:

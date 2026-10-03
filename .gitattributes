@@ -6,7 +6,10 @@
 *.png     binary
 *.jpg     binary
 *.joblib  binary
+*.pptx    binary
 
 # Source and documentation: normal text handling.
 *.py      text
 *.md      text
+*.yml     text
+*.ini     text

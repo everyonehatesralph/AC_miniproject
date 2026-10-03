@@ -86,16 +86,18 @@ The run prints each step as it starts and finishes:
 | Step | Script | What it does | Time (16 cores) |
 |---|---|---|---|
 | 00 | `00_fetch_recordings.py` | downloads the 38 recordings, checks their hashes | 2–3 min |
-| 00 | `00_extract_metadata_pdf.py` | reads the metadata PDF into a CSV (no value changed) | seconds |
+| 00 | `00_extract_metadata_pdf.py` | reads the metadata PDF (or a CSV export of the sheet) into a CSV; no value changed | seconds |
 | 01 | `01_audit_data.py` | Phase 0 audit | seconds |
+| 01b | `01b_merge_listening_reviews.py` | merges the listeners' answers (if any) into decisions | seconds |
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning (raw values kept) | seconds |
 | 03 | `03_prepare_audio.py` | audio QA, retake choice, WAV conversion, naming, quality report | ~30 s |
+| 03b | `03b_build_listening_review.py` | builds the listening-review page | seconds |
 | 04 | `04_extract_features.py` | 108 acoustic features per participant | seconds |
 | 05 | `05_eda.py` | exploratory analysis and figures | ~1.5 min |
 | 06 | `06_train_models.py` | speaker-independent training and permutation tests | **~55–60 min** |
 | 07 | `07_evaluate_models.py` | metrics, intervals, comparisons | ~40 s |
 | 08 | `08_lexical_control.py` | same-word analysis | ~3 min |
-| 09 | `09_build_final_report.py`, `09b_build_html_report.py` | final report + browser version | seconds |
+| 09, 09b, 09c | `09_build_final_report.py`, `09b_build_html_report.py`, `09c_build_presentation.py` | final report, browser version, slides | seconds |
 | 10 | `10_validate_project.py` | automated checks | seconds |
 
 Useful options:
@@ -117,6 +119,7 @@ or restore the committed ones with `git checkout -- models reports figures data 
 - **On GitHub:** open any `.md` file in `reports/`; GitHub shows the text and the figures.
 - **Main documents:**
   - `reports/final_group_research_report.md` (the research report)
+  - `reports/presentation/G3_results_presentation.pptx` (12 slides with speaker notes, built from the results)
   - `reports/validation_report.md`
   - `docs/DOCUMENTATION.md` (how everything works)
   - `docs/decision_log.md` (decisions still awaiting confirmation)
@@ -124,7 +127,8 @@ or restore the committed ones with `git checkout -- models reports figures data 
 **Expected validation result:** `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 - The two BLOCKED items are missing data that code cannot fix: fewer than 40 participants have recordings,
   and no consent documentation has been supplied.
-- The WARNING is that the retake choices await the group's listening confirmation.
+- The WARNING is that the retake choices await a human listening decision (section 6). It turns into PASS
+  once every retake participant has one.
 
 **Reproducibility:** with the pinned versions, the same machine type gives byte-identical audio files and
 identical results. On a different operating system or CPU, the last decimals of some numbers can differ
@@ -132,25 +136,89 @@ identical results. On a different operating system or CPU, the last decimals of 
 
 ## 6. The group's review tasks (human in the loop)
 
-Code cannot do these. Each has a file the pipeline reads automatically on the next run:
+Code cannot do these. Each has a file the pipeline reads automatically on the next run.
 
-| Task | Where | Then re-run |
+### 6.1 Blind listening review (at least two group members, independently)
+
+1. Run the pipeline once, so the audio exists on your computer.
+2. Double-click **`data/review/listening_review.html`**. It works offline in any browser.
+   - It shows participant codes and take numbers only: no words, ratings or automatic choices, so you stay
+     blind.
+   - For each take you play the whole clip and the located word, then answer:
+     - the word you hear;
+     - whether the whole word is audible;
+     - whether the whole word lies inside the blue band (if not, mark the real start and end);
+     - whether another voice is over the word;
+     - clarity, 1–5.
+   - For the five participants with retakes, you also choose the take that holds the whole word most clearly.
+3. Type your initials, answer everything, press **Save answers (CSV)**, and move the file from Downloads into
+   **`data/review/answers/`**. Keep one file per person: replace your older file.
+4. Commit and push your answers file, then re-run: `run_pipeline.py --skip-fetch --from 01b`.
+
+Step 01b turns answers into decisions **only when every listener (at least two) gives the same answer**:
+- the same take;
+- corrected boundaries within 50 ms (their mean is used);
+- the same *protocol* word for a word that is missing in the sheet (Y2-073).
+
+A heard word that differs from the sheet is **reported, never changed**. Everything else is listed under "Needs a
+joint decision" in `reports/listening_review_report.md`, together with the agreement between listeners
+(percent agreement, Cohen's kappa).
+
+### 6.2 The group's own decisions (these always win over the listening review)
+
+| Task | File | Then re-run |
 |---|---|---|
-| Confirm which retake to use (Y2-044, 047, 056, 057, 064) by listening, without looking at the ratings | `data/processed_audio/retake_review/` (README inside) → `data/processed_audio/take_overrides.csv` | `--skip-fetch --from 03` |
-| Check each located word by listening; give corrected boundaries if needed (especially Y2-045, Y2-055) | `data/processed_audio/segment_review_sheet.csv` → `data/processed_audio/segment_overrides.csv` | `--skip-fetch --from 03` |
-| Verified corrections (Y2-076 arousal, a word heard on a recording, …) | `data/metadata_corrections.csv` (copy the TEMPLATE) | `--skip-fetch --from 02` |
-| Consent documentation | `consent/` (see `consent/README.md`) | `--skip-fetch --from 10` |
+| A joint decision on a take | `data/processed_audio/take_overrides.csv`: `participant_code,drive_file_id,reason,decided_by` | `--skip-fetch --from 03` |
+| Jointly agreed word boundaries | `data/processed_audio/segment_overrides.csv`: `participant_code,drive_file_id,seg_start_s,seg_end_s,reviewer,note` (times in seconds on the whole clip; `drive_file_id` may be blank only for a participant with one recording) | `--skip-fetch --from 03` |
+| Verified corrections (Y2-076 arousal, a confirmed word, …) | `data/metadata_corrections.csv` (copy the TEMPLATE) | `--skip-fetch --from 02` |
+| Consent documentation | `consent/consent_log.csv` (copy the TEMPLATE; see `consent/README.md`) | `--skip-fetch --from 03` (once the log exists, undocumented participants are excluded, which changes the analysis set) |
 
-## 7. Working as a team with Git
+## 7. Adding new participants
+
+Only with the instructor's approval, and with the checklist (`docs/data_collection_checklist.md`).
+
+1. **Metadata.** Add the participants to the Google Sheet, then *File → Download → Comma-separated values*. Save
+   the file as **`data/metadata_raw/G3_metadata_export.csv`**. From then on step 00 reads the cell values from
+   this export instead of the PDF.
+   - The header must stay exactly as in the template, and nothing may be written outside its columns (the run
+     stops rather than drop anything).
+   - Strikethrough cannot travel in a CSV, so the cells struck through in the PDF stay marked as long as they
+     are unchanged.
+2. **Recordings.** Upload each file unedited to the group's Drive folder. For each one, add a line to
+   `data/raw/drive_manifest.csv`. The Drive file id is the part of the share link between `/d/` and `/view`.
+3. **Consent.** Add each new code to `consent/consent_log.csv`.
+4. **Run everything:** `run_pipeline.py` (without `--skip-fetch`, so the new recordings are downloaded). Then do
+   the listening review for the new participants (6.1).
+
+## 8. Running the tests
+
+The unit tests check the building blocks with synthetic signals and small tables. They need no recordings.
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.venv\Scripts\python.exe -m pytest
+```
+
+What they check:
+- participant codes, sessions, syllables, derived targets;
+- the word locator and the Praat pitch on synthetic signals;
+- the consent rules, the take-selection rule and the quality flags;
+- rating parsing, the CSV-export path and the leakage guard;
+- every listening-review rule.
+
+GitHub runs them on every push (`.github/workflows/tests.yml`; see the *Actions* tab). The tests never write to
+`reports/logs/`.
+
+## 9. Working as a team with Git
 
 - Pull before you start: `git pull`.
-- Commit your inputs (review sheets, override and correction files) and push them.
+- Commit your inputs (listening answers, override and correction files, the consent log) and push them.
 - Let **one person** run the full pipeline afterwards and commit the regenerated outputs. Several people
   committing generated files at the same time causes conflicts.
 - Recordings and WAV files are ignored by Git (`.gitignore`). Never force-add them: they are participants'
   personal data.
 
-## 8. Troubleshooting
+## 10. Troubleshooting
 
 | Problem | Fix |
 |---|---|
@@ -162,3 +230,6 @@ Code cannot do these. Each has a file the pipeline reads automatically on the ne
 | Antivirus blocks ffmpeg | Allow `.venv/.../imageio_ffmpeg/binaries/ffmpeg-*` (it is the official static ffmpeg build). |
 | Step 10 shows FAIL | Read `reports/validation_report.md`; each FAIL names the file and the reason (BLOCKED and WARNING do not stop the run). |
 | It is slow | Step 06 needs about 1 hour on 16 cores. Use `--quick` only to test the installation. |
+| The listening page plays nothing | The audio is created by a local run (step 03); the recordings are not in Git. Run the pipeline first, then open the page again. |
+| Step 01b stops with an error about an answers file | The message names the file and the problem: two files from one listener, an unknown take, or an invalid value. Fix or replace that file. |
+| Step 00 stops on `G3_metadata_export.csv` | The export's header differs from the template, or a value was typed outside its columns; the message says which. |

@@ -7,7 +7,7 @@
   {
     "item": "consent requirements satisfied",
     "status": "BLOCKED",
-    "evidence": "metadata records consent 'Y' for 40/40; consent documentation files supplied: 0"
+    "evidence": "metadata records consent 'Y' for 40/40, but consent_log.csv has not been supplied (template: consent/consent_log_TEMPLATE.csv)"
   },
   {
     "item": "no participant names/student IDs exposed",
@@ -27,7 +27,7 @@
   {
     "item": "duplicates resolved",
     "status": "WARNING",
-    "evidence": "5 participants had retakes (Y2-044, Y2-047, Y2-056, Y2-057, Y2-064); exactly one take selected each by the documented rule (unique selections: True); group confirmation pending"
+    "evidence": "5 participants had retakes (Y2-044, Y2-047, Y2-056, Y2-057, Y2-064); exactly one take selected each (unique selections: True); human listening decision pending for Y2-044, Y2-047, Y2-056, Y2-057, Y2-064 (data/review/listening_review.html)"
   },
   {
     "item": "raw files preserved",

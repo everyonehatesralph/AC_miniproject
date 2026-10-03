@@ -1,0 +1,30 @@
+# Runs the unit tests on every push and pull request. The tests use synthetic signals and small tables,
+# plus the committed metadata PDF; they never need the participants' recordings (which are not in Git).
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+      - name: Install the pinned dependencies
+        run: python -m pip install -r requirements.txt -r requirements-dev.txt
+      - name: Run the tests
+        env:
+          PIPELINE_NO_FILE_LOG: "1"
+        run: python -m pytest

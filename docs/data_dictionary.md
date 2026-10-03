@@ -14,9 +14,9 @@ Extraction evidence:
 
 | Column | Meaning |
 |---|---|
-| `_source_page`, `_source_row_on_page` | location of the row in the PDF |
+| `_source_page`, `_source_row_on_page` | location of the row in the PDF. When a CSV export is the source: `_source_page` is blank and `_source_row_on_page` is the sheet's row number (header = row 1) |
 | `_wrapped_fields` | cells whose text wrapped onto several lines and was re-joined |
-| `_struck_fields`, `_struck_detail` | cells with strikethrough formatting (only Y2-076 `Arousal (1-5)`) |
+| `_struck_fields`, `_struck_detail` | cells with strikethrough formatting (only Y2-076 `Arousal (1-5)`). With a CSV export they are carried forward from the PDF while the cell is unchanged (`…, carried forward from the PDF`) |
 | `_nonblack_text_fields`, `_filled_fields` | coloured text / cell fills (none) |
 
 ## 2. `data/metadata_cleaned.csv`: Phase 1 output (40 rows)
@@ -33,7 +33,7 @@ Extraction evidence:
 | `session_raw`, `session` | str | `Afternoon-Evening` / protocol spelling `Afternoon–Evening` |
 | `session_token_assumed` | str | `PM` (assumption from the §XII example) |
 | `spoken_word_raw`, `spoken_word` | str | raw / stripped; blank = not recorded (never inferred) |
-| `spoken_word_source` | str | `metadata`, `missing`, or `verified_correction` |
+| `spoken_word_source` | str | `metadata`, `missing`, `verified_correction` (R9) or `listening_review` (R10: a missing word heard identically by every blind listener) |
 | `spoken_word_in_protocol_list` | bool | word is one of Salamat, Ambot, Grabe, Lisod, Sayon, Lingaw, Kapoy |
 | `self_reported_feeling_raw`, `self_reported_feeling` | str | participant's own description, raw / stripped |
 | `valence_raw`, `valence` | str, Int | `4 — Pleasant` / 4 (1 Very Unpleasant … 5 Very Pleasant) |
@@ -44,9 +44,11 @@ Extraction evidence:
 | `date_collected`, `collector_initials`, `notes` | str | as recorded (all blank) |
 | `audio_filename_raw` | str | as recorded (all blank; the convention name is assigned in Phase 4) |
 | `qa_flags` | str | `;`-separated flags (e.g. `SPOKEN_WORD_MISSING`, `WORD_NOT_IN_PROTOCOL_LIST`, `FEELING_IDENTICAL_TO_WORD`) |
-| `corrections_applied` | str | verified corrections with source/verifier (none yet) |
+| `corrections_applied` | str | verified corrections and listening-review fills, with source/verifier (none yet) |
 
 Change log: `reports/phase1/cleaning_log.csv` (`participant_code`, `field`, `raw_value`, `cleaned_value`, `rule`).
+`reports/phase1/cleaning_summary.json` counts `verified_corrections_applied` (R9) and
+`listening_review_fills_applied` (R10) separately.
 
 ## 3. Raw recordings: `data/raw/`
 
@@ -69,7 +71,9 @@ Local file name: `<drive name>__<drive file id>.mov`; the original bytes are nev
 | `readable` | decoded successfully |
 | `peak_dbfs`, `clip_fraction`, `clip_pct`, `dc_offset`, `rms_dbfs`, `interchannel_corr` | original-signal QA (native rate/channels) |
 | `proc_duration_s` | duration of the 16 kHz mono signal |
-| `seg_start_s`, `seg_end_s`, `seg_duration_s`, `peak_time_s` | located utterance (with 0.05 s context each side) |
+| `seg_start_s`, `seg_end_s`, `seg_duration_s`, `peak_time_s` | located utterance (with 0.05 s context each side); a human override replaces start/end |
+| `auto_seg_start_s`, `auto_seg_end_s` | the automatic (label-blind) boundaries, kept even when a human override is used; the listening review judges these |
+| `review_take` | take number in the listening review (order of capture time); audio `data/review/audio/<code>_t<k>.wav` |
 | `event_duration_s` | duration of the energy event itself (without the added context) |
 | `word`, `word_syllables`, `event_s_per_syllable` | recorded word, its syllable count (vowel letters), event duration per syllable (< 0.10 → `TOO_SHORT_FOR_WORD`) |
 | `sbr_db` | utterance peak minus background floor (smoothed frame energy) |
@@ -97,8 +101,9 @@ Local file name: `<drive name>__<drive file id>.mov`; the original bytes are nev
 |---|---|
 | `participant_code` | code |
 | `n_takes` | number of recordings supplied |
-| `include_primary` | in the primary analysis set (consent recorded + one usable selected take) |
-| `exclusion_reason` | `NO_RECORDING`, `NO_USABLE_RECORDING`, `NO_CONSENT`, or blank |
+| `include_primary` | in the primary analysis set (consent recorded + one usable selected take; once a consent log exists, also documented consent) |
+| `exclusion_reason` | `NO_RECORDING`, `NO_USABLE_RECORDING`, `NO_CONSENT`, `CONSENT_NOT_DOCUMENTED`, or blank |
+| `consent_documented` | `True`/`False` from `consent/consent_log.csv` (date + voice `Y` + data use `Y`); blank while no log exists |
 | `selected_drive_file_id`, `selected_file`, `processed_file`, `segment_file` | the take used |
 | `selected_flags` | QA flags of the selected take |
 | `subset_retake` | participant had more than one take (sensitivity analysis 1) |
@@ -113,11 +118,27 @@ Pre-filled: `participant_code`, `standardized_filename`, `segment_file`, `seg_st
 
 To be filled by a Bisaya-speaking reviewer: `heard_word`, `boundaries_ok_Y_N`, `corrected_start_s`,
 `corrected_end_s`, `reviewer_initials`, `notes`. Verified boundaries go into `segment_overrides.csv`
-(`participant_code`, `seg_start_s`, `seg_end_s`, `reviewer`, `note`).
+(`participant_code`, `drive_file_id`, `seg_start_s`, `seg_end_s`, `reviewer`, `note`; `drive_file_id` may be blank only
+for a participant with one recording). The blind listening review (7c) replaces this worksheet for most uses.
 
 ## 7b. `data/processed_audio/retake_review/`: listening packet for participants with several takes
 
 One folder per participant with every take: `<code>_take<k>_<hhmmss>_<id>[_SELECTED].wav` (whole clip, 16 kHz mono) and `..._word.wav` (located word). `retake_review_sheet.csv` has one row per take with the objective evidence (`event_duration_s`, `event_s_per_syllable`, `sbr_db`, `competing_margin_db`, `flags`, `auto_selected`) and blank listener columns (`heard_word`, `whole_word_audible_Y_N`, `clarity_1_to_5`, `other_voice_over_word_Y_N`, `choose_this_take_Y_N`, `listener_initials`, `notes`). A listening decision goes into `take_overrides.csv` (`participant_code`, `drive_file_id`, `reason`, `decided_by`).
+
+## 7c. Blind listening review: `data/review/`
+
+| File | Columns / content |
+|---|---|
+| `audio/<code>_t<k>.wav`, `audio/<code>_t<k>_word.wav` | every take (whole clip, 16 kHz mono) and its automatically located word, under neutral names; local only, not in Git |
+| `listening_review.html` | the listening page (generated by `03b`; local only) |
+| `answers/*.csv` | one file per listener, saved from the page: `reviewer_initials`, `participant_code`, `take`, `drive_file_id`, `shown_start_s`, `shown_end_s` (the automatic boundaries shown), `heard_word`, `whole_word_audible_Y_N`, `boundaries_ok_Y_N`, `corrected_start_s`, `corrected_end_s`, `clarity_1_to_5`, `other_voice_over_word_Y_N`, `chosen_take_Y_N` (retake participants: Y for the chosen take; N on every take = none holds the whole word), `notes`, `page_version`, `saved_at` (UTC) |
+| `take_overrides_from_review.csv` | `participant_code`, `drive_file_id`, `reason`, `decided_by`: unanimous take choices |
+| `segment_overrides_from_review.csv` | `participant_code`, `drive_file_id`, `seg_start_s`, `seg_end_s`, `reviewer`, `note`: unanimous corrected boundaries (mean of the listeners, all within 50 ms) |
+| `metadata_corrections_from_review.csv` | `participant_code`, `field` (`spoken_word`), `new_value`, `source`, `verified_by`, `date_verified`: missing words heard identically by every listener |
+
+Reports: `reports/listening_review_report.md`. `reports/listening_review_agreement.csv` has `judgement`,
+`listeners`, `n_items`, `percent_agreement`, `cohen_kappa`. `reports/listening_review_decisions.csv` has
+`participant_code`, `take`, `judgement`, `outcome`, `answers`, with one row per take or participant item.
 
 ## 8. `data/acoustic_features.csv`: feature table (32 rows × 111 columns)
 
@@ -156,3 +177,5 @@ DOCUMENTATION.md §5.8. Naming pattern:
 | `reports/eda/*.csv` | affect distributions, target viability, Spearman feature-vs-rating tests (with BH q-values), recording-configuration effect, word × affect |
 | `reports/evaluation/*.csv` | summary metrics, per-class metrics, confusion matrices, model comparison, hyperparameter choices, sensitivity summary |
 | `reports/lexical/*.csv` | word feasibility, within-word correlations, accuracy by word group |
+| `reports/presentation/G3_results_presentation.pptx` | 12 slides with speaker notes, generated from the files above (`09c`) |
+| `consent/consent_log.csv` (supplied by the group) | `participant_code`, `consent_date`, `collector_initials`, `consent_form_version`, `voice_recording_consented_Y_N`, `video_recording_consented_Y_N`, `data_use_for_research_consented_Y_N`, `notes` (template: `consent/consent_log_TEMPLATE.csv`; codes only, never names) |

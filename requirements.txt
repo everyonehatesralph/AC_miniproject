@@ -27,3 +27,6 @@ markdown==3.11
 # metadata PDF extraction and Drive download
 pymupdf==1.28.2
 gdown==6.4.1
+
+# the generated presentation (reports/presentation/)
+python-pptx==1.0.2

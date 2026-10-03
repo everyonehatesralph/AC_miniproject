@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import os
 import re
 import shutil
 import subprocess
@@ -67,8 +68,10 @@ MEDIA_EXTS = AUDIO_EXTS | VIDEO_EXTS
 
 # ---- generic helpers --------------------------------------------------------------
 def setup_logging(name: str, logfile: Path | None = None) -> logging.Logger:
+    """Console logging, plus a log file unless PIPELINE_NO_FILE_LOG is set (the tests set it, so importing a
+    pipeline script never overwrites the log of the last real run)."""
     handlers: list[logging.Handler] = [logging.StreamHandler(sys.stdout)]
-    if logfile is not None:
+    if logfile is not None and not os.environ.get("PIPELINE_NO_FILE_LOG"):
         logfile.parent.mkdir(parents=True, exist_ok=True)
         handlers.append(logging.FileHandler(logfile, mode="w", encoding="utf-8"))
     logging.basicConfig(level=logging.INFO, force=True, handlers=handlers,
@@ -96,6 +99,43 @@ def normalise_code(raw: str) -> str | None:
 
 def session_key(value: str) -> str:
     return value.translate(DASHES).casefold().replace(" ", "")
+
+
+# ---- consent documentation (Protocol Section VI) ------------------------------------
+CONSENT_LOG = CONSENT_DIR / "consent_log.csv"
+CONSENT_LOG_COLUMNS = ["participant_code", "consent_date", "collector_initials", "consent_form_version",
+                       "voice_recording_consented_Y_N", "video_recording_consented_Y_N",
+                       "data_use_for_research_consented_Y_N", "notes"]
+
+
+def load_consent_log() -> dict[str, bool] | None:
+    """Documented consent per participant from consent/consent_log.csv (None if the log does not exist).
+
+    A participant counts as documented only with a consent date AND 'Y' for both voice recording and
+    research data use. Blank template rows count as not documented. Invalid entries raise an error.
+    """
+    if not CONSENT_LOG.is_file():
+        return None
+    import pandas as pd
+    df = pd.read_csv(CONSENT_LOG, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+    missing = [c for c in CONSENT_LOG_COLUMNS if c not in df.columns]
+    if missing:
+        raise ValueError(f"{CONSENT_LOG.name} is missing columns {missing} (copy consent_log_TEMPLATE.csv)")
+    documented: dict[str, bool] = {}
+    for _, r in df.iterrows():
+        code = normalise_code(r["participant_code"])
+        if code is None:
+            raise ValueError(f"{CONSENT_LOG.name}: invalid participant code {r['participant_code']!r}")
+        if code in documented:
+            raise ValueError(f"{CONSENT_LOG.name}: participant {code} listed twice")
+        answers = {k: r[k].strip().upper() for k in ("voice_recording_consented_Y_N", "data_use_for_research_consented_Y_N",
+                                                     "video_recording_consented_Y_N")}
+        for k, v in answers.items():
+            if v not in ("Y", "N", ""):
+                raise ValueError(f"{CONSENT_LOG.name}, {code}: {k} must be Y, N or blank, not {v!r}")
+        documented[code] = bool(r["consent_date"].strip()) and answers["voice_recording_consented_Y_N"] == "Y" \
+            and answers["data_use_for_research_consented_Y_N"] == "Y"
+    return documented
 
 
 # ---- media helpers -------------------------------------------------------------------

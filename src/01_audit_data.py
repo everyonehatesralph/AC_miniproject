@@ -39,7 +39,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from common import (AROUSAL_LABELS, CODE_IN_NAME_RE, CODE_STRICT_RE, CONSENT_DIR, DASHES, FILENAME_RE,
+from common import (AROUSAL_LABELS, CODE_IN_NAME_RE, CODE_STRICT_RE, CONSENT_DIR, CONSENT_LOG, DASHES, FILENAME_RE,
                     GROUP_YEAR_LEVEL, MEDIA_EXTS, MIN_VALID_OBSERVATIONS, PROJECT_ROOT, PROTOCOL_ACTIVITIES,
                     PROTOCOL_SESSIONS, PROTOCOL_WORDS, RAW_DIR, RAW_METADATA_CSV, RECORDING_MAP, REPORTS,
                     SESSION_TOKEN_ASSUMED, VALENCE_LABELS, probe_media, rel, session_key, setup_logging,
@@ -57,6 +57,7 @@ SECTION_XI_FIELDS = ("code", "year", "activity", "session", "word", "feeling", "
 RATING_RE = re.compile(r"^\s*(\d+)\s*(?:[‐-―−-]\s*(.*?))?\s*$")
 YEAR_RE = re.compile(r"(?i)^\s*([1-4])\s*(?:st|nd|rd|th)\s*year\s*$")
 SKIP_DIRS = {".venv", ".git", "__pycache__", "node_modules", "processed_audio"}
+SKIP_PATHS = {PROJECT_ROOT / "data" / "review"}  # listening-review copies made by step 03: not supplied media
 SEVERITY = {
     "BLOCKER": "observation/deliverable cannot count as valid until resolved",
     "MAJOR": "blocks a required deliverable or analysis step (naming, lexical analysis, protocol compliance)",
@@ -281,7 +282,8 @@ def audit_metadata(df: pd.DataFrame) -> tuple[list[dict], list[dict]]:
 def find_media(root: Path) -> list[Path]:
     found = []
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")]
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS and not d.startswith(".")
+                       and Path(dirpath) / d not in SKIP_PATHS]
         found += [Path(dirpath) / n for n in filenames if Path(n).suffix.lower() in MEDIA_EXTS]
     return sorted(found)
 
@@ -374,11 +376,12 @@ def inventory_media(known_codes: set[str]) -> tuple[pd.DataFrame, list[dict]]:
 def inventory_consent(known_codes: set[str]) -> dict:
     """Count consent documents without printing their names (they may contain names)."""
     files = [p for p in CONSENT_DIR.rglob("*") if p.is_file() and not p.name.startswith(".")
-             and p.name.lower() not in {"readme.md", "readme.txt"}] if CONSENT_DIR.is_dir() else []
+             and p.name.lower() not in {"readme.md", "readme.txt"}
+             and "TEMPLATE" not in p.name.upper()] if CONSENT_DIR.is_dir() else []
     codes = set()
     for p in files:
         codes |= {f"Y{a}-{b}" for a, b in CODE_IN_NAME_RE.findall(p.name)}
-    return {"consent_dir": rel(CONSENT_DIR), "n_files": len(files),
+    return {"consent_dir": rel(CONSENT_DIR), "n_files": len(files), "consent_log_present": CONSENT_LOG.is_file(),
             "extensions": dict(Counter(p.suffix.lower() for p in files)),
             "participant_codes_in_filenames": sorted(codes & known_codes)}
 
@@ -458,7 +461,7 @@ def counts(values) -> dict:
     return {str(k): int(v) for k, v in sorted(Counter(values).items(), key=lambda kv: str(kv[0]))}
 
 
-def dataset_issues(df, media, consent, provenance_present) -> list[dict]:
+def dataset_issues(df, media, consent, metadata_from_pdf) -> list[dict]:
     out = []
 
     def add(code, severity, detail):
@@ -467,7 +470,7 @@ def dataset_issues(df, media, consent, provenance_present) -> list[dict]:
 
     if media.empty:
         add("NO_MEDIA_FILES_SUPPLIED", "BLOCKER", "no audio/video file found; no observation can be validated")
-    if consent["n_files"] == 0:
+    if not consent["consent_log_present"]:
         add("CONSENT_DOCUMENTATION_NOT_SUPPLIED", "BLOCKER",
             "Section XVIII item 2 requires consent documentation; the sheet's 'Yes' is an attestation, not documentation")
     covered = media["participant_code"].nunique() if not media.empty else 0
@@ -481,7 +484,7 @@ def dataset_issues(df, media, consent, provenance_present) -> list[dict]:
                 f"every row has {COL[key]} = '{vals.pop()}'; {COL[key]} x Affect cannot be analysed within Group 3")
     add("SESSION_TOKEN_ASSUMED", "REVIEW",
         "Section XII shows 'PM' in its example but never defines session tokens; AM/PM mapping needs confirmation")
-    if provenance_present:
+    if metadata_from_pdf:
         add("METADATA_SOURCE_IS_PDF_EXPORT", "REVIEW",
             "only a PDF export of the Google Sheet was supplied; cell comments and edit history are lost")
     return out
@@ -618,8 +621,9 @@ def main() -> int:
     log.info("consent documents found: %d", consent["n_files"])
     issues = recording_issues(rows, media) + issues
     qa = build_qa_table(rows, issues, media)
-    provenance = RAW_METADATA_CSV.with_name(RAW_METADATA_CSV.stem + "_provenance.json").is_file()
-    all_issues = dataset_issues(df, media, consent, provenance) + issues + media_issues
+    prov_path = RAW_METADATA_CSV.with_name(RAW_METADATA_CSV.stem + "_provenance.json")
+    from_pdf = prov_path.is_file() and "source_pdf" in json.loads(prov_path.read_text(encoding="utf-8"))
+    all_issues = dataset_issues(df, media, consent, from_pdf) + issues + media_issues
     summary = summarize(df, rows, qa, all_issues, media, consent)
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

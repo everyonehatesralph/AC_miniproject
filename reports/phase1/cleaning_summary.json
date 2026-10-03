@@ -14,6 +14,7 @@
     "R8": 40
   },
   "verified_corrections_applied": 0,
+  "listening_review_fills_applied": 0,
   "flags": {
     "ACTIVITY_MAPPING_PENDING_CONFIRMATION": 40,
     "AROUSAL_STRUCK_THROUGH": 1,

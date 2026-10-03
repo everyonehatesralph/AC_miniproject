@@ -21,9 +21,9 @@ import numpy as np
 import pandas as pd
 import soundfile as sf
 
-from common import (CLEAN_METADATA_CSV, CONSENT_DIR, DATA, DOWNLOAD_LOG, FEATURES_CSV, FIGURES, FILENAME_RE,
+from common import (CLEAN_METADATA_CSV, CONSENT_DIR, CONSENT_LOG, DATA, DOWNLOAD_LOG, FEATURES_CSV, FIGURES, FILENAME_RE,
                     MIN_VALID_OBSERVATIONS, MODELS, PROCESSED_AUDIO_DIR, PROJECT_ROOT, RAW_METADATA_CSV, REPORTS,
-                    TARGET_SR, sha256_of, setup_logging)
+                    TARGET_SR, load_consent_log, sha256_of, setup_logging)
 
 log = setup_logging("validate", REPORTS / "logs" / "10_validate_project.log")
 RESULTS: list[dict] = []
@@ -51,17 +51,24 @@ def main() -> int:
           f"{len(manifest)} metadata participants; missing: "
           f"{', '.join(manifest.loc[manifest['n_takes'] == '0', 'participant_code'])})")
 
-    # 2. consent
-    consent_files = [p for p in CONSENT_DIR.rglob("*") if p.is_file() and p.name.lower() not in {"readme.md"}] \
-        if CONSENT_DIR.is_dir() else []
+    # 2. consent (documented in consent/consent_log.csv; the sheet's "Yes" is only an attestation)
     sheet_yes = (meta["consent_obtained"] == "Y").sum()
-    check("consent requirements satisfied", "BLOCKED" if not consent_files else "WARNING",
-          f"metadata records consent 'Y' for {sheet_yes}/{len(meta)}; consent documentation files supplied: "
-          f"{len(consent_files)}")
+    consent_log = load_consent_log()
+    if consent_log is None:
+        check("consent requirements satisfied", "BLOCKED",
+              f"metadata records consent 'Y' for {sheet_yes}/{len(meta)}, but {CONSENT_LOG.name} has not been supplied "
+              "(template: consent/consent_log_TEMPLATE.csv)")
+    else:
+        documented = sorted(c for c, ok in consent_log.items() if ok)
+        undocumented_included = sorted(set(included["participant_code"]) - set(documented))
+        check("consent requirements satisfied", "PASS" if not undocumented_included else "FAIL",
+              f"{CONSENT_LOG.name}: documented consent for {len(documented)} of {len(meta)} metadata participants; "
+              f"included participants without documented consent: {undocumented_included or 'none'}")
 
     # 3. no names / student IDs
     hits = []
-    for path in [CLEAN_METADATA_CSV, RAW_METADATA_CSV, FEATURES_CSV, *REPORTS.glob("*.md")]:
+    for path in [CLEAN_METADATA_CSV, RAW_METADATA_CSV, FEATURES_CSV, *REPORTS.glob("*.md"),
+                 *([CONSENT_LOG] if CONSENT_LOG.is_file() else [])]:
         text = path.read_text(encoding="utf-8-sig", errors="replace")
         if PII.search(text):
             hits.append(path.name)
@@ -85,9 +92,16 @@ def main() -> int:
     # 6. duplicates resolved
     retakes = manifest[manifest["n_takes"].astype(int) > 1]
     dup_sel = manifest["selected_drive_file_id"].replace("", np.nan).dropna()
-    check("duplicates resolved", "WARNING" if len(retakes) else "PASS",
+    decided = set()  # human decisions: the group's own file, or a unanimous blind listening review (01b)
+    for f in (PROCESSED_AUDIO_DIR / "take_overrides.csv", DATA / "review" / "take_overrides_from_review.csv"):
+        if f.is_file():
+            decided |= set(pd.read_csv(f, dtype=str, keep_default_na=False)["participant_code"])
+    pending = [c for c in retakes["participant_code"] if c not in decided]
+    check("duplicates resolved", "FAIL" if not dup_sel.is_unique else "WARNING" if pending else "PASS",
           f"{len(retakes)} participants had retakes ({', '.join(retakes['participant_code'])}); exactly one take "
-          f"selected each by the documented rule (unique selections: {dup_sel.is_unique}); group confirmation pending")
+          f"selected each (unique selections: {dup_sel.is_unique}); "
+          + (f"human listening decision pending for {', '.join(pending)} (data/review/listening_review.html)"
+             if pending else "every choice confirmed by a human listening decision"))
 
     # 7. raw files preserved
     dl = pd.read_csv(DOWNLOAD_LOG, dtype=str)

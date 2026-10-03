@@ -135,7 +135,9 @@ def main() -> int:
                               "metadata_pct": 100 * m_counts[r] / m_counts.sum(), "analysis_n": int(a_counts[r]),
                               "analysis_pct": 100 * a_counts[r] / a_counts.sum()})
     axes[0].set_ylabel("participants")
-    axes[0].legend(loc="upper left")
+    # one shared legend above both panels, clear of the bars and their value labels
+    fig.legend(*axes[0].get_legend_handles_labels(), loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2,
+               frameon=False)
     viz.save(fig, FIG / "fig01_affect_distributions.png")
     dist = pd.DataFrame(dist_rows)
     dist.to_csv(OUT / "affect_distributions.csv", index=False)
