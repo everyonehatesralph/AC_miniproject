@@ -31,7 +31,7 @@ number in every report is generated from the data, and the whole run is reproduc
 
 - **Data:**
   - 40 metadata participants; 38 recordings (iPhone MOV) covering 32 participants.
-  - 8 participants have no recording, so the protocol minimum of 40 is **not met** (n = 32).
+  - 8 participants have no recording, so the protocol minimum of 40 is **not met** (n = 32); a later delivery holds trimmed 16 kHz copies for 8 of them (4 edited or damaged), which cannot count without the original recordings (reports/supplied_audio_audit.md).
   - 5 participants had retakes; one take each was chosen by the label-blind complete-word rule.
 - **Self-reports:** valence 3–5 for 30 of 32 and arousal 3–5 for 26 of 32. Valence and arousal correlate (ρ = 0.77). Only 2 participants reported unpleasant valence; not modelled (too few per class): valence_5, arousal_5, valence_3.
 - **Acoustics vs affect:** after FDR correction, 3 of 108 features are associated with arousal and 0 with valence. 6 recordings with a different audio configuration shift 20 features (a device confound).
@@ -116,6 +116,7 @@ validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning |
 | 03 | `03_prepare_audio.py` | Phases 2–5: matching, retakes, WAV conversion, naming, quality report |
 | 03b | `03b_build_listening_review.py` | the listening-review page (`data/review/listening_review.html`) |
+| 03c | `03c_audit_supplied_audio.py` | audit of audio supplied later (`reports/supplied_audio_audit.md`; never analysed) |
 | 04 | `04_extract_features.py` | Phase 6 features |
 | 05 | `05_eda.py` | Phase 7 EDA |
 | 06 | `06_train_models.py` | Phases 8–11 speaker-independent training |
@@ -134,7 +135,8 @@ These cannot be done by code. See `docs/decision_log.md` (PENDING items).
    `consent/consent_log.csv` (codes only, no names; see `consent/README.md`). Results must not be disseminated
    before this. Once the log exists, undocumented participants are excluded automatically.
 2. **Missing recordings** for Y2-053, 071, 074, 076, 077, 078, 079, 080 (if they exist), or new participants.
-   32 < 40. New participants: follow `docs/data_collection_checklist.md`; they enter the pipeline through a CSV
+   32 < 40. The CS2B_v2 delivery has only trimmed 16 kHz copies for these eight, some of them edited, so the
+   **original phone files** are still needed (`reports/supplied_audio_audit.md`). New participants: follow `docs/data_collection_checklist.md`; they enter the pipeline through a CSV
    export of the sheet and one manifest row per recording (`docs/RUNNING.md`).
 3. **Blind listening review, by at least two group members independently:** open
    `data/review/listening_review.html`. It covers every word, its boundaries, the retake choices (Y2-044, 047,

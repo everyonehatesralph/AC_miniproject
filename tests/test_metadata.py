@@ -92,13 +92,15 @@ def test_leakage_guard_rejects_non_acoustic_columns(script):
 
 
 def test_audit_ignores_listening_review_copies(script, tmp_path, monkeypatch):
-    """Audio written by the pipeline for the listening review is not supplied media (it once doubled every take)."""
+    """Pipeline-made review copies and later-delivered copies are not supplied recordings (they once doubled every take)."""
     audit = script("01_audit_data.py")
     (tmp_path / "data" / "raw").mkdir(parents=True)
     (tmp_path / "data" / "review" / "audio").mkdir(parents=True)
     (tmp_path / "data" / "raw" / "Y2-041.mov").write_bytes(b"")
     (tmp_path / "data" / "review" / "audio" / "Y2-041_t1.wav").write_bytes(b"")
-    monkeypatch.setattr(audit, "SKIP_PATHS", {tmp_path / "data" / "review"})
+    (tmp_path / "data" / "supplied_audio" / "CS2B_v2").mkdir(parents=True)
+    (tmp_path / "data" / "supplied_audio" / "CS2B_v2" / "Y2-041_Y2_PM_Kapoy.wav").write_bytes(b"")
+    monkeypatch.setattr(audit, "SKIP_PATHS", {tmp_path / "data" / "review", tmp_path / "data" / "supplied_audio"})
     assert [p.name for p in audit.find_media(tmp_path)] == ["Y2-041.mov"]
 
 

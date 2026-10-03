@@ -92,6 +92,7 @@ The run prints each step as it starts and finishes:
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning (raw values kept) | seconds |
 | 03 | `03_prepare_audio.py` | audio QA, retake choice, WAV conversion, naming, quality report | ~30 s |
 | 03b | `03b_build_listening_review.py` | builds the listening-review page | seconds |
+| 03c | `03c_audit_supplied_audio.py` | audits audio supplied later (e.g. the CS2B_v2 copies) against the originals | ~30 s |
 | 04 | `04_extract_features.py` | 108 acoustic features per participant | seconds |
 | 05 | `05_eda.py` | exploratory analysis and figures | ~1.5 min |
 | 06 | `06_train_models.py` | speaker-independent training and permutation tests | **~55–60 min** |
@@ -189,6 +190,17 @@ Only with the instructor's approval, and with the checklist (`docs/data_collecti
 3. **Consent.** Add each new code to `consent/consent_log.csv`.
 4. **Run everything:** `run_pipeline.py` (without `--skip-fetch`, so the new recordings are downloaded). Then do
    the listening review for the new participants (6.1).
+
+**Converted copies are not recordings.**
+- Files that someone converted, trimmed or cleaned (such as the `CS2B_v2` 16 kHz WAVs and their denoised
+  version) are audited by step 03c (`reports/supplied_audio_audit.md`) but never analysed. Only the original
+  phone files count.
+- To register a delivery, put its WAVs in `data/supplied_audio/<delivery name>/` (they stay out of Git) and add
+  a row to `data/supplied_audio/deliveries.csv`.
+- The audit shows, for each file:
+  - which original take it was cut from;
+  - whether it was edited (inserted silence, clipping, a cut-off word);
+  - whether its file-name word agrees with the sheet.
 
 ## 8. Running the tests
 

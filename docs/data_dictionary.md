@@ -140,6 +140,26 @@ Reports: `reports/listening_review_report.md`. `reports/listening_review_agreeme
 `listeners`, `n_items`, `percent_agreement`, `cohen_kappa`. `reports/listening_review_decisions.csv` has
 `participant_code`, `take`, `judgement`, `outcome`, `answers`, with one row per take or participant item.
 
+## 7d. Audio supplied after the originals: `data/supplied_audio/`
+
+`deliveries.csv` has one row per delivery folder: `delivery`, `source` (the file it came from), `source_sha256`,
+`outer_zip_sha256`, `received`, `n_wav`, `note`. The WAVs themselves are not in Git.
+
+The audit table, `reports/supplied_audio_audit.csv`, has one row per supplied file:
+
+| Column(s) | Meaning |
+|---|---|
+| `delivery`, `file`, `participant_code`, `file_word`, `sha256` | identity (the code and word parsed from the file name) |
+| `sample_rate`, `channels`, `subtype`, `duration_s` | format |
+| `peak_dbfs`, `clip_pct`, `longest_digital_silence_s` | level, clipping (% of samples at full scale), longest run of exact zeros |
+| `word_start_s`, `word_end_s`, `sbr_db`, `voiced_frames_in_word` | the automatically located word in the supplied file |
+| `best_original`, `best_ncc` | the most similar original take and the normalised cross-correlation (≥ 0.95 = the same recording) |
+| `cut_start_s`, `cut_end_s`, `gain` | where the file sits in that take and its amplitude ratio (blank when no original is related) |
+| `original_take_selected_by_pipeline` | whether that take is the one the pipeline selected |
+| `sheet_word`, `feeling`, `word_relation` | the sheet's word and feeling text, and how the file-name word relates to them |
+| `verdict` | `COPY_OF_ORIGINAL`, `NEW_RECORDING`, `DIFFERENT_RECORDING`, `OTHER_PARTICIPANT`, `UNCERTAIN_MATCH`, `PROCESSED_DELIVERY` |
+| `flags` | `CLIPPING`, `DIGITAL_SILENCE_INSERTED`, `WORD_CUT_AT_START`, `WORD_CUT_AT_END`, `FORMAT_DIFFERS` |
+
 ## 8. `data/acoustic_features.csv`: feature table (32 rows × 111 columns)
 
 | Column | Meaning |

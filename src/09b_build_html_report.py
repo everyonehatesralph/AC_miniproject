@@ -50,6 +50,8 @@ GUIDES = [  # pages listed on the overview under "Guides and next steps" (kept o
     ("running", "How to run it", DOCS / "RUNNING.md", "the team guide: install, run, check, troubleshoot"),
     ("listening_review", "Listening review", REPORTS / "listening_review_report.md",
      "blind listening review: agreement between listeners and the decisions used"),
+    ("supplied_audio", "Supplied audio audit", REPORTS / "supplied_audio_audit.md",
+     "audio delivered later (CS2B_v2) checked against the originals and the sheet"),
     ("collection_checklist", "Data collection checklist", DOCS / "data_collection_checklist.md",
      "one page to bring to every recording session"),
     ("analysis_plan", "Pre-registered analysis plan", DOCS / "analysis_plan_pooled_study.md",

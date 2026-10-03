@@ -70,7 +70,7 @@ In Group 3, 15 of 31 recorded words are on that list (Kapoy, Salamat, Lingaw) an
 
 Immediately after the recording, each participant described how they felt and rated valence (1 very unpleasant – 5 very pleasant) and arousal (1 very low – 5 very high). These ratings are the reference labels.
 
-Y2-076's arousal rating is struck through in the sheet and is not used. Y2-076 has no recording in any case.
+Y2-076's arousal rating is struck through in the sheet and is not used. Y2-076 has no original recording in any case.
 
 ### 4.6 Audio Processing
 
@@ -329,7 +329,7 @@ Full detail: `reports/lexical_control_analysis.md`.
 7. **Limited contextual variation:** one year level, one activity, one session; RQ2 is not answerable within Group 3.
 8. **Possible lexical influence:** 16 of 31 words are off the protocol list and words differ phonetically, so acoustic features can encode word identity.
 9. **Self-report uncertainty:** single-item ratings; 16 rows with feeling text identical to the word; 2 rows without a description; 1 struck-through rating.
-10. **Duplicates and missing observations:** 5 retake sets were resolved by the complete-word rule (pending listening confirmation); 8 participants have no recording.
+10. **Duplicates and missing observations:** 5 retake sets were resolved by the complete-word rule (pending listening confirmation); 8 participants have no recording; a later delivery holds trimmed 16 kHz copies for 8 of them (4 edited or damaged), which cannot count without the original recordings (reports/supplied_audio_audit.md). The delivery's file for Y2-075 does not match the original recording and is unexplained.
 11. **No demographic variables were collected** (the protocol allows optional variables only when approved), so speaker characteristics such as sex confound F0.
 12. **Consent documentation not supplied;** dissemination is blocked until it is verified.
 13. **Limited generalisability:** one class session, one device model; a pilot study.
@@ -362,7 +362,7 @@ They do identify concrete requirements for the consolidated study: reach the pla
 
 | Deliverable | Status | File | Evidence | Remaining issue |
 |---|---|---|---|---|
-| 1. Minimum of 40 valid participant observations | BLOCKED | data/analysis_manifest.csv | 32 valid unique participants; 8 metadata participants have no recording | needs 8 more valid observations: recordings for Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080 (if they exist) or new consented participants |
+| 1. Minimum of 40 valid participant observations | BLOCKED | data/analysis_manifest.csv | 32 valid unique participants; 8 metadata participants have no recording | needs 8 more valid observations: recordings for Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080 (if they exist) or new consented participants; a later delivery holds trimmed 16 kHz copies for 8 of them (4 edited or damaged), which cannot count without the original recordings (reports/supplied_audio_audit.md) |
 | 2. Required consent documentation | BLOCKED | consent/consent_log.csv | sheet records consent 'Y' for 40/40; consent log not supplied | fill consent/consent_log_TEMPLATE.csv (codes only, no names), save as consent_log.csv; keep signed forms outside the dataset |
 | 3. Properly coded research metadata | COMPLETE | data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv | 40 rows; raw kept beside cleaned; 244 logged changes (rules R1–R8) | confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings |
 | 4. Properly named audio recordings | COMPLETE | data/processed_audio/recordings/, file_mapping.csv | 32 WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all 38 originals | Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption |
@@ -389,6 +389,7 @@ See `docs/decision_log.md` (items marked PENDING):
 - 'Lecture' → 'Lecture/Discussion';
 - the `PM` token;
 - consent documentation;
+- the supplied audio delivery: original recordings for Y2-053, Y2-071, Y2-074, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080, and an explanation for Y2-075 (`reports/supplied_audio_audit.md`);
 - the blind listening review (utterance boundaries, retakes, Y2-073's word): `data/review/listening_review.html`, results in `reports/listening_review_report.md`.
 
 ### D. Reproduction

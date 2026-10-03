@@ -32,6 +32,7 @@ STEPS = [
     ("02", "02_clean_metadata.py", "Phase 1: metadata cleaning"),
     ("03", "03_prepare_audio.py", "Phases 2-5: matching, duplicates, WAV conversion, naming, quality report"),
     ("03b", "03b_build_listening_review.py", "listening-review page (data/review/listening_review.html)"),
+    ("03c", "03c_audit_supplied_audio.py", "audit of audio supplied later (reports/supplied_audio_audit.md)"),
     ("04", "04_extract_features.py", "Phase 6: acoustic features"),
     ("05", "05_eda.py", "Phase 7: exploratory analysis"),
     ("06", "06_train_models.py", "Phases 8-11: speaker-independent training"),
@@ -47,7 +48,7 @@ STEPS = [
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--skip-fetch", action="store_true", help="do not contact Google Drive")
-    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 04 ... 09, 09b, 09c, 10")
+    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10")
     ap.add_argument("--quick", action="store_true", help="smoke test: fewer CV repeats/permutations in step 06")
     args = ap.parse_args()
     t_all = time.time()

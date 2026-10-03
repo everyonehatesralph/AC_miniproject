@@ -135,6 +135,16 @@ def main() -> int:
                                                               sel_qa["segmentation_source"])
                               if source.startswith("human") or (code, take) in confirmed))
     words_from_review = meta.loc[meta["spoken_word_source"] == "listening_review", "participant_code"].tolist()
+    # audio supplied after the original recordings (03c audit): never analysed, but reported
+    supplied_csv = REPORTS / "supplied_audio_audit.csv"
+    supplied = (pd.read_csv(supplied_csv, dtype=str, keep_default_na=False, encoding="utf-8-sig") if supplied_csv.is_file()
+                else pd.DataFrame(columns=["delivery", "participant_code", "verdict", "flags"]))
+    supplied_new = supplied[supplied["verdict"] == "NEW_RECORDING"]
+    supplied_edited = supplied_new[supplied_new["flags"] != ""]
+    supplied_odd = supplied[supplied["verdict"].isin(["DIFFERENT_RECORDING", "OTHER_PARTICIPANT", "UNCERTAIN_MATCH"])]
+    supplied_note = (f"a later delivery holds trimmed 16 kHz copies for {len(supplied_new)} of them "
+                     f"({len(supplied_edited)} edited or damaged), which cannot count without the original recordings "
+                     "(reports/supplied_audio_audit.md)" if len(supplied_new) else "")
     bounds_text = (f"boundaries verified by listening for {bounds_verified} of {n} selected recordings"
                    if bounds_verified else "segment boundaries not yet verified by listening")
     retake_text = ("all confirmed by human listening" if takes_human == len(retakes) else
@@ -231,7 +241,8 @@ def main() -> int:
     status = [
         ("1. Minimum of 40 valid participant observations", "BLOCKED" if n < MIN_VALID_OBSERVATIONS else "COMPLETE",
          "data/analysis_manifest.csv", f"{n} valid unique participants; {len(missing_rec)} metadata participants have no recording",
-         f"needs {max(0, MIN_VALID_OBSERVATIONS - n)} more valid observations: recordings for {', '.join(missing_rec)} (if they exist) or new consented participants"),
+         f"needs {max(0, MIN_VALID_OBSERVATIONS - n)} more valid observations: recordings for {', '.join(missing_rec)} (if they exist) or new consented participants"
+         + (f"; {supplied_note}" if supplied_note else "")),
         ("2. Required consent documentation", consent_status, "consent/consent_log.csv", consent_evidence,
          consent_issue),
         ("3. Properly coded research metadata", "COMPLETE", "data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv",
@@ -377,8 +388,9 @@ def main() -> int:
         "unpleasant – 5 very pleasant) and arousal (1 very low – 5 very high). These ratings are the reference "
         "labels.",
         "",
-        "Y2-076's arousal rating is struck through in the sheet and is not used. Y2-076 has no recording in any "
-        "case.",
+        "Y2-076's arousal rating is struck through in the sheet and is not used. "
+        + ("Y2-076 has no original recording in any case." if "Y2-076" in missing_rec else
+           "Y2-076 can therefore enter only the valence analyses."),
         "",
         "### 4.6 Audio Processing",
         "",
@@ -629,7 +641,10 @@ def main() -> int:
         f"9. **Self-report uncertainty:** single-item ratings; {n_feel_eq} rows with feeling text identical to the "
         f"word; {n_feel_missing} rows without a description; {n_struck} struck-through rating{'' if n_struck == 1 else 's'}.",
         f"10. **Duplicates and missing observations:** {len(retakes)} retake sets were resolved by the complete-word "
-        f"rule ({retake_text}); {len(missing_rec)} participants have no recording.",
+        f"rule ({retake_text}); {len(missing_rec)} participants have no recording"
+        + (f"; {supplied_note}" if supplied_note else "") + "."
+        + (f" The delivery's file for {', '.join(supplied_odd['participant_code'])} does not match the original "
+           "recording and is unexplained." if len(supplied_odd) else ""),
         "11. **No demographic variables were collected** (the protocol allows optional variables only when approved), "
         "so speaker characteristics such as sex confound F0.",
         ("12. **Consent documentation not supplied;** dissemination is blocked until it is verified."
@@ -686,6 +701,9 @@ def main() -> int:
         "- 'Lecture' → 'Lecture/Discussion';",
         "- the `PM` token;",
         "- consent documentation;",
+        *([f"- the supplied audio delivery: original recordings for {', '.join(supplied_new['participant_code'])}"
+           + (f", and an explanation for {', '.join(supplied_odd['participant_code'])}" if len(supplied_odd) else "")
+           + " (`reports/supplied_audio_audit.md`);"] if len(supplied_new) or len(supplied_odd) else []),
         *([] if bounds_verified == n and "Y2-073" in words_from_review else
           ["- the blind listening review (utterance boundaries, retakes, Y2-073's word): "
            "`data/review/listening_review.html`, results in `reports/listening_review_report.md`."]),
@@ -711,7 +729,8 @@ def main() -> int:
         f"  - {n_meta} metadata participants; {dq['total_files']} recordings (iPhone MOV) covering "
         f"{dq['participants_with_recordings']} participants.",
         f"  - {len(missing_rec)} participants have no recording, so the protocol minimum of "
-        f"{MIN_VALID_OBSERVATIONS} is **{'met' if n >= MIN_VALID_OBSERVATIONS else 'not met'}** (n = {n}).",
+        f"{MIN_VALID_OBSERVATIONS} is **{'met' if n >= MIN_VALID_OBSERVATIONS else 'not met'}** (n = {n})"
+        + (f"; {supplied_note}" if supplied_note else "") + ".",
         f"  - {len(retakes)} participants had retakes; one take each was chosen by the label-blind complete-word "
         "rule.",
         f"- **Self-reports:** valence 3–5 for {v35} of {n} and arousal 3–5 for {a35} of {n}. Valence and arousal "

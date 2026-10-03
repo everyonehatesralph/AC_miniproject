@@ -201,6 +201,10 @@ def main() -> int:
     sp = pd.read_csv(REPORTS / "eda" / "spearman_feature_vs_rating.csv")
 
     n_meta, n = len(meta), int((manifest["include_primary"] == "True").sum())
+    supplied_csv = REPORTS / "supplied_audio_audit.csv"
+    supplied = (pd.read_csv(supplied_csv, dtype=str, keep_default_na=False, encoding="utf-8-sig") if supplied_csv.is_file()
+                else pd.DataFrame(columns=["verdict", "flags", "participant_code"]))
+    supplied_new = supplied[supplied["verdict"] == "NEW_RECORDING"]
     n_recorded = dq["participants_with_recordings"]
     retakes = dq["retake_participants"]
     extra_takes = dq["total_files"] - n_recorded
@@ -267,6 +271,9 @@ def main() -> int:
     text_box(s, MARGIN, 3.85, W - 2 * MARGIN, 3.0, [
         (f"{n_meta - n_recorded} participants have no recording; {len(retakes)} were recorded more than once "
          f"({extra_takes} extra takes): one take each was chosen by a label-blind complete-word rule", 1),
+        *([(f"A later delivery has trimmed 16 kHz copies for {len(supplied_new)} of them, "
+             f"{int((supplied_new['flags'] != '').sum())} edited or damaged: not counted until the originals are supplied", 2)]
+          if len(supplied_new) else []),
         (f"{missing_words} spoken words are missing from the sheet; the word is never guessed from the feeling text", 1),
         (f"Background voices in {flags.get('BACKGROUND_VOICES', 0)} of {n} selected recordings; "
          f"{flags.get('RECORDING_CONFIG_DIFFERS', 0)} used a different recording setting", 1),

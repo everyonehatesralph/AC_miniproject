@@ -57,7 +57,8 @@ SECTION_XI_FIELDS = ("code", "year", "activity", "session", "word", "feeling", "
 RATING_RE = re.compile(r"^\s*(\d+)\s*(?:[‐-―−-]\s*(.*?))?\s*$")
 YEAR_RE = re.compile(r"(?i)^\s*([1-4])\s*(?:st|nd|rd|th)\s*year\s*$")
 SKIP_DIRS = {".venv", ".git", "__pycache__", "node_modules", "processed_audio"}
-SKIP_PATHS = {PROJECT_ROOT / "data" / "review"}  # listening-review copies made by step 03: not supplied media
+SKIP_PATHS = {PROJECT_ROOT / "data" / "review",          # listening-review copies made by step 03
+              PROJECT_ROOT / "data" / "supplied_audio"}  # converted copies delivered later (audited by 03c)
 SEVERITY = {
     "BLOCKER": "observation/deliverable cannot count as valid until resolved",
     "MAJOR": "blocks a required deliverable or analysis step (naming, lexical analysis, protocol compliance)",
