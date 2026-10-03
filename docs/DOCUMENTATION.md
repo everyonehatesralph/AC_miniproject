@@ -60,6 +60,7 @@ data/
   analysis_manifest.csv         one row per participant: included or excluded, and why
   acoustic_features.csv         32 x 108 feature table (participant_code = identifier only)
   acoustic_features_dictionary.csv
+  acoustic_features_with_labels.csv   the same rows with the labels in front (for reading; never a model input)
 src/                            pipeline scripts (section 4) + common.py (constants) + viz.py (figure style)
 models/                         CV predictions, fold scores, splits, permutation tests, final fitted models
 figures/  qa/ eda/ evaluation/ lexical/

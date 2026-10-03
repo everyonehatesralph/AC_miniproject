@@ -4,7 +4,7 @@ Deliverable,Status,File,Evidence,Remaining issue
 3. Properly coded research metadata,COMPLETE,"data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv",40 rows; raw kept beside cleaned; 244 logged changes (rules R1–R8),"confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings"
 4. Properly named audio recordings,COMPLETE,"data/processed_audio/recordings/, file_mapping.csv",32 WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all 38 originals,Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption
 5. Data quality report,COMPLETE,reports/data_quality_report.md,38 recordings assessed; 30 selected takes with ≥1 flag,"segment boundaries not yet verified by listening (blind listening review, data/review/listening_review.html)"
-6. Extracted acoustic feature dataset,COMPLETE,data/acoustic_features.csv,"32 × 108 features, no missing values",—
+6. Extracted acoustic feature dataset,COMPLETE,"data/acoustic_features.csv, data/acoustic_features_with_labels.csv","32 × 108 features, no missing values",—
 7. Exploratory analysis,COMPLETE,reports/exploratory_analysis.md,"affect distributions, feature–affect statistics, confound analysis",context × affect (RQ2) not analysable within Group 3 (constant variables)
 8. Machine learning experiment,COMPLETE,"models/, src/06_train_models.py","3 viable tasks × 5 models, 10× repeated nested speaker-independent CV","tasks not modelled (sparse classes): valence_5, arousal_5, valence_3"
 9. Model evaluation,COMPLETE,reports/model_evaluation.md,"BA, macro-P/R/F1, accuracy, per-class, confusion matrices, bootstrap CIs, permutation tests, corrected t-tests",—

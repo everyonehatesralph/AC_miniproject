@@ -3,8 +3,10 @@
 
 Input   data/analysis_manifest.csv (include_primary rows) and their segment WAVs
         (data/processed_audio/segments/*.wav: PCM 16-bit, mono, 16 kHz)
-Output  data/acoustic_features.csv               participant_code + 108 numeric features
+Output  data/acoustic_features.csv               participant_code + 108 numeric features (what the models read)
         data/acoustic_features_dictionary.csv    name, group, unit, definition
+        data/acoustic_features_with_labels.csv   the same rows with the participant's labels in front (for
+                                                 reading and submission; never a model input as a whole)
         reports/features_summary.json
 
 Features (Protocol Section XIV; frames 25 ms / hop 10 ms, Hann window, uncentred so that
@@ -35,11 +37,14 @@ import numpy as np
 import pandas as pd
 import soundfile as sf
 
-from common import (DATA, FEATURES_CSV, FRAME_S, HOP_S, N_FFT, PITCH, PROJECT_ROOT, REPORTS, TARGET_SR, praat_pitch,
-                    rel, setup_logging, sha256_of)
+from common import (CLEAN_METADATA_CSV, DATA, FEATURES_CSV, FRAME_S, HOP_S, N_FFT, PITCH, PROJECT_ROOT, REPORTS,
+                    TARGET_SR, TARGETS, TASK_ROLE, derive_target, praat_pitch, rel, setup_logging, sha256_of)
 
 MANIFEST = DATA / "analysis_manifest.csv"
 DICTIONARY = DATA / "acoustic_features_dictionary.csv"
+LABELLED = DATA / "acoustic_features_with_labels.csv"
+LABEL_COLS = ["year_level", "session", "class_activity_protocol", "spoken_word", "spoken_word_source",
+              "self_reported_feeling", "valence", "valence_status", "arousal", "arousal_status"]
 N_MFCC = 13
 N_MELS = 40
 MIN_VOICED_FOR_F0 = 3
@@ -162,6 +167,16 @@ def main() -> int:
         raise ValueError("non-finite value in a non-F0 feature")
     df.to_csv(FEATURES_CSV, index=False, float_format="%.6g")
     dictionary(feature_cols).to_csv(DICTIONARY, index=False)
+    # the same rows with the labels in front, for people to read; 06 trains on FEATURES_CSV and refuses any
+    # non-acoustic column, so this combined file can never leak a label into a model
+    meta = pd.read_csv(CLEAN_METADATA_CSV, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+    labels = meta[["participant_code", *LABEL_COLS]].copy()
+    for task in (t for t, role in TASK_ROLE.items() if role in ("primary", "secondary")):
+        labels[f"derived_{task}"] = derive_target(pd.to_numeric(labels[TARGETS[task]["source"]], errors="coerce"), task)
+    flags = included.set_index("participant_code")["selected_flags"].rename("recording_flags")
+    labelled = labels.merge(flags, left_on="participant_code", right_index=True, how="inner")
+    labelled = labelled.merge(df, on="participant_code", how="right", validate="one_to_one")
+    labelled.to_csv(LABELLED, index=False, float_format="%.6g")
     summary = {
         "rows": int(len(df)), "n_features": len(feature_cols),
         "features_by_group": dictionary(feature_cols)["group"].value_counts().to_dict(),

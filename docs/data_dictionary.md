@@ -176,6 +176,23 @@ DOCUMENTATION.md §5.8. Naming pattern:
 - `mfcc_{1..13}_{mean,std}`, `delta_mfcc_{1..13}_{mean,std}`, `delta2_mfcc_{1..13}_{mean,std}`
 - `spectral_{centroid,bandwidth,rolloff}_hz_{mean,std}`
 
+## 8b. `data/acoustic_features_with_labels.csv`: features with labels (32 rows × 125 columns)
+
+The rows and the 108 feature columns of `acoustic_features.csv`, unchanged, with the participant's labels in front,
+so that one file can be read and submitted. The models never read this file as a whole: step 06 trains on
+`acoustic_features.csv` and refuses any non-acoustic column.
+
+| Column(s) | Meaning |
+|---|---|
+| `participant_code` | identifier only |
+| `year_level`, `session`, `class_activity_protocol` | context (constant within Group 3) |
+| `spoken_word`, `spoken_word_source` | the word from the sheet and where it came from (blank = not recorded; never inferred) |
+| `self_reported_feeling` | the participant's own description |
+| `valence`, `valence_status`, `arousal`, `arousal_status` | the participant's 1–5 ratings and their status |
+| `derived_arousal_3`, `derived_valence_2`, `derived_arousal_2` | **derived** groupings of the participant's own ratings (`common.TARGETS`), not collected variables |
+| `recording_flags` | QA flags of the selected take |
+| `segment_file`, `segment_sha256`, then the 108 features | exactly as in `acoustic_features.csv` |
+
 ## 9. Model outputs: `models/`
 
 | File | Columns |

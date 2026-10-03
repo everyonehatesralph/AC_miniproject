@@ -56,7 +56,7 @@ number in every report is generated from the data, and the whole run is reproduc
 | 3 | Coded research metadata | `data/metadata_cleaned.csv`, `reports/phase1/cleaning_log.csv` |
 | 4 | Properly named audio recordings | `data/processed_audio/recordings/`, `data/processed_audio/file_mapping.csv` |
 | 5 | Data quality report | `reports/data_quality_report.md`, `reports/audio_quality_table.csv` |
-| 6 | Acoustic feature dataset | `data/acoustic_features.csv`, `data/acoustic_features_dictionary.csv` |
+| 6 | Acoustic feature dataset | `data/acoustic_features.csv` (features only), `data/acoustic_features_with_labels.csv` (with labels), `data/acoustic_features_dictionary.csv` |
 | 7 | Exploratory analysis | `reports/exploratory_analysis.md`, `figures/eda/` |
 | 8 | Machine learning experiment | `src/06_train_models.py`, `models/` |
 | 9 | Model evaluation | `reports/model_evaluation.md`, `figures/evaluation/` |
