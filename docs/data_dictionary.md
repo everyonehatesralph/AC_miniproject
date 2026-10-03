@@ -142,7 +142,7 @@ Reports: `reports/listening_review_report.md`. `reports/listening_review_agreeme
 
 ## 7d. Audio supplied after the originals: `data/supplied_audio/`
 
-`deliveries.csv` has one row per delivery folder: `delivery`, `source` (the file it came from), `source_sha256`,
+`deliveries.csv` has one row per delivery: `delivery`, `kept` (`no` = received but deliberately not kept, e.g. the denoised CS2B_v2 copies), `source` (the file it came from), `source_sha256`,
 `outer_zip_sha256`, `received`, `n_wav`, `note`. The WAVs themselves are not in Git.
 
 The audit table, `reports/supplied_audio_audit.csv`, has one row per supplied file:

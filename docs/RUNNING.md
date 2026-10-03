@@ -192,11 +192,11 @@ Only with the instructor's approval, and with the checklist (`docs/data_collecti
    the listening review for the new participants (6.1).
 
 **Converted copies are not recordings.**
-- Files that someone converted, trimmed or cleaned (such as the `CS2B_v2` 16 kHz WAVs and their denoised
-  version) are audited by step 03c (`reports/supplied_audio_audit.md`) but never analysed. Only the original
-  phone files count.
+- Files that someone converted or trimmed (such as the `CS2B_v2` 16 kHz WAVs) are audited by step 03c
+  (`reports/supplied_audio_audit.md`) but never analysed. Only the original phone files count.
+- Denoised or otherwise cleaned versions are not kept at all; the protocol forbids denoising.
 - To register a delivery, put its WAVs in `data/supplied_audio/<delivery name>/` (they stay out of Git) and add
-  a row to `data/supplied_audio/deliveries.csv`.
+  a row to `data/supplied_audio/deliveries.csv` (`kept = yes`).
 - The audit shows, for each file:
   - which original take it was cut from;
   - whether it was edited (inserted silence, clipping, a cut-off word);

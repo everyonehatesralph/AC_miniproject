@@ -441,11 +441,11 @@ recordings are never needed.
 
 ### 5.17 Audio supplied after the originals (step 03c)
 
-A delivery of converted files (for example `CS2B_v2`: 40 WAVs at 16 kHz, plus a denoised version) is
+A delivery of converted files (for example `CS2B_v2`: 40 WAVs at 16 kHz; its denoised version was not kept) is
 **audited, never analysed**. An observation needs an original, unedited recording (protocol §X), and such
 copies lose the capture metadata, the native-format QA and, when trimmed, the context the word locator needs.
 
-Each delivery is a folder in `data/supplied_audio/`, listed with its source and SHA-256 in `deliveries.csv`.
+Each delivery is a folder in `data/supplied_audio/`, listed with its source and SHA-256 in `deliveries.csv`. A delivery received but deliberately not kept (`kept = no`, such as a denoised one) stays listed and is not audited.
 For every file, `src/03c_audit_supplied_audio.py` checks:
 
 | Check | How |

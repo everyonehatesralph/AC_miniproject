@@ -1,3 +1,3 @@
-delivery,source,source_sha256,outer_zip_sha256,received,n_wav,note
-CS2B_v2_wav_16k_denoised,files.zip > CS2B_v2_wav_16k_denoised.zip,7c48bd082beb968d4664e2e4cf40c2fe7be7d790e528c3a75d08513a8d413664,b99786e37daf18cf1f9bb4902098df885cb2a356bcc16baaec021054f446f3a5,2026-10-03,40,"denoised by the supplier: processed audio, never used (protocol section X)"
-CS2B_v2_wav_16k,files.zip > CS2B_v2_wav_16k.zip,2da58be1ff54aa40ee26b72f09fbdb931b05101e85fda88b337b63606168702d,b99786e37daf18cf1f9bb4902098df885cb2a356bcc16baaec021054f446f3a5,2026-10-03,40,16 kHz WAV copies made by the supplier; audited by src/03c_audit_supplied_audio.py
+delivery,kept,source,source_sha256,outer_zip_sha256,received,n_wav,note
+CS2B_v2_wav_16k_denoised,no,files.zip > CS2B_v2_wav_16k_denoised.zip,7c48bd082beb968d4664e2e4cf40c2fe7be7d790e528c3a75d08513a8d413664,b99786e37daf18cf1f9bb4902098df885cb2a356bcc16baaec021054f446f3a5,2026-10-03,40,"denoised by the supplier: processed audio, not kept in the project (protocol section X forbids denoising); still in the original zip"
+CS2B_v2_wav_16k,yes,files.zip > CS2B_v2_wav_16k.zip,2da58be1ff54aa40ee26b72f09fbdb931b05101e85fda88b337b63606168702d,b99786e37daf18cf1f9bb4902098df885cb2a356bcc16baaec021054f446f3a5,2026-10-03,40,16 kHz WAV copies made by the supplier; audited by src/03c_audit_supplied_audio.py
