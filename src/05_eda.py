@@ -29,8 +29,8 @@ from scipy import stats
 
 import viz
 from viz import plt
-from common import (CLEAN_METADATA_CSV, DATA, FEATURES_CSV, FIGURES, MIN_CLASS_SIZE, PROTOCOL_WORDS, RANDOM_STATE,
-                    REPORTS, TARGETS, derive_target, rel, setup_logging)
+from common import (AROUSAL_LABELS, CLEAN_METADATA_CSV, DATA, FEATURES_CSV, FIGURES, LOW_SBR_DB, MIN_CLASS_SIZE,
+                    PROTOCOL_WORDS, RANDOM_STATE, REPORTS, TARGETS, VALENCE_LABELS, derive_target, rel, setup_logging)
 
 FIG = FIGURES / "eda"
 OUT = REPORTS / "eda"
@@ -89,6 +89,29 @@ def strip_by_class(ax, values, classes, order, title, ylabel):
     ax.set_title(title, fontsize=9)
     ax.set_ylabel(ylabel, fontsize=8)
     ax.grid(axis="x", visible=False)
+
+
+def dot_rows(ax, groups: list[str], values: dict[str, np.ndarray], discrete: bool) -> None:
+    """One row per group, one dot per participant, a black tick at the group median.
+    Discrete values (1-5 ratings) are spread sideways inside their cell; continuous ones slightly up/down."""
+    for yi, g in enumerate(groups):
+        v = np.asarray(values[g], dtype=float)
+        v = v[~np.isnan(v)]
+        if not len(v):
+            continue
+        if discrete:
+            xs, ys = [], []
+            for r in np.unique(v):
+                k = int((v == r).sum())
+                xs += list(r + (np.arange(k) - (k - 1) / 2) * 0.09)
+                ys += [yi] * k
+        else:
+            xs, ys = v, yi + (np.linspace(-0.22, 0.22, len(v)) if len(v) > 1 else np.zeros(1))
+        ax.scatter(xs, ys, s=28, color=viz.SERIES[0], edgecolor=viz.SURFACE, linewidth=1, zorder=3)
+        ax.scatter(np.median(v), yi, marker="|", s=320, color=viz.INK, linewidths=1.8, zorder=4)
+    ax.set_yticks(range(len(groups)), groups)
+    ax.set_ylim(-0.7, len(groups) - 0.3)
+    ax.grid(axis="y", visible=False)
 
 
 def main() -> int:
@@ -229,6 +252,24 @@ def main() -> int:
         .sort_values("n", ascending=False).reset_index())
     word_affect["on_protocol_list"] = word_affect["spoken_word"].str.casefold().isin(on_list)
     word_affect.to_csv(OUT / "spoken_word_affect.csv", index=False)
+    from matplotlib.lines import Line2D
+    wm = meta[meta["spoken_word"] != ""]
+    word_rows = wm["spoken_word"].value_counts().sort_values(kind="stable").index.tolist()  # most frequent on top
+    fig, axes = plt.subplots(1, 2, figsize=(10.5, 0.34 * len(word_rows) + 1.6), sharey=True)
+    for ax, key, labels in zip(axes, ("valence", "arousal"), (VALENCE_LABELS, AROUSAL_LABELS)):
+        dot_rows(ax, word_rows, {w: wm.loc[wm["spoken_word"] == w, key].to_numpy() for w in word_rows}, discrete=True)
+        ax.set_xticks(range(1, 6), [f"{i}\n{labels[i].lower()}" if i in (1, 3, 5) else str(i) for i in range(1, 6)],
+                      fontsize=7.5)
+        ax.set_xlim(0.5, 5.5)
+        ax.set_title(f"Self-reported {key}")
+    axes[0].set_yticks(range(len(word_rows)), [f"{w}  (n = {int((wm['spoken_word'] == w).sum())})" for w in word_rows])
+    axes[0].legend(handles=[Line2D([], [], marker="o", ls="", color=viz.SERIES[0], label="one participant"),
+                            Line2D([], [], marker="|", ls="", color=viz.INK, markersize=13, markeredgewidth=1.8,
+                                   label="median of the word")], loc="lower left")  # empty corner: no data there
+    fig.suptitle(f"Ratings by spoken word (metadata rows with a word, n = {len(wm)}); descriptive only, the lexical "
+                 "control tests word effects", x=0.01, ha="left", fontsize=10, fontweight="semibold")
+    fig.tight_layout()
+    viz.save(fig, FIG / "fig12_valence_arousal_by_word.png")
 
     # ---- acoustic feature distributions and correlations ----------------------------------
     fig, axes = plt.subplots(3, 4, figsize=(12, 7.2))
@@ -251,6 +292,22 @@ def main() -> int:
     cb.set_label("Spearman ρ")
     ax.set_title(f"Correlation among duration, F0, energy, ZCR and spectral features (n = {n})")
     viz.save(fig, FIG / "fig07_feature_correlation_matrix.png")
+    a3 = TARGETS["arousal_3"]["order"]
+    from matplotlib.lines import Line2D
+    for feat, fname, label in (("f0_mean", "fig14_mean_f0_by_participant.png", "F0 mean over voiced frames (Hz)"),
+                               ("rms_db_mean", "fig15_mean_rms_by_participant.png", "RMS level mean (dBFS)")):
+        d = data[["participant_code", feat, "arousal_3"]].sort_values(feat, kind="stable").reset_index(drop=True)
+        fig, ax = plt.subplots(figsize=(7.4, 0.22 * len(d) + 1.5))
+        colors = [viz.SERIES[a3.index(c)] if c in a3 else viz.MUTED for c in d["arousal_3"]]
+        ax.scatter(d[feat], range(len(d)), s=40, color=colors, edgecolor=viz.SURFACE, linewidth=1, zorder=3)
+        ax.set_yticks(range(len(d)), d["participant_code"], fontsize=7)
+        ax.set_ylim(-0.8, len(d) - 0.2)
+        ax.grid(axis="y", visible=False)
+        ax.set_xlabel(label)
+        ax.legend(handles=[Line2D([], [], marker="o", ls="", color=viz.SERIES[i], label=f"arousal {c.lower()}")
+                           for i, c in enumerate(a3)], loc="lower right", title="derived from the rating")
+        ax.set_title(f"{label.split(' (')[0]} by participant (n = {len(d)}), lowest to highest")
+        viz.save(fig, FIG / fname)
     high_corr = [(a, b, float(corr.loc[a, b])) for i, a in enumerate(prosodic) for b in prosodic[i + 1:]
                  if abs(corr.loc[a, b]) >= 0.9]
 
@@ -341,6 +398,18 @@ def main() -> int:
             test = "permutation chi-square (20,000)"
         assoc[t] = {"table": {r: tab.loc[r].to_dict() for r in tab.index}, "test": test, "p_value": float(p)}
     sbr = {key: [float(v) for v in stats.spearmanr(data["sbr_db"], data[key])] for key in ("valence", "arousal")}
+    sw = data.assign(word=data["spoken_word"].replace("", "(not recorded)"))
+    sbr_rows = sw["word"].value_counts().sort_values(kind="stable").index.tolist()
+    fig, ax = plt.subplots(figsize=(7.4, 0.34 * len(sbr_rows) + 1.5))
+    dot_rows(ax, sbr_rows, {w: sw.loc[sw["word"] == w, "sbr_db"].to_numpy() for w in sbr_rows}, discrete=False)
+    ax.set_yticks(range(len(sbr_rows)), [f"{w}  (n = {int((sw['word'] == w).sum())})" for w in sbr_rows])
+    ax.axvline(LOW_SBR_DB, color=viz.INK_2, lw=1)
+    ax.text(LOW_SBR_DB, -0.62, f" LOW_SBR below {LOW_SBR_DB:g} dB", color=viz.INK_2, fontsize=7.5, va="bottom")
+    ax.set_xlabel("utterance-to-background ratio (dB)")
+    ax.set_title(f"Recording noise by spoken word (selected takes, n = {len(sw)}); black tick = median")
+    viz.save(fig, FIG / "fig13_sbr_by_word.png")
+    kw_groups = [g["sbr_db"].to_numpy() for _, g in sw[sw["word"] != "(not recorded)"].groupby("word") if len(g) >= 2]
+    kw = stats.kruskal(*kw_groups) if len(kw_groups) >= 2 else None
 
     # ---- summary + report ---------------------------------------------------------------------
     sig_counts = {key: int((sp[(sp["rating"] == key)]["q_value_bh"] < 0.05).sum()) for key in ("valence", "arousal")}
@@ -350,6 +419,8 @@ def main() -> int:
             ["feature", "spearman_rho", "p_value", "q_value_bh"]].to_dict("records") for key in ("valence", "arousal")},
         "config_effect_features_fdr05": int((mw["q_value_bh"] < 0.05).sum()),
         "config_label_association": assoc, "sbr_vs_rating_spearman": sbr,
+        "sbr_by_word_kruskal": ({"H": float(kw.statistic), "p_value": float(kw.pvalue), "n_words": len(kw_groups)}
+                                if kw is not None else None),
         "derived_targets": target_rows, "context": ctx, "n_prosodic_pairs_abs_rho_ge_0_9": len(high_corr),
     })
     (OUT / "eda_summary.json").write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
@@ -408,6 +479,11 @@ def main() -> int:
         f"{', '.join(f'{w} ({c})' for w, c in words.items() if c >= 8) or 'none'}; every other word occurs at most "
         f"{int(words[words < 8].max())} times (see `reports/lexical_control_analysis.md`).",
         "",
+        "![ratings by word](../figures/eda/fig12_valence_arousal_by_word.png)",
+        "",
+        "Each dot is one participant; the black tick is the word's median. With so few participants per word, "
+        "differences between words are descriptive here; the lexical-control analysis tests them.",
+        "",
         "![feelings](../figures/eda/fig05_self_reported_feeling_frequency.png)",
         "",
         "## 5. Acoustic features",
@@ -418,6 +494,13 @@ def main() -> int:
         "",
         f"{len(high_corr)} pairs of duration/F0/energy/ZCR/spectral features have |ρ| ≥ 0.9; the feature set is "
         "partly redundant. That is one reason models use regularisation.",
+        "",
+        "![F0 by participant](../figures/eda/fig14_mean_f0_by_participant.png)",
+        "",
+        "![RMS by participant](../figures/eda/fig15_mean_rms_by_participant.png)",
+        "",
+        "Per-participant F0 mostly reflects voice type (for example sex), and the RMS level depends on the distance "
+        "to the phone and on the device setting. Colours show the derived arousal class, for orientation only.",
         "",
         "## 6. Acoustic features vs self-reported affect (RQ3)",
         "",
@@ -463,6 +546,13 @@ def main() -> int:
         "",
         f"Utterance-to-background ratio vs ratings (Spearman): valence ρ = {sbr['valence'][0]:.2f} "
         f"(p = {sbr['valence'][1]:.3g}); arousal ρ = {sbr['arousal'][0]:.2f} (p = {sbr['arousal'][1]:.3g}).",
+        "",
+        "![noise by word](../figures/eda/fig13_sbr_by_word.png)",
+        "",
+        (f"Across the {len(kw_groups)} words with at least two recordings, the utterance-to-background ratio "
+         + ("differs between words" if kw.pvalue < 0.05 else "does not differ significantly between words")
+         + f" (Kruskal–Wallis H = {kw.statistic:.2f}, p = {kw.pvalue:.3f})."
+         if kw is not None else "Too few words have two or more recordings to compare recording noise between words."),
         "",
         "Any acoustic feature that separates the configurations can produce a spurious affect association "
         "whenever configuration and labels are unevenly distributed. The model evaluation therefore includes a "

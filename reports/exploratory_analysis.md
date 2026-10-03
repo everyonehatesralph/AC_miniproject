@@ -72,6 +72,10 @@ Year level, class activity and session each take **one value** for every Group 3
 
 Words with ≥ 8 occurrences (needed for a within-word comparison): Kapoy (10); every other word occurs at most 3 times (see `reports/lexical_control_analysis.md`).
 
+![ratings by word](../figures/eda/fig12_valence_arousal_by_word.png)
+
+Each dot is one participant; the black tick is the word's median. With so few participants per word, differences between words are descriptive here; the lexical-control analysis tests them.
+
 ![feelings](../figures/eda/fig05_self_reported_feeling_frequency.png)
 
 ## 5. Acoustic features
@@ -81,6 +85,12 @@ Words with ≥ 8 occurrences (needed for a within-word comparison): Kapoy (10); 
 ![correlations](../figures/eda/fig07_feature_correlation_matrix.png)
 
 6 pairs of duration/F0/energy/ZCR/spectral features have |ρ| ≥ 0.9; the feature set is partly redundant. That is one reason models use regularisation.
+
+![F0 by participant](../figures/eda/fig14_mean_f0_by_participant.png)
+
+![RMS by participant](../figures/eda/fig15_mean_rms_by_participant.png)
+
+Per-participant F0 mostly reflects voice type (for example sex), and the RMS level depends on the distance to the phone and on the device setting. Colours show the derived arousal class, for orientation only.
 
 ## 6. Acoustic features vs self-reported affect (RQ3)
 
@@ -154,5 +164,9 @@ Association of configuration with the labels:
 | arousal_3 | permutation chi-square (20,000) | 0.512 | A: mono: {'High': 12, 'Low': 4, 'Moderate': 10}; B: stereo + 2nd track: {'High': 1, 'Low': 2, 'Moderate': 3} |
 
 Utterance-to-background ratio vs ratings (Spearman): valence ρ = 0.11 (p = 0.564); arousal ρ = 0.12 (p = 0.53).
+
+![noise by word](../figures/eda/fig13_sbr_by_word.png)
+
+Across the 7 words with at least two recordings, the utterance-to-background ratio does not differ significantly between words (Kruskal–Wallis H = 11.03, p = 0.087).
 
 Any acoustic feature that separates the configurations can produce a spurious affect association whenever configuration and labels are unevenly distributed. The model evaluation therefore includes a sensitivity analysis without config-B recordings.

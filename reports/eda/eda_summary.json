@@ -201,6 +201,11 @@
       0.5295064725388452
     ]
   },
+  "sbr_by_word_kruskal": {
+    "H": 11.028961867478607,
+    "p_value": 0.08748544448218216,
+    "n_words": 7
+  },
   "derived_targets": [
     {
       "task": "valence_5",
