@@ -127,8 +127,9 @@ def main() -> int:
     feature_cols = [c for c in feats.columns if c not in ID_COLS]
     data = feats.merge(meta, on="participant_code", how="left", validate="one_to_one").copy()
     sel_qa = qa[qa["selected"] == "True"].set_index("participant_code")
-    data["config"] = np.where(data["participant_code"].map(
-        lambda c: "RECORDING_CONFIG_DIFFERS" in sel_qa.loc[c, "flags"]), "B: stereo + 2nd track", "A: mono")
+    # config B = recorded with a different audio setup (for a supplied copy: its original was; manifest column)
+    cfg_b = manifest.set_index("participant_code")["config_b_origin"].eq("True")
+    data["config"] = np.where(data["participant_code"].map(cfg_b), "B: stereo + 2nd track", "A: mono")
     data["sbr_db"] = data["participant_code"].map(sel_qa["sbr_db"].astype(float))
     for t in TARGETS:
         data[t] = derive_target(data[TARGETS[t]["source"]], t)
@@ -166,12 +167,13 @@ def main() -> int:
     dist.to_csv(OUT / "affect_distributions.csv", index=False)
 
     # valence x arousal
-    ct = pd.crosstab(data["valence"].astype(int), data["arousal"].astype(int)).reindex(
+    both = data.dropna(subset=["valence", "arousal"])  # a struck-through rating is missing, never imputed
+    ct = pd.crosstab(both["valence"].astype(int), both["arousal"].astype(int)).reindex(
         index=range(1, 6), columns=range(1, 6), fill_value=0)
-    rho_va, p_va = stats.spearmanr(data["valence"], data["arousal"])
+    rho_va, p_va = stats.spearmanr(both["valence"], both["arousal"])
     mv = meta.dropna(subset=["valence", "arousal"])
     rho_va_m, p_va_m = stats.spearmanr(mv["valence"], mv["arousal"])
-    summary["valence_arousal_spearman"] = {"analysis": [float(rho_va), float(p_va), int(n)],
+    summary["valence_arousal_spearman"] = {"analysis": [float(rho_va), float(p_va), int(len(both))],
                                            "metadata": [float(rho_va_m), float(p_va_m), int(len(mv))]}
     fig, ax = plt.subplots(figsize=(4.6, 4.0))
     im = ax.imshow(ct.values, cmap=viz.SEQUENTIAL, vmin=0, vmax=max(1, ct.values.max()), origin="lower")
@@ -304,8 +306,11 @@ def main() -> int:
         ax.set_ylim(-0.8, len(d) - 0.2)
         ax.grid(axis="y", visible=False)
         ax.set_xlabel(label)
-        ax.legend(handles=[Line2D([], [], marker="o", ls="", color=viz.SERIES[i], label=f"arousal {c.lower()}")
-                           for i, c in enumerate(a3)], loc="lower right", title="derived from the rating")
+        handles = [Line2D([], [], marker="o", ls="", color=viz.SERIES[i], label=f"arousal {c.lower()}")
+                   for i, c in enumerate(a3)]
+        if d["arousal_3"].isna().any():  # e.g. a struck-through rating: shown, but in neutral grey
+            handles.append(Line2D([], [], marker="o", ls="", color=viz.MUTED, label="arousal not usable"))
+        ax.legend(handles=handles, loc="lower right", title="derived from the rating")
         ax.set_title(f"{label.split(' (')[0]} by participant (n = {len(d)}), lowest to highest")
         viz.save(fig, FIG / fname)
     high_corr = [(a, b, float(corr.loc[a, b])) for i, a in enumerate(prosodic) for b in prosodic[i + 1:]
@@ -315,8 +320,10 @@ def main() -> int:
     rows = []
     for key in ("valence", "arousal"):
         for f in feature_cols:
-            rho, p = stats.spearmanr(data[f], data[key])
-            rows.append({"rating": key, "feature": f, "spearman_rho": float(rho), "p_value": float(p)})
+            ok = data[key].notna() & data[f].notna()  # each rating on the participants who gave it
+            rho, p = stats.spearmanr(data.loc[ok, f], data.loc[ok, key])
+            rows.append({"rating": key, "feature": f, "spearman_rho": float(rho), "p_value": float(p),
+                         "n": int(ok.sum())})
     sp = pd.DataFrame(rows)
     sp["q_value_bh"] = np.nan
     for key in ("valence", "arousal"):
@@ -363,10 +370,15 @@ def main() -> int:
 
     # ---- recording-configuration confound ---------------------------------------------------
     is_b = data["config"].str.startswith("B")
-    cap = pd.to_datetime(sel_qa.loc[data.loc[is_b, "participant_code"], "capture_time"], format="%Y-%m-%dT%H:%M:%S%z")
-    med_cap = pd.to_datetime(sel_qa["capture_time"], format="%Y-%m-%dT%H:%M:%S%z").sort_values().iloc[len(sel_qa) // 2]
-    late_h = ((cap - med_cap).dt.total_seconds() / 3600)
-    late = late_h[late_h > 1]
+    has_times = bool((sel_qa["capture_time"] != "").all())  # converted WAVs carry no capture time
+    if has_times:
+        cap = pd.to_datetime(sel_qa.loc[data.loc[is_b, "participant_code"], "capture_time"], format="%Y-%m-%dT%H:%M:%S%z")
+        med_cap = pd.to_datetime(sel_qa["capture_time"], format="%Y-%m-%dT%H:%M:%S%z").sort_values().iloc[len(sel_qa) // 2]
+        late_h = ((cap - med_cap).dt.total_seconds() / 3600)
+        late = late_h[late_h > 1]
+    else:
+        late = pd.Series(dtype=float)
+    supplied_audio = bool(manifest["audio_source"].str.contains(":").any())
     mw = []
     for f in feature_cols:
         u, p = stats.mannwhitneyu(data.loc[is_b, f], data.loc[~is_b, f], alternative="two-sided")
@@ -397,7 +409,8 @@ def main() -> int:
             p = perm_chi2(data["config"], data[t])
             test = "permutation chi-square (20,000)"
         assoc[t] = {"table": {r: tab.loc[r].to_dict() for r in tab.index}, "test": test, "p_value": float(p)}
-    sbr = {key: [float(v) for v in stats.spearmanr(data["sbr_db"], data[key])] for key in ("valence", "arousal")}
+    sbr = {key: [float(v) for v in stats.spearmanr(data.loc[data[key].notna(), "sbr_db"], data[key].dropna())]
+           for key in ("valence", "arousal")}
     sw = data.assign(word=data["spoken_word"].replace("", "(not recorded)"))
     sbr_rows = sw["word"].value_counts().sort_values(kind="stable").index.tolist()
     fig, ax = plt.subplots(figsize=(7.4, 0.34 * len(sbr_rows) + 1.5))
@@ -530,9 +543,16 @@ def main() -> int:
         "",
         "## 7. Recording condition as a confound",
         "",
-        f"{int(is_b.sum())} selected recordings (config B) were made with a different audio setup (stereo plus a second track; "
-        f"{len(late)} captured {late.min():.1f}–{late.max():.1f} h after the median capture time). **{summary['config_effect_features_fdr05']} of "
-        f"{len(feature_cols)} features differ between configurations at FDR q < 0.05** (Mann–Whitney):",
+        (f"{int(is_b.sum())} analysed files (config B) are copies of recordings made with a different audio setup "
+         "(stereo plus a second track)."
+         if supplied_audio else
+         f"{int(is_b.sum())} selected recordings (config B) were made with a different audio setup (stereo plus a second "
+         "track" + (f"; {len(late)} captured {late.min():.1f}–{late.max():.1f} h after the median capture time" if len(late)
+                    else "") + ").")
+        + (f" **{summary['config_effect_features_fdr05']} of {len(feature_cols)} features differ between configurations "
+           "at FDR q < 0.05** (Mann–Whitney):" if summary["config_effect_features_fdr05"] else
+           f" **No feature differs between configurations at FDR q < 0.05** (Mann–Whitney; with {int(is_b.sum())} "
+           "config-B files the test has little power, so a smaller artefact cannot be ruled out). Smallest p-values:"),
         "",
         md_table(mw.head(10)),
         "",

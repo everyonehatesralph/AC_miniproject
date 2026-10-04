@@ -1,0 +1,6 @@
+{
+  "source": "supplied",
+  "delivery": "CS2B_v2_wav_16k",
+  "decided_on": "2026-10-04",
+  "decision": "Group decision: every requirement uses the CS2B_v2 16 kHz WAV copies instead of the original phone recordings. The originals stay untouched in data/raw (archived, not analysed). Delete this file, or set \"source\": \"original\", to return to the originals."
+}

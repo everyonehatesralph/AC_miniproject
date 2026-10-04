@@ -92,3 +92,28 @@ def test_consent_log_rejects_bad_values_and_duplicates(tmp_path, monkeypatch):
 def test_no_consent_log_means_not_yet_supplied(tmp_path, monkeypatch):
     monkeypatch.setattr(common, "CONSENT_LOG", tmp_path / "absent.csv")
     assert common.load_consent_log() is None
+
+
+def test_audio_source_defaults_to_the_original_recordings(tmp_path, monkeypatch):
+    monkeypatch.setattr(common, "AUDIO_SOURCE_FILE", tmp_path / "absent.json")
+    assert common.audio_source() == {"source": "original"}
+
+
+def test_audio_source_supplied_needs_the_delivery_and_its_hash_list(tmp_path, monkeypatch):
+    cfg = tmp_path / "audio_source.json"
+    cfg.write_text('{"source": "supplied", "delivery": "D1"}', encoding="utf-8")
+    monkeypatch.setattr(common, "AUDIO_SOURCE_FILE", cfg)
+    monkeypatch.setattr(common, "SUPPLIED_DIR", tmp_path)
+    with pytest.raises(FileNotFoundError):
+        common.audio_source()
+    (tmp_path / "D1").mkdir()
+    (tmp_path / "D1_files.csv").write_text("file,participant_code,bytes,sha256\n", encoding="utf-8")
+    src = common.audio_source()
+    assert src["source"] == "supplied" and src["folder"] == tmp_path / "D1"
+    cfg.write_text('{"source": "elsewhere"}', encoding="utf-8")
+    with pytest.raises(ValueError):
+        common.audio_source()
+
+
+def test_longest_zero_run_shared_helper():
+    assert common.longest_zero_run(np.array([1, 0, 0, 0, 2, 0], dtype=np.int16)) == 3

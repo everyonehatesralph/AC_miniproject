@@ -70,7 +70,8 @@ def rec(**over):
     base = {"touches_start": False, "touches_end": False, "seg_duration_s": 0.6, "word_syllables": 2,
             "event_duration_s": 0.5, "competing_margin_db": 10.0, "sbr_db": 20.0, "clip_fraction": 0.0,
             "voiced_s_outside_segment": 0.0, "voiced_frames_in_segment": 30, "proc_duration_s": 3.0,
-            "capture_time": "2026-10-01T18:10:00+0800", "orig_channels": "mono", "orig_audio_streams": 1}
+            "capture_time": "2026-10-01T18:10:00+0800", "orig_channels": "mono", "orig_audio_streams": 1,
+            "longest_digital_silence_s": 0.0}
     return base | over
 
 
@@ -94,3 +95,12 @@ def test_flags_for_edges_config_and_capture_outlier(m):
 
 def test_unknown_word_never_raises_too_short(m):
     assert "TOO_SHORT_FOR_WORD" not in m.file_flags(rec(word_syllables=None, event_duration_s=0.01), MEDIAN, ("mono", 1))
+
+
+@pytest.mark.parametrize("zeros_s, flagged", [(0.06, True), (0.04, False)])
+def test_inserted_digital_silence_is_flagged(m, zeros_s, flagged):
+    assert ("DIGITAL_SILENCE" in m.file_flags(rec(longest_digital_silence_s=zeros_s), MEDIAN, ("mono", 1))) is flagged
+
+
+def test_converted_copy_without_capture_time(m):
+    assert "NO_CAPTURE_TIME" in m.file_flags(rec(capture_time=""), None, ("mono", 1))

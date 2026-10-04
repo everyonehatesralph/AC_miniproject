@@ -25,22 +25,22 @@ A word is eligible when it has ≥ 8 recordings and variation in at least one ra
 
 ## B. Same word, different self-reported affect
 
-Spearman correlation between the six pre-specified prosodic features and the ratings, inside each eligible word. Permutation p-values (20,000 permutations), Benjamini–Hochberg across the 12 tests. **0 of 12 pass q < 0.05.** In 67% of tests the within-word correlation has the same sign as in the full sample.
+Spearman correlation between the six pre-specified prosodic features and the ratings, inside each eligible word. Permutation p-values (20,000 permutations), Benjamini–Hochberg across the 12 tests. **0 of 12 pass q < 0.05.** In 33% of tests the within-word correlation has the same sign as in the full sample.
 
 | word | n | rating | feature | rho_within_word | p_perm | rho_full_sample | same_direction | q_bh |
 |---|---|---|---|---|---|---|---|---|
-| Kapoy | 10 | valence | f0_median | 0.157 | 0.656 | 0.150 | True | 0.789 |
-| Kapoy | 10 | valence | f0_range_st | 0.442 | 0.199 | 0.132 | True | 0.691 |
-| Kapoy | 10 | valence | rms_db_mean | -0.352 | 0.345 | 0.393 | False | 0.691 |
-| Kapoy | 10 | valence | utterance_duration_s | 0.597 | 0.063 | 0.068 | True | 0.691 |
-| Kapoy | 10 | valence | spectral_centroid_hz_mean | 0.097 | 0.789 | 0.105 | True | 0.789 |
-| Kapoy | 10 | valence | voiced_ratio | -0.394 | 0.280 | 0.111 | False | 0.691 |
-| Kapoy | 10 | arousal | f0_median | 0.117 | 0.756 | 0.113 | True | 0.789 |
-| Kapoy | 10 | arousal | f0_range_st | 0.233 | 0.523 | 0.129 | True | 0.785 |
-| Kapoy | 10 | arousal | rms_db_mean | -0.281 | 0.433 | 0.344 | False | 0.742 |
-| Kapoy | 10 | arousal | utterance_duration_s | 0.495 | 0.150 | 0.092 | True | 0.691 |
-| Kapoy | 10 | arousal | spectral_centroid_hz_mean | 0.370 | 0.294 | 0.255 | True | 0.691 |
-| Kapoy | 10 | arousal | voiced_ratio | 0.103 | 0.779 | -0.080 | False | 0.789 |
+| Kapoy | 10 | valence | f0_median | -0.165 | 0.634 | 0.006 | False | 0.890 |
+| Kapoy | 10 | valence | f0_range_st | 0.120 | 0.733 | 0.082 | True | 0.890 |
+| Kapoy | 10 | valence | rms_db_mean | -0.285 | 0.439 | 0.260 | False | 0.870 |
+| Kapoy | 10 | valence | utterance_duration_s | 0.112 | 0.756 | 0.104 | True | 0.890 |
+| Kapoy | 10 | valence | spectral_centroid_hz_mean | 0.030 | 0.943 | 0.139 | True | 0.943 |
+| Kapoy | 10 | valence | voiced_ratio | -0.090 | 0.816 | 0.029 | False | 0.890 |
+| Kapoy | 10 | arousal | f0_median | -0.391 | 0.268 | 0.011 | False | 0.870 |
+| Kapoy | 10 | arousal | f0_range_st | -0.267 | 0.459 | 0.211 | False | 0.870 |
+| Kapoy | 10 | arousal | rms_db_mean | -0.281 | 0.433 | 0.194 | False | 0.870 |
+| Kapoy | 10 | arousal | utterance_duration_s | -0.350 | 0.329 | 0.128 | False | 0.870 |
+| Kapoy | 10 | arousal | spectral_centroid_hz_mean | 0.267 | 0.462 | 0.257 | True | 0.870 |
+| Kapoy | 10 | arousal | voiced_ratio | 0.240 | 0.507 | -0.029 | False | 0.870 |
 
 ![Kapoy](../figures/lexical/fig_lexical_kapoy_features_vs_affect.png)
 
@@ -52,7 +52,7 @@ Same leakage-safe pipeline (median imputation, standardisation, L2 logistic regr
 
 | balanced accuracy (mean of 10 repeats) | range over repeats | permutation null mean | null 95th percentile | permutation p |
 |---|---|---|---|---|
-| 0.755 | 0.705–0.829 | 0.502 | 0.681 | 0.022 |
+| 0.850 | 0.776–0.926 | 0.496 | 0.679 | 0.002 |
 
 ## D. Is word choice itself associated with the ratings?
 
@@ -65,33 +65,33 @@ Out-of-fold accuracy of the affect models by word group (all repeats pooled):
 
 | task | model | word_group | participants | accuracy_over_repeats |
 |---|---|---|---|---|
-| arousal_2 | logistic_regression | Kapoy | 10 | 0.790 |
-| arousal_2 | logistic_regression | other words | 21 | 0.495 |
-| arousal_2 | logistic_regression | word unknown | 1 | 0.100 |
-| arousal_2 | random_forest | Kapoy | 10 | 0.820 |
-| arousal_2 | random_forest | other words | 21 | 0.590 |
-| arousal_2 | random_forest | word unknown | 1 | 0.000 |
-| arousal_2 | svm_rbf | Kapoy | 10 | 0.790 |
-| arousal_2 | svm_rbf | other words | 21 | 0.562 |
-| arousal_2 | svm_rbf | word unknown | 1 | 1.000 |
-| arousal_3 | logistic_regression | Kapoy | 10 | 0.360 |
-| arousal_3 | logistic_regression | other words | 21 | 0.448 |
-| arousal_3 | logistic_regression | word unknown | 1 | 0.000 |
-| arousal_3 | random_forest | Kapoy | 10 | 0.460 |
-| arousal_3 | random_forest | other words | 21 | 0.495 |
-| arousal_3 | random_forest | word unknown | 1 | 0.000 |
-| arousal_3 | svm_rbf | Kapoy | 10 | 0.260 |
-| arousal_3 | svm_rbf | other words | 21 | 0.433 |
-| arousal_3 | svm_rbf | word unknown | 1 | 0.100 |
-| valence_2 | logistic_regression | Kapoy | 10 | 0.630 |
-| valence_2 | logistic_regression | other words | 21 | 0.614 |
-| valence_2 | logistic_regression | word unknown | 1 | 0.600 |
-| valence_2 | random_forest | Kapoy | 10 | 0.670 |
-| valence_2 | random_forest | other words | 21 | 0.619 |
-| valence_2 | random_forest | word unknown | 1 | 0.000 |
-| valence_2 | svm_rbf | Kapoy | 10 | 0.570 |
-| valence_2 | svm_rbf | other words | 21 | 0.567 |
-| valence_2 | svm_rbf | word unknown | 1 | 0.000 |
+| arousal_2 | logistic_regression | Kapoy | 10 | 0.630 |
+| arousal_2 | logistic_regression | other words | 21 | 0.476 |
+| arousal_2 | logistic_regression | word unknown | 8 | 0.438 |
+| arousal_2 | random_forest | Kapoy | 10 | 0.560 |
+| arousal_2 | random_forest | other words | 21 | 0.586 |
+| arousal_2 | random_forest | word unknown | 8 | 0.512 |
+| arousal_2 | svm_rbf | Kapoy | 10 | 0.840 |
+| arousal_2 | svm_rbf | other words | 21 | 0.405 |
+| arousal_2 | svm_rbf | word unknown | 8 | 0.400 |
+| arousal_3 | logistic_regression | Kapoy | 10 | 0.430 |
+| arousal_3 | logistic_regression | other words | 21 | 0.414 |
+| arousal_3 | logistic_regression | word unknown | 8 | 0.400 |
+| arousal_3 | random_forest | Kapoy | 10 | 0.440 |
+| arousal_3 | random_forest | other words | 21 | 0.514 |
+| arousal_3 | random_forest | word unknown | 8 | 0.487 |
+| arousal_3 | svm_rbf | Kapoy | 10 | 0.440 |
+| arousal_3 | svm_rbf | other words | 21 | 0.376 |
+| arousal_3 | svm_rbf | word unknown | 8 | 0.138 |
+| valence_2 | logistic_regression | Kapoy | 10 | 0.550 |
+| valence_2 | logistic_regression | other words | 21 | 0.600 |
+| valence_2 | logistic_regression | word unknown | 9 | 0.567 |
+| valence_2 | random_forest | Kapoy | 10 | 0.540 |
+| valence_2 | random_forest | other words | 21 | 0.652 |
+| valence_2 | random_forest | word unknown | 9 | 0.544 |
+| valence_2 | svm_rbf | Kapoy | 10 | 0.490 |
+| valence_2 | svm_rbf | other words | 21 | 0.576 |
+| valence_2 | svm_rbf | word unknown | 9 | 0.578 |
 
 ## Interpretation rules applied
 

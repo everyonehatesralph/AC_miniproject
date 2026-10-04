@@ -23,7 +23,7 @@ import soundfile as sf
 
 from common import (CLEAN_METADATA_CSV, CONSENT_DIR, CONSENT_LOG, DATA, DOWNLOAD_LOG, FEATURES_CSV, FIGURES, FILENAME_RE,
                     MIN_VALID_OBSERVATIONS, MODELS, PROCESSED_AUDIO_DIR, PROJECT_ROOT, RAW_METADATA_CSV, REPORTS,
-                    TARGET_SR, load_consent_log, sha256_of, setup_logging)
+                    TARGET_SR, audio_source, load_consent_log, sha256_of, setup_logging)
 
 log = setup_logging("validate", REPORTS / "logs" / "10_validate_project.log")
 RESULTS: list[dict] = []
@@ -104,13 +104,24 @@ def main() -> int:
              if pending else "every choice confirmed by a human listening decision"))
 
     # 7. raw files preserved
+    src = audio_source()
     dl = pd.read_csv(DOWNLOAD_LOG, dtype=str)
-    changed = [r.local_file for r in dl.itertuples() if sha256_of(PROJECT_ROOT / r.local_file) != r.sha256]
+    present = [r for r in dl.itertuples() if (PROJECT_ROOT / r.local_file).is_file()]
+    changed = [r.local_file for r in present if sha256_of(PROJECT_ROOT / r.local_file) != r.sha256]
+    if src["source"] == "original" and len(present) < len(dl):
+        changed.append(f"{len(dl) - len(present)} original recordings missing")
+    supplied_note, supplied_changed = "", []
+    if src["source"] == "supplied":  # the analysed delivery must be exactly the audited files
+        files = pd.read_csv(src["files_csv"], dtype=str)
+        supplied_changed = [f.file for f in files.itertuples() if sha256_of(src["folder"] / f.file) != f.sha256]
+        supplied_note = (f"; analysed delivery {src['delivery']}: {len(files)} files match their SHA-256: "
+                         f"{not supplied_changed}")
     root_pdf = PROJECT_ROOT / "G3 - mini project - TEmplate.pdf"
     pdf_ok = (sha256_of(root_pdf) == sha256_of(DATA / "metadata_raw" / "G3 - mini project - TEmplate.pdf")
               if root_pdf.is_file() else True)  # the root copy exists only on the original machine
-    check("raw files preserved", "PASS" if not changed and pdf_ok else "FAIL",
-          f"{len(dl)} raw recordings match their download SHA-256: {not changed}; metadata PDF copy identical: {pdf_ok}")
+    check("raw files preserved", "PASS" if not changed and not supplied_changed and pdf_ok else "FAIL",
+          f"{len(present)} of {len(dl)} original recordings present and matching their download SHA-256: "
+          f"{not changed}{supplied_note}; metadata PDF copy identical: {pdf_ok}")
 
     # 8. processed WAVs
     wav_problems = []

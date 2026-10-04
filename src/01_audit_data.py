@@ -42,7 +42,7 @@ import pandas as pd
 from common import (AROUSAL_LABELS, CODE_IN_NAME_RE, CODE_STRICT_RE, CONSENT_DIR, CONSENT_LOG, DASHES, FILENAME_RE,
                     GROUP_YEAR_LEVEL, MEDIA_EXTS, MIN_VALID_OBSERVATIONS, PROJECT_ROOT, PROTOCOL_ACTIVITIES,
                     PROTOCOL_SESSIONS, PROTOCOL_WORDS, RAW_DIR, RAW_METADATA_CSV, RECORDING_MAP, REPORTS,
-                    SESSION_TOKEN_ASSUMED, VALENCE_LABELS, probe_media, rel, session_key, setup_logging,
+                    SESSION_TOKEN_ASSUMED, VALENCE_LABELS, audio_source, probe_media, rel, session_key, setup_logging,
                     sha256_of, sniff_container)
 
 OUT_DIR = REPORTS / "phase0"
@@ -310,7 +310,8 @@ def inventory_media(known_codes: set[str]) -> tuple[pd.DataFrame, list[dict]]:
                    .set_index("original_file")["drive_name"].to_dict()
                    if RECORDING_MAP.is_file() and "drive_name" in pd.read_csv(RECORDING_MAP, nrows=0).columns else {})
     records, issues = [], []
-    for p in find_media(PROJECT_ROOT):
+    src = audio_source()  # the original recordings (project scan), or the supplied delivery the group chose
+    for p in find_media(src["folder"] if src["source"] == "supplied" else PROJECT_ROOT):
         relpath = rel(p)
         under_raw = RAW_DIR in p.resolve().parents
         map_key = p.resolve().relative_to(RAW_DIR).as_posix() if under_raw else None
@@ -553,6 +554,10 @@ def write_report(summary: dict, qa: pd.DataFrame, media: pd.DataFrame, issues: p
         "",
         "Earlier, metadata-only version: `reports/phase0_data_audit_v1_metadata_only.md` (written before the "
         "recordings were supplied).",
+        "",
+        (f"**Audio source: the supplied delivery `{audio_source()['delivery']}`** (group decision; the original phone "
+         "recordings in `data/raw/` are archived, not inventoried here)." if audio_source()["source"] == "supplied"
+         else "**Audio source: the original phone recordings** (`data/raw/`)."),
         "",
         "## A–O summary",
         "",

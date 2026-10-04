@@ -42,8 +42,9 @@ import pandas as pd
 import soundfile as sf
 from scipy.signal import fftconvolve
 
-from common import (CLEAN_METADATA_CSV, CLIP_FRACTION_LIMIT, DATA, REPORTS, TARGET_SR, locate_utterance,
-                    normalise_code, praat_pitch, rel, setup_logging, sha256_of)
+from common import (CLEAN_METADATA_CSV, CLIP_FRACTION_LIMIT, DATA, DIGITAL_SILENCE_S, REPORTS, TARGET_SR,
+                    audio_source, locate_utterance, longest_zero_run, normalise_code, praat_pitch, rel, setup_logging,
+                    sha256_of)
 
 SUPPLIED = DATA / "supplied_audio"
 DELIVERIES = SUPPLIED / "deliveries.csv"
@@ -53,7 +54,6 @@ REPORT_MD = REPORTS / "supplied_audio_audit.md"
 REPORT_CSV = REPORTS / "supplied_audio_audit.csv"
 SAME_RECORDING_NCC = 0.95   # at or above: the same recording (resampling differences keep real copies >= 0.97)
 UNRELATED_NCC = 0.50        # below: unrelated audio
-DIGITAL_SILENCE_S = 0.05    # exact zeros for this long do not occur in a phone recording of a hallway
 PROCESSED_RE = re.compile(r"(?i)denois|enhanc|filter|normali[sz]")
 NAME_RE = re.compile(r"^(?P<code>Y\d\s*-\s*\d{3})(?:_Y\d_(?:AM|PM)_(?P<word>[A-Za-z]+))?", re.I)
 
@@ -82,13 +82,6 @@ def ncc_best(a: np.ndarray, b: np.ndarray) -> tuple[float, float, float]:
     k = int(np.argmax(np.abs(r)))
     gain = np.linalg.norm(short) / max(float(window[k]), 1e-20)
     return float(r[k]), (-k if swap else k) / TARGET_SR, (1 / gain if swap else gain)
-
-
-def longest_zero_run(y: np.ndarray) -> int:
-    """Length (samples) of the longest run of exact zeros."""
-    z = np.concatenate([[0], (y == 0).astype(np.int8), [0]])
-    edges = np.flatnonzero(np.diff(z))
-    return int((edges[1::2] - edges[::2]).max()) if len(edges) else 0
 
 
 def word_relation(file_word: str, sheet_word: str, feeling: str) -> str:
@@ -158,13 +151,15 @@ def audit_file(path: Path, delivery: str, processed: bool, takes: dict, meta: pd
         t_row = takes[(best_code, best_k)][1]
         row.update({"best_original": f"{best_code} take {best_k}", "best_ncc": round(ncc, 4),
                     "cut_start_s": round(offset, 3), "cut_end_s": round(offset + info.duration, 3),
-                    "gain": round(gain, 3), "original_take_selected_by_pipeline": t_row["selected"] == "True"})
+                    "gain": round(gain, 3), "original_take_selected_by_pipeline": t_row["selected"] == "True",
+                    "original_flags": t_row["flags"]})  # e.g. RECORDING_CONFIG_DIFFERS: a copy keeps that confound
     else:
         best_code, ncc = None, 0.0
     own_codes = {c for c, _ in takes}
     row["verdict"] = verdict(code or "", own_codes, best_code, ncc, processed)
     if abs(ncc) < UNRELATED_NCC:  # no original is related: where it would sit in one means nothing
-        for key in ("best_original", "cut_start_s", "cut_end_s", "gain", "original_take_selected_by_pipeline"):
+        for key in ("best_original", "cut_start_s", "cut_end_s", "gain", "original_take_selected_by_pipeline",
+                    "original_flags"):
             row[key] = ""
     m = meta.loc[code] if code in meta.index else None
     row["sheet_word"] = m["spoken_word"] if m is not None else ""
@@ -287,6 +282,10 @@ def write_report(audit: pd.DataFrame, deliveries: pd.DataFrame, comparisons: lis
 
 
 def main() -> int:
+    if audio_source()["source"] != "original":
+        log.info("the analysis uses a supplied delivery, so there are no analysed originals to compare against; "
+                 "keeping %s (made while the originals were analysed) unchanged", rel(REPORT_MD))
+        return 0
     if not DELIVERIES.is_file():
         log.info("no %s: nothing to audit", rel(DELIVERIES))
         return 0

@@ -208,6 +208,10 @@ def main() -> int:
     n_recorded = dq["participants_with_recordings"]
     retakes = dq["retake_participants"]
     extra_takes = dq["total_files"] - n_recorded
+    supplied_mode = dq.get("audio_source", "original") != "original"
+    no_orig = int((manifest.get("subset_no_original", pd.Series(dtype=str)) == "True").sum())
+    edited = int((manifest.get("subset_edited_or_clipped", pd.Series(dtype=str)) == "True").sum())
+    n_cfg = dq.get("config_b_origin", dq["flag_counts_selected"].get("RECORDING_CONFIG_DIFFERS", 0))
     missing_words = int((meta["spoken_word"] == "").sum())
     flags = dq["flag_counts_selected"]
     any_sig = ev["any_model_significant_after_holm"]
@@ -269,14 +273,18 @@ def main() -> int:
     tiles(s, [(str(n_meta), "participants in the sheet"), (str(n_recorded), "with a recording"),
               (str(n), "analysed"), (str(MIN_VALID_OBSERVATIONS), "required by the protocol")], top=1.95)
     text_box(s, MARGIN, 3.85, W - 2 * MARGIN, 3.0, [
-        (f"{n_meta - n_recorded} participants have no recording; {len(retakes)} were recorded more than once "
-         f"({extra_takes} extra takes): one take each was chosen by a label-blind complete-word rule", 1),
-        *([(f"A later delivery has trimmed 16 kHz copies for {len(supplied_new)} of them, "
-             f"{int((supplied_new['flags'] != '').sum())} edited or damaged: not counted until the originals are supplied", 2)]
-          if len(supplied_new) else []),
+        *([(f"By the group's decision the analysis uses the {dq['audio_source']} delivery: trimmed 16 kHz copies, one "
+            "per participant; the original recordings are archived, not analysed", 1),
+           (f"{no_orig} files have no verified original and {edited} are edited or clipped; sensitivity analyses "
+            "exclude them", 2)] if supplied_mode else
+          [(f"{n_meta - n_recorded} participants have no recording; {len(retakes)} were recorded more than once "
+            f"({extra_takes} extra takes): one take each was chosen by a label-blind complete-word rule", 1),
+           *([(f"A later delivery has trimmed 16 kHz copies for {len(supplied_new)} of them, "
+               f"{int((supplied_new['flags'] != '').sum())} edited or damaged: not counted until the originals are "
+               "supplied", 2)] if len(supplied_new) else [])]),
         (f"{missing_words} spoken words are missing from the sheet; the word is never guessed from the feeling text", 1),
         (f"Background voices in {flags.get('BACKGROUND_VOICES', 0)} of {n} selected recordings; "
-         f"{flags.get('RECORDING_CONFIG_DIFFERS', 0)} used a different recording setting", 1),
+         f"{n_cfg} {'are copies of recordings that' if supplied_mode else ''} used a different recording setting", 1),
         ("Consent: " + ("documented for the analysed participants" if consent and all(
             consent.get(c, False) for c in manifest.loc[manifest["include_primary"] == "True", "participant_code"])
             else "the sheet says Yes, but the signed-form log is still to be supplied"), 1),
@@ -405,11 +413,17 @@ def main() -> int:
     number += 1
     s = new_slide(prs, "Other confounds and limits", "Why the results are preliminary")
     text_box(s, MARGIN, 1.95, W - 2 * MARGIN, 4.9, [
-        (f"Sample: {n} participants analysed, below the protocol minimum of {MIN_VALID_OBSERVATIONS}", 1),
+        (f"Sample: {n} participants analysed, "
+         + (f"below the protocol minimum of {MIN_VALID_OBSERVATIONS}" if n < MIN_VALID_OBSERVATIONS else
+            f"meeting the protocol minimum of {MIN_VALID_OBSERVATIONS}"), 1),
         (f"Power: with n = {n}, only correlations of about |ρ| ≥ {rho_min:.2f} are reliably detectable; a moderate "
          f"ρ = 0.3 needs about {n_for_rho(0.3)} participants", 2),
-        (f"Recording setting: {flags.get('RECORDING_CONFIG_DIFFERS', 0)} files used a different setting, which "
-         f"shifts {eda['config_effect_features_fdr05']} of {fsum['n_features']} features", 1),
+        *([(f"Audio: trimmed copies, not the original recordings; {no_orig} without a verified original, {edited} "
+            "edited or clipped", 1)] if supplied_mode else []),
+        (f"Recording setting: {n_cfg} files {'are copies of recordings that ' if supplied_mode else ''}used a "
+         "different setting, which "
+         + (f"shifts {eda['config_effect_features_fdr05']} of {fsum['n_features']} features"
+            if eda["config_effect_features_fdr05"] else "shows no significant feature difference in this analysis"), 1),
         (f"Noise: background voices in {flags.get('BACKGROUND_VOICES', 0)} of {n} recordings, captured in a "
          "hallway right after class", 1),
         ("One word per person: no way to separate a person's voice from their state", 1),
@@ -437,6 +451,8 @@ def main() -> int:
     text_box(s, MARGIN, 1.95, W - 2 * MARGIN, 4.9, [
         ("Document consent from the signed forms (consent/consent_log.csv)", 1),
         ("Blind listening review by two group members: words, boundaries, retakes (data/review/listening_review.html)", 1),
+        *([("Find the original recordings behind the copies without a verified original "
+            "(reports/supplied_audio_audit.md)", 1)] if supplied_mode else []),
         ("Collect more participants with the checklist: audio only, one setting, quiet spot, one take", 1),
         ("Pre-registered analysis plan for a larger or pooled study (docs/analysis_plan_pooled_study.md)", 1),
         ("Confirm open protocol questions with the instructor (docs/next_steps/)", 1),

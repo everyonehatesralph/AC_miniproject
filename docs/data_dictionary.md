@@ -71,6 +71,7 @@ Local file name: `<drive name>__<drive file id>.mov`; the original bytes are nev
 | `readable` | decoded successfully |
 | `peak_dbfs`, `clip_fraction`, `clip_pct`, `dc_offset`, `rms_dbfs`, `interchannel_corr` | original-signal QA (native rate/channels) |
 | `proc_duration_s` | duration of the 16 kHz mono signal |
+| `longest_digital_silence_s` | longest run of exact zeros (≥ 0.05 s → `DIGITAL_SILENCE`: the file was edited) |
 | `seg_start_s`, `seg_end_s`, `seg_duration_s`, `peak_time_s` | located utterance (with 0.05 s context each side); a human override replaces start/end |
 | `auto_seg_start_s`, `auto_seg_end_s` | the automatic (label-blind) boundaries, kept even when a human override is used; the listening review judges these |
 | `review_take` | take number in the listening review (order of capture time); audio `data/review/audio/<code>_t<k>.wav` |
@@ -107,8 +108,12 @@ Local file name: `<drive name>__<drive file id>.mov`; the original bytes are nev
 | `selected_drive_file_id`, `selected_file`, `processed_file`, `segment_file` | the take used |
 | `selected_flags` | QA flags of the selected take |
 | `subset_retake` | participant had more than one take (sensitivity analysis 1) |
-| `subset_config_or_time_anomaly` | `RECORDING_CONFIG_DIFFERS` or `CAPTURE_TIME_OUTLIER` (sensitivity analysis 2) |
-| `subset_segmentation_critical` | `EDGE_START`/`EDGE_END`/`LONG_SEGMENT`/`COMPETING_EVENT` (sensitivity analysis 3) |
+| `subset_config_or_time_anomaly` | `RECORDING_CONFIG_DIFFERS` or `CAPTURE_TIME_OUTLIER` of the recording, or of the original a supplied copy was cut from (sensitivity analysis 2) |
+| `subset_segmentation_critical` | `EDGE_START`/`EDGE_END`/`LONG_SEGMENT`/`TOO_SHORT_FOR_WORD`/`COMPETING_EVENT` (sensitivity analysis 3) |
+| `subset_no_original` | the analysed file is a supplied copy without a verified original recording (sensitivity analysis 4) |
+| `subset_edited_or_clipped` | `DIGITAL_SILENCE` or `CLIPPING` (sensitivity analysis 5) |
+| `config_b_origin` | recorded with a different audio configuration (for a supplied copy: its original was) |
+| `audio_source` | `original recording`, or `<delivery>: <audit verdict>` for a supplied copy |
 | `word_in_filename` | word token used in the file name (`UNVERIFIED` if not recorded) |
 
 ## 7. `data/processed_audio/segment_review_sheet.csv`: listening worksheet (32 rows)
@@ -141,6 +146,10 @@ Reports: `reports/listening_review_report.md`. `reports/listening_review_agreeme
 `participant_code`, `take`, `judgement`, `outcome`, `answers`, with one row per take or participant item.
 
 ## 7d. Audio supplied after the originals: `data/supplied_audio/`
+
+`data/audio_source.json` selects the analysed recordings (now `CS2B_v2_wav_16k`; see DOCUMENTATION.md §5.18).
+`<delivery>_files.csv` lists each file of a delivery: `file`, `participant_code`, `bytes`, `sha256` (checked on every
+run when that delivery is analysed).
 
 `deliveries.csv` has one row per delivery: `delivery`, `kept` (`no` = received but deliberately not kept, e.g. the denoised CS2B_v2 copies), `source` (the file it came from), `source_sha256`,
 `outer_zip_sha256`, `received`, `n_wav`, `note`. The WAVs themselves are not in Git.

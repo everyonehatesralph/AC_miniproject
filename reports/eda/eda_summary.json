@@ -1,12 +1,12 @@
 {
   "n_metadata": 40,
-  "n_analysis": 32,
+  "n_analysis": 40,
   "n_features": 108,
   "valence_arousal_spearman": {
     "analysis": [
-      0.7657137017858114,
-      3.2853045153040424e-07,
-      32
+      0.7106380773242148,
+      4.008814149141989e-07,
+      39
     ],
     "metadata": [
       0.7106380773242148,
@@ -16,231 +16,231 @@
   },
   "significant_features_fdr05": {
     "valence": 0,
-    "arousal": 3
+    "arousal": 0
   },
   "top_features": {
     "valence": [
       {
         "feature": "rms_db_iqr",
-        "spearman_rho": -0.4677676204986644,
-        "p_value": 0.0069413231125679785,
-        "q_value_bh": 0.37483144807867086
+        "spearman_rho": -0.42632601011288485,
+        "p_value": 0.006086386625360827,
+        "q_value_bh": 0.2655421989263577
       },
       {
-        "feature": "mfcc_13_std",
-        "spearman_rho": 0.4677676204986644,
-        "p_value": 0.0069413231125679785,
-        "q_value_bh": 0.37483144807867086
-      },
-      {
-        "feature": "delta2_mfcc_13_std",
-        "spearman_rho": 0.4255412771807718,
-        "p_value": 0.015176322476453358,
-        "q_value_bh": 0.42230517040026627
+        "feature": "delta2_mfcc_10_std",
+        "spearman_rho": 0.40858706378363857,
+        "p_value": 0.008856636630161055,
+        "q_value_bh": 0.2655421989263577
       },
       {
         "feature": "delta_mfcc_13_std",
-        "spearman_rho": 0.4238059480033242,
-        "p_value": 0.0156409322370469,
-        "q_value_bh": 0.42230517040026627
+        "spearman_rho": 0.4071088182562014,
+        "p_value": 0.009129869740579742,
+        "q_value_bh": 0.2655421989263577
       },
       {
-        "feature": "delta_mfcc_2_mean",
-        "spearman_rho": -0.3973903816355101,
-        "p_value": 0.024309787539348336,
-        "q_value_bh": 0.4503337195788628
+        "feature": "delta_mfcc_4_std",
+        "spearman_rho": 0.40346247928852297,
+        "p_value": 0.009834896256531767,
+        "q_value_bh": 0.2655421989263577
       },
       {
-        "feature": "rms_db_mean",
-        "spearman_rho": 0.39257002280926656,
-        "p_value": 0.026253990121674186,
-        "q_value_bh": 0.4503337195788628
+        "feature": "delta2_mfcc_13_std",
+        "spearman_rho": 0.3636483997495481,
+        "p_value": 0.021078129159123,
+        "q_value_bh": 0.45528758983705686
       },
       {
-        "feature": "rms_db_min",
-        "spearman_rho": 0.38582152045252577,
-        "p_value": 0.029188296639370736,
-        "q_value_bh": 0.4503337195788628
+        "feature": "mfcc_13_std",
+        "spearman_rho": 0.3322110448660506,
+        "p_value": 0.036228323494395774,
+        "q_value_bh": 0.6317990892015839
       },
       {
-        "feature": "delta2_mfcc_2_std",
-        "spearman_rho": -0.37618080280003885,
-        "p_value": 0.03383937840935651,
-        "q_value_bh": 0.4568316085263129
+        "feature": "delta_mfcc_3_mean",
+        "spearman_rho": -0.3157532446605832,
+        "p_value": 0.04716941001774542,
+        "q_value_bh": 0.6317990892015839
       },
       {
         "feature": "delta2_mfcc_9_std",
-        "spearman_rho": 0.31505865288327195,
-        "p_value": 0.07902448669317197,
-        "q_value_bh": 0.7336757685136419
+        "spearman_rho": 0.30579972477583944,
+        "p_value": 0.05498815328155758,
+        "q_value_bh": 0.6317990892015839
       },
       {
         "feature": "delta_mfcc_7_mean",
-        "spearman_rho": -0.3139017667649735,
-        "p_value": 0.08019132566609655,
-        "q_value_bh": 0.7336757685136419
+        "spearman_rho": -0.2920027665197591,
+        "p_value": 0.0675043421815199,
+        "q_value_bh": 0.6317990892015839
+      },
+      {
+        "feature": "rms_db_std",
+        "spearman_rho": -0.2915100180106133,
+        "p_value": 0.06798978689093355,
+        "q_value_bh": 0.6317990892015839
       }
     ],
     "arousal": [
       {
-        "feature": "delta2_mfcc_13_std",
-        "spearman_rho": 0.6180048631530544,
-        "p_value": 0.00016387495088850376,
-        "q_value_bh": 0.013464921229549606
+        "feature": "delta2_mfcc_10_std",
+        "spearman_rho": 0.5098277521235924,
+        "p_value": 0.0009153545845016795,
+        "q_value_bh": 0.09885829512618138
       },
       {
         "feature": "delta_mfcc_13_std",
-        "spearman_rho": 0.6024200580735409,
-        "p_value": 0.0002639581642771395,
-        "q_value_bh": 0.013464921229549606
-      },
-      {
-        "feature": "mfcc_13_std",
-        "spearman_rho": 0.5904909480126788,
-        "p_value": 0.0003740255897097113,
-        "q_value_bh": 0.013464921229549606
-      },
-      {
-        "feature": "delta2_mfcc_10_std",
-        "spearman_rho": 0.46831377238933203,
-        "p_value": 0.00686705062824337,
-        "q_value_bh": 0.185410366962571
-      },
-      {
-        "feature": "mfcc_9_mean",
-        "spearman_rho": 0.4517669423049102,
-        "p_value": 0.009442270570871393,
-        "q_value_bh": 0.2039530443308221
+        "spearman_rho": 0.418535702546959,
+        "p_value": 0.008009300040685556,
+        "q_value_bh": 0.43250220219702
       },
       {
         "feature": "delta2_mfcc_9_std",
-        "spearman_rho": 0.42155935715079146,
-        "p_value": 0.016259999342483216,
-        "q_value_bh": 0.29267998816469787
+        "spearman_rho": 0.385443647752207,
+        "p_value": 0.015382890184392548,
+        "q_value_bh": 0.4422683045304632
       },
       {
         "feature": "mfcc_10_std",
-        "spearman_rho": 0.39250620200256253,
-        "p_value": 0.02628056126815275,
-        "q_value_bh": 0.40547151670864245
+        "spearman_rho": 0.382081915201629,
+        "p_value": 0.01638030757520234,
+        "q_value_bh": 0.4422683045304632
+      },
+      {
+        "feature": "mfcc_13_std",
+        "spearman_rho": 0.3626468988936,
+        "p_value": 0.023274529645183485,
+        "q_value_bh": 0.5027298403359634
+      },
+      {
+        "feature": "delta2_mfcc_13_std",
+        "spearman_rho": 0.3451028571452712,
+        "p_value": 0.031425901310399504,
+        "q_value_bh": 0.5348062332116658
+      },
+      {
+        "feature": "delta_mfcc_12_std",
+        "spearman_rho": 0.33816928375970406,
+        "p_value": 0.035236059464690966,
+        "q_value_bh": 0.5348062332116658
+      },
+      {
+        "feature": "delta_mfcc_4_std",
+        "spearman_rho": 0.33092054794752035,
+        "p_value": 0.03961527653419746,
+        "q_value_bh": 0.5348062332116658
       },
       {
         "feature": "delta_mfcc_10_std",
-        "spearman_rho": 0.3817315219475903,
-        "p_value": 0.031093313695099392,
-        "q_value_bh": 0.4197597348838418
+        "spearman_rho": 0.3153725349010972,
+        "p_value": 0.05050617425992616,
+        "q_value_bh": 0.6060740911191139
       },
       {
-        "feature": "rms_db_mean",
-        "spearman_rho": 0.3444049517571505,
-        "p_value": 0.053575305845478045,
-        "q_value_bh": 0.6255407428883267
-      },
-      {
-        "feature": "mfcc_1_mean",
-        "spearman_rho": 0.32227837664426096,
-        "p_value": 0.07203609661195685,
-        "q_value_bh": 0.6255407428883267
+        "feature": "mfcc_10_mean",
+        "spearman_rho": -0.29488697717101253,
+        "p_value": 0.06839196497479803,
+        "q_value_bh": 0.6108193156539269
       }
     ]
   },
-  "config_effect_features_fdr05": 20,
+  "config_effect_features_fdr05": 0,
   "config_label_association": {
     "valence_2": {
       "table": {
         "A: mono": {
-          "NotPleasant": 10,
-          "Pleasant": 16
+          "NotPleasant": 15,
+          "Pleasant": 20
         },
         "B: stereo + 2nd track": {
-          "NotPleasant": 4,
+          "NotPleasant": 3,
           "Pleasant": 2
         }
       },
       "test": "Fisher exact",
-      "p_value": 0.36494252873563227
+      "p_value": 0.6419192471824051
     },
     "arousal_2": {
       "table": {
         "A: mono": {
-          "High": 12,
-          "NotHigh": 14
+          "High": 16,
+          "NotHigh": 18
         },
         "B: stereo + 2nd track": {
           "High": 1,
-          "NotHigh": 5
+          "NotHigh": 4
         }
       },
       "test": "Fisher exact",
-      "p_value": 0.36055273054716885
+      "p_value": 0.36341199499094246
     },
     "arousal_3": {
       "table": {
         "A: mono": {
-          "High": 12,
-          "Low": 4,
+          "High": 16,
+          "Low": 8,
           "Moderate": 10
         },
         "B: stereo + 2nd track": {
           "High": 1,
-          "Low": 2,
+          "Low": 1,
           "Moderate": 3
         }
       },
       "test": "permutation chi-square (20,000)",
-      "p_value": 0.512274386280686
+      "p_value": 0.4151292435378231
     }
   },
   "sbr_vs_rating_spearman": {
     "valence": [
-      0.10577806189950674,
-      0.5644903094604764
+      -0.09017720697300811,
+      0.5800066012099405
     ],
     "arousal": [
-      0.1153679451778845,
-      0.5295064725388452
+      0.048064702544814784,
+      0.7713833156605061
     ]
   },
   "sbr_by_word_kruskal": {
-    "H": 11.028961867478607,
-    "p_value": 0.08748544448218216,
+    "H": 10.635457445266052,
+    "p_value": 0.1003179110207495,
     "n_words": 7
   },
   "derived_targets": [
     {
       "task": "valence_5",
-      "classes": "1: 1 / 2: 1 / 3: 12 / 4: 9 / 5: 9",
+      "classes": "1: 1 / 2: 2 / 3: 15 / 4: 11 / 5: 11",
       "min_class": 1,
       "viable": false
     },
     {
       "task": "arousal_5",
-      "classes": "1: 2 / 2: 4 / 3: 13 / 4: 9 / 5: 4",
-      "min_class": 2,
+      "classes": "1: 3 / 2: 6 / 3: 13 / 4: 12 / 5: 5",
+      "min_class": 3,
       "viable": false
     },
     {
       "task": "valence_3",
-      "classes": "Unpleasant: 2 / Neutral: 12 / Pleasant: 18",
-      "min_class": 2,
+      "classes": "Unpleasant: 3 / Neutral: 15 / Pleasant: 22",
+      "min_class": 3,
       "viable": false
     },
     {
       "task": "arousal_3",
-      "classes": "Low: 6 / Moderate: 13 / High: 13",
-      "min_class": 6,
+      "classes": "Low: 9 / Moderate: 13 / High: 17",
+      "min_class": 9,
       "viable": true
     },
     {
       "task": "valence_2",
-      "classes": "NotPleasant: 14 / Pleasant: 18",
-      "min_class": 14,
+      "classes": "NotPleasant: 18 / Pleasant: 22",
+      "min_class": 18,
       "viable": true
     },
     {
       "task": "arousal_2",
-      "classes": "NotHigh: 19 / High: 13",
-      "min_class": 13,
+      "classes": "NotHigh: 22 / High: 17",
+      "min_class": 17,
       "viable": true
     }
   ],
@@ -266,5 +266,5 @@
       "distinct_non_blank": 1
     }
   ],
-  "n_prosodic_pairs_abs_rho_ge_0_9": 6
+  "n_prosodic_pairs_abs_rho_ge_0_9": 8
 }

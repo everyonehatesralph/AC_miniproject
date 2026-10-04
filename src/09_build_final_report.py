@@ -145,6 +145,24 @@ def main() -> int:
     supplied_note = (f"a later delivery holds trimmed 16 kHz copies for {len(supplied_new)} of them "
                      f"({len(supplied_edited)} edited or damaged), which cannot count without the original recordings "
                      "(reports/supplied_audio_audit.md)" if len(supplied_new) else "")
+    # which recordings were analysed (data/audio_source.json, via step 03): the originals or a supplied delivery
+    supplied_mode = dq.get("audio_source", "original") != "original"
+    delivery = dq.get("audio_source", "")
+    no_orig = (manifest.loc[manifest["subset_no_original"] == "True", "participant_code"].tolist()
+               if "subset_no_original" in manifest else [])
+    edited = (manifest.loc[manifest["subset_edited_or_clipped"] == "True", "participant_code"].tolist()
+              if "subset_edited_or_clipped" in manifest else [])
+    n_copies = int(manifest["audio_source"].str.endswith("COPY_OF_ORIGINAL").sum()) if supplied_mode else 0
+    if supplied_mode:
+        supplied_note = ""  # the delivery is the analysed data here, not a side delivery
+    rec_noun = "files" if supplied_mode else "recordings"
+    unverified = manifest.loc[(manifest["include_primary"] == "True") & (manifest["word_in_filename"] == "UNVERIFIED"),
+                              "participant_code"].tolist()
+    scen_text = {"no_retakes": "participants with retakes", "no_config_B": "config-B/capture-outlier recordings",
+                 "high_confidence_segmentation": "segmentation-critical recordings",
+                 "no_unverified_source": "files without a verified original recording",
+                 "no_edited_or_clipped": "edited or clipped files"}
+    sens_run = ", ".join(scen_text.get(k, k) for k in sens_info) or "none"
     bounds_text = (f"boundaries verified by listening for {bounds_verified} of {n} selected recordings"
                    if bounds_verified else "segment boundaries not yet verified by listening")
     retake_text = ("all confirmed by human listening" if takes_human == len(retakes) else
@@ -216,12 +234,15 @@ def main() -> int:
     gaps = (acc_pivot['Kapoy'] - acc_pivot['other words'])
     gap_task = gaps.idxmax()
     kap = meta[meta['spoken_word'] == 'Kapoy'].merge(included[['participant_code']], on='participant_code')
-    kap_v, kap_a = kap['valence'].astype(int), kap['arousal'].astype(int)
+    kap_v = pd.to_numeric(kap['valence'], errors='coerce').dropna().astype(int)
+    kap_a = pd.to_numeric(kap['arousal'], errors='coerce').dropna().astype(int)
     kap_n, kap_vmode, kap_amode = len(kap), int(kap_v.mode().iloc[0]), int(kap_a.mode().iloc[0])
     kap_v3, kap_a3 = int((kap_v == kap_vmode).sum()), int((kap_a == kap_amode).sum())
     ana = meta.merge(included[['participant_code']], on='participant_code')
-    v35 = int(ana['valence'].astype(int).between(3, 5).sum())
-    a35 = int(ana['arousal'].astype(int).between(3, 5).sum())
+    ana_v = pd.to_numeric(ana['valence'], errors='coerce').dropna()  # a struck-through rating is missing
+    ana_a = pd.to_numeric(ana['arousal'], errors='coerce').dropna()
+    v35, n_val = int(ana_v.between(3, 5).sum()), len(ana_v)
+    a35, n_aro = int(ana_a.between(3, 5).sum()), len(ana_a)
 
     # ---- consent documentation status (consent/consent_log.csv) ------------------------------
     clog = load_consent_log()
@@ -241,8 +262,11 @@ def main() -> int:
     status = [
         ("1. Minimum of 40 valid participant observations", "BLOCKED" if n < MIN_VALID_OBSERVATIONS else "COMPLETE",
          "data/analysis_manifest.csv", f"{n} valid unique participants; {len(missing_rec)} metadata participants have no recording",
-         f"needs {max(0, MIN_VALID_OBSERVATIONS - n)} more valid observations: recordings for {', '.join(missing_rec)} (if they exist) or new consented participants"
-         + (f"; {supplied_note}" if supplied_note else "")),
+         (f"needs {max(0, MIN_VALID_OBSERVATIONS - n)} more valid observations: recordings for {', '.join(missing_rec)} "
+          "(if they exist) or new consented participants" + (f"; {supplied_note}" if supplied_note else "")
+          if n < MIN_VALID_OBSERVATIONS else
+          f"{len(no_orig)} observations rest on supplied copies without a verified original and {len(edited)} files are "
+          "edited or clipped; sensitivity analyses exclude them" if supplied_mode else "—")),
         ("2. Required consent documentation", consent_status, "consent/consent_log.csv", consent_evidence,
          consent_issue),
         ("3. Properly coded research metadata", "COMPLETE", "data/metadata_cleaned.csv, reports/phase1/cleaning_log.csv",
@@ -250,8 +274,9 @@ def main() -> int:
          f"{rule_span})",
          "confirm: Y2-076 arousal; 'Lecture' → 'Lecture/Discussion'; off-list words; 9 missing words, 2 missing feelings"),
         ("4. Properly named audio recordings", "COMPLETE", "data/processed_audio/recordings/, file_mapping.csv",
-         f"{n} WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all {dq['total_files']} originals",
-         "Y2-073 word token UNVERIFIED (word not recorded); session token PM is an assumption"),
+         f"{n} WAVs named ParticipantCode_YearLevel_Session_Word.wav; mapping for all {dq['total_files']} source files",
+         f"word token UNVERIFIED for {', '.join(unverified) or 'none'} (word not recorded); session token PM is an "
+         "assumption"),
         ("5. Data quality report", "COMPLETE", "reports/data_quality_report.md",
          f"{dq['total_files']} recordings assessed; {dq['selected_with_flags']} selected takes with ≥1 flag",
          "—" if bounds_verified == n else bounds_text + " (blind listening review, data/review/listening_review.html)"),
@@ -288,8 +313,11 @@ def main() -> int:
         f"recorded immediately after class, carry information about the speaker's independently self-reported "
         f"valence and arousal.",
         "",
-        f"Of {n_meta} second-year CS participants in the Group 3 metadata, {n} had a usable recording. That is below "
-        f"the protocol minimum of {MIN_VALID_OBSERVATIONS}.",
+        f"Of {n_meta} second-year CS participants in the Group 3 metadata, {n} had a usable recording"
+        + (f". That is below the protocol minimum of {MIN_VALID_OBSERVATIONS}." if n < MIN_VALID_OBSERVATIONS else
+           f", which meets the protocol minimum of {MIN_VALID_OBSERVATIONS}"
+           + (f"; by the group's decision these are the {delivery} copies, {len(no_orig)} of them without a "
+              "verified original recording." if supplied_mode else ".")),
         "",
         f"From each recording's automatically located target utterance, {fsum['n_features']} features were extracted "
         f"(F0, energy, zero-crossing rate, MFCC with derivatives, spectral and temporal descriptors). Logistic "
@@ -300,9 +328,13 @@ def main() -> int:
         f"Feature–affect correlations surviving FDR correction: {fdr['valence']} of {fsum['n_features']} for valence, "
         f"{fdr['arousal']} for arousal.",
         "",
-        f"A recording-configuration artefact affected {cfg_feats} features, and the retained retakes and automatic "
-        f"utterance localisation add further uncertainty. Within this pilot dataset, the results {headline}. The "
-        f"findings should be interpreted as a feasibility study.",
+        (f"A recording-configuration artefact affected {cfg_feats} features, and " if cfg_feats else
+         "No recording-configuration artefact was detectable, but ")
+        + ("the trimmed, partly edited copies analysed instead of the original recordings, and the automatic utterance "
+           "localisation, add further uncertainty." if supplied_mode else
+           "the retained retakes and automatic utterance localisation add further uncertainty.")
+        + f" Within this pilot dataset, the results {headline}. The findings should be interpreted as a feasibility "
+        "study.",
         "",
         "## 1. Introduction",
         "",
@@ -338,9 +370,11 @@ def main() -> int:
         "",
         f"The assigned population is Second-Year CS students (protocol §IV). The Group 3 metadata lists {n_meta} "
         f"participants, Y2-041 to Y2-080, every one recorded as 2nd year. Recordings were supplied for "
-        f"{dq['participants_with_recordings']} of them. No recording exists for {len(missing_rec)} "
-        f"({', '.join(missing_rec)}). The analysis set comprises the **{n} participants** with a usable recording "
-        f"and valid ratings. Every participant contributes exactly one observation.",
+        f"{dq['participants_with_recordings']} of them"
+        + (f". No recording exists for {len(missing_rec)} ({', '.join(missing_rec)})" if missing_rec else "")
+        + (f" (as {delivery} copies; see §4.3)" if supplied_mode else "")
+        + f". The analysis set comprises the **{n} participants** with a usable recording. Every participant "
+        "contributes exactly one observation.",
         "",
         "### 4.2 Research Ethics",
         "",
@@ -363,14 +397,25 @@ def main() -> int:
         f"Environmental Science for {(meta['subject'] == 'Environmental Science').sum()} rows, blank for "
         f"{(meta['subject'] == '').sum()}).",
         "",
-        f"Embedded capture times place {len(main_caps)} of the {n} selected recordings between {main_caps.min()} "
-        f"and {main_caps.max()} (PHT) on {caps.str[:10].mode().iloc[0]}. That is consistent with the recorded "
-        f"session. The time boundary between sessions was not documented in the supplied material.",
+        ("The analysed files are converted copies and carry no capture time. The capture times of the original "
+         "recordings, audited before the switch, were consistent with the recorded session, except for the originals "
+         f"of {subsets['subset_config_or_time_anomaly']} files, which have a different configuration or a much later "
+         "capture time (§6). The time boundary between sessions was not documented in the supplied material."
+         if supplied_mode else
+         f"Embedded capture times place {len(main_caps)} of the {n} selected recordings between {main_caps.min()} "
+         f"and {main_caps.max()} (PHT) on {caps.str[:10].mode().iloc[0]}. That is consistent with the recorded "
+         "session. The time boundary between sessions was not documented in the supplied material."),
         "",
-        f"All recordings were made on one smartphone model (iPhone 17) as short MOV videos (AAC, 48 kHz). "
-        f"{subsets['subset_config_or_time_anomaly']} recordings differ in audio configuration (stereo plus a second "
-        f"track); {len(outlier_hours)} of them were captured {outlier_hours.min():.1f}–{outlier_hours.max():.1f} h after "
-        f"the median capture time. The group must explain this (see §6).",
+        (f"**Audio source (group decision, 2026-10-04):** the analysis uses the `{delivery}` delivery, "
+         f"{dq['total_files']} WAV files (PCM 16-bit, mono, 16 kHz), one per participant, converted and trimmed by a "
+         "group member from the smartphone recordings (iPhone 17, MOV). The original recordings are archived in "
+         f"`data/raw/` and not analysed. {n_copies} files are copies of an original; {len(no_orig)} have no verified "
+         f"original ({', '.join(no_orig)}); {len(edited)} contain inserted digital silence or clipping "
+         f"({', '.join(edited) or 'none'}). Provenance: `reports/supplied_audio_audit.md`." if supplied_mode else
+         f"All recordings were made on one smartphone model (iPhone 17) as short MOV videos (AAC, 48 kHz). "
+         f"{subsets['subset_config_or_time_anomaly']} recordings differ in audio configuration (stereo plus a second "
+         f"track); {len(outlier_hours)} of them were captured {outlier_hours.min():.1f}–{outlier_hours.max():.1f} h "
+         "after the median capture time. The group must explain this (see §6)."),
         "",
         "### 4.4 Natural Bisaya Speech Procedure",
         "",
@@ -395,19 +440,26 @@ def main() -> int:
         "",
         "### 4.6 Audio Processing",
         "",
-        "1. **Original-audio QA:** peak, clipping, DC offset, level and configuration, measured before processing.",
-        "2. **Standardisation:** ffmpeg first audio stream → mono → 16 kHz → WAV PCM 16-bit, metadata stripped. "
-        "There is no filtering, denoising, normalisation, pitch or speed change. Output is byte-reproducible.",
+        ("1. **Audio QA of the supplied files:** peak, clipping, DC offset, level and inserted digital silence."
+         if supplied_mode else
+         "1. **Original-audio QA:** peak, clipping, DC offset, level and configuration, measured before processing."),
+        ("2. **Standardisation:** the files are already WAV PCM 16-bit mono 16 kHz; ffmpeg passes the samples through "
+         "unchanged (checked bit-identical). The pipeline adds no filtering, denoising, normalisation, pitch or speed "
+         "change; the supplier's trimming and edits cannot be undone." if supplied_mode else
+         "2. **Standardisation:** ffmpeg first audio stream → mono → 16 kHz → WAV PCM 16-bit, metadata stripped. "
+         "There is no filtering, denoising, normalisation, pitch or speed change. Output is byte-reproducible."),
         "3. **Target-utterance localisation.** The clips contain continuous hallway babble and sometimes other "
         "speech, so the participant's word was located as the dominant short-time-energy event. This is "
         "deterministic and blind to labels. Segments touching the clip edge, longer than 1.5 s, or with a "
         "competing event within 3 dB are flagged.",
-        f"4. **Duplicates.** {len(retakes)} participants ({', '.join(retakes)}) had retakes captured seconds apart. "
-        "One take each was chosen by a label-blind *complete-word rule*: drop takes whose word is cut off by the "
-        "clip edge, too long to be one word, or too short to contain the recorded word (< 0.10 s per syllable); "
-        "prefer a take without a competing event; then use the clearest take if it is ≥ 3 dB clearer, otherwise "
-        "the earliest. Takes are never chosen for sounding more emotional. A blind listening review (at least two "
-        f"listeners; only unanimous answers count) can confirm or replace each choice; so far: {retake_text}.",
+        ("4. **One file per participant.** Where a participant was recorded more than once, the delivery contains "
+         "one take (the latest, according to the audit), which is used as supplied." if supplied_mode else
+         f"4. **Duplicates.** {len(retakes)} participants ({', '.join(retakes)}) had retakes captured seconds apart. "
+         "One take each was chosen by a label-blind *complete-word rule*: drop takes whose word is cut off by the "
+         "clip edge, too long to be one word, or too short to contain the recorded word (< 0.10 s per syllable); "
+         "prefer a take without a competing event; then use the clearest take if it is ≥ 3 dB clearer, otherwise "
+         "the earliest. Takes are never chosen for sounding more emotional. A blind listening review (at least two "
+         f"listeners; only unanimous answers count) can confirm or replace each choice; so far: {retake_text}."),
         "5. **Naming:** `ParticipantCode_YearLevel_Session_Word.wav`. `PM` is assumed for Afternoon–Evening, and "
         "`UNVERIFIED` is used where no word was recorded.",
         "",
@@ -443,8 +495,7 @@ def main() -> int:
         f"({train['n_permutations']} permutations of the full nested procedure) checks each model against chance, "
         f"with Holm adjustment.",
         "- **Model comparison:** corrected repeated k-fold t-test (Nadeau & Bengio, 2003).",
-        "- **Sensitivity analyses:** removing retake participants, config-B/capture-outlier recordings and "
-        "segmentation-critical recordings.",
+        f"- **Sensitivity analyses:** the same design after removing, in turn: {sens_run}.",
         "",
         "## 5. Dataset Description",
         "",
@@ -452,7 +503,9 @@ def main() -> int:
             {"Stage": "Metadata rows (participants)", "n": n_meta},
             {"Stage": "Participants with ≥1 recording", "n": dq["participants_with_recordings"]},
             {"Stage": "Recording files supplied", "n": dq["total_files"]},
-            {"Stage": "Participants with retakes", "n": len(retakes)},
+            *([{"Stage": "…of them copies of an original / without a verified original", "n": f"{n_copies} / {len(no_orig)}"},
+               {"Stage": "…edited or clipped (inserted digital silence, clipping)", "n": len(edited)}]
+              if supplied_mode else [{"Stage": "Participants with retakes", "n": len(retakes)}]),
             {"Stage": "Participants with a usable selected recording (analysis set)", "n": n},
             {"Stage": "Protocol minimum", "n": MIN_VALID_OBSERVATIONS},
         ])),
@@ -467,23 +520,32 @@ def main() -> int:
         "",
         md_table(pd.DataFrame([
             {"Quantity": "Recordings (files)", "Value": dq["total_files"]},
-            {"Quantity": "Participants without any recording", "Value": f"{len(missing_rec)} ({', '.join(missing_rec)})"},
+            {"Quantity": "Participants without any recording",
+             "Value": f"{len(missing_rec)}" + (f" ({', '.join(missing_rec)})" if missing_rec else "")},
             {"Quantity": "Duplicate (retake) participants / extra files", "Value": f"{len(retakes)} / {dq['extra_takes']}"},
             {"Quantity": "Unreadable files / files without speech", "Value": f"{dq['unreadable_files']} / {dq['no_speech_files']}"},
             {"Quantity": "Valid recordings (selected, usable)", "Value": dq["valid_recordings"]},
             {"Quantity": "Selected recordings with ≥1 flag", "Value": dq["selected_with_flags"]},
             {"Quantity": "…with a segmentation-critical flag", "Value": dq["selected_segmentation_critical"]},
-            {"Quantity": "…with a different recording configuration", "Value": subsets["subset_config_or_time_anomaly"]},
+            {"Quantity": "…with a different recording configuration" + (" (of the original)" if supplied_mode else ""),
+             "Value": subsets["subset_config_or_time_anomaly"]},
+            *([{"Quantity": "Files without a verified original / edited or clipped",
+                "Value": f"{len(no_orig)} / {len(edited)}"}] if supplied_mode else []),
         ])),
         "",
         f"Flags among the selected recordings: {', '.join(f'{k} {v}' for k, v in dq['flag_counts_selected'].items())}. "
         f"Background voices were detected in {n_bg} of {n} selected clips. The recordings were not made in a quiet "
-        "place (protocol §X).",
+        "place (protocol §X)."
+        + (" The supplier trimmed the clips, removing much of the background around each word, so these counts "
+           "understate the noise in the original recordings." if supplied_mode else ""),
         "",
-        f"**Recording-configuration artefact.** The {subsets['subset_config_or_time_anomaly']} config-B recordings "
-        f"differ from the rest in {cfg_feats} of {fsum['n_features']} features at FDR q < 0.05 ({', '.join(cfg_dirs)}). "
-        "This is a device/setting effect that a classifier could mistake for "
-        "affect. Configuration was not significantly associated with the labels ("
+        (f"**Recording-configuration artefact.** The {subsets['subset_config_or_time_anomaly']} config-B {rec_noun} "
+         f"differ from the rest in {cfg_feats} of {fsum['n_features']} features at FDR q < 0.05 ({', '.join(cfg_dirs)}). "
+         "This is a device/setting effect that a classifier could mistake for affect." if cfg_feats else
+         f"**Recording configuration.** The {subsets['subset_config_or_time_anomaly']} config-B {rec_noun} do not "
+         f"differ from the rest in any of the {fsum['n_features']} features at FDR q < 0.05; with so few such files the "
+         "test has little power, so a smaller artefact cannot be ruled out.")
+        + " Configuration was not significantly associated with the labels ("
         + "; ".join(f"{t}: p = {a['p_value']:.2f}" for t, a in eda["config_label_association"].items()) + ").",
         "",
         "Full detail: `reports/data_quality_report.md`.",
@@ -578,18 +640,23 @@ def main() -> int:
         "## 10. Discussion",
         "",
         "**Observations.**",
-        f"- {n} of {n_meta} participants have usable recordings; there are {len(retakes)} retake sets, "
-        f"{n_meta - len(words)} missing words, and a different recording configuration for "
-        f"{subsets['subset_config_or_time_anomaly']} files.",
+        (f"- {n} of {n_meta} participants are analysed from the {delivery} copies ({len(no_orig)} without a verified "
+         f"original, {len(edited)} edited or clipped); {n_meta - len(words)} words are missing; "
+         f"{subsets['subset_config_or_time_anomaly']} files are copies of recordings with a different configuration."
+         if supplied_mode else
+         f"- {n} of {n_meta} participants have usable recordings; there are {len(retakes)} retake sets, "
+         f"{n_meta - len(words)} missing words, and a different recording configuration for "
+         f"{subsets['subset_config_or_time_anomaly']} files."),
         "- The recordings are short clips in a noisy, multi-speaker environment.",
-        f"- Self-reports cluster at neutral-to-pleasant valence (3–5: {v35} of {n}) and moderate-to-high arousal "
-        f"(3–5: {a35} of {n}).",
+        f"- Self-reports cluster at neutral-to-pleasant valence (3–5: {v35} of {n_val}) and moderate-to-high arousal "
+        f"(3–5: {a35} of {n_aro}).",
         "",
         "**Statistical results.**",
         f"- Valence and arousal co-vary strongly (ρ = {va[0]:.2f}).",
         f"- After FDR correction, {fdr['arousal']} {'feature is' if fdr['arousal'] == 1 else 'features are'} "
         f"associated with arousal and {fdr['valence']} with valence.",
-        f"- The recording configuration changes {cfg_feats} features.",
+        (f"- The recording configuration changes {cfg_feats} features." if cfg_feats else
+         "- No feature differs significantly between recording configurations."),
         "",
         "**Model performance.**",
         f"- {ml_statement}",
@@ -614,8 +681,10 @@ def main() -> int:
          if lexical_confound else
          "- Lexical content could still be absorbed by an acoustic model, although the confound conditions were "
          "not jointly significant in this sample."),
-        f"- Recording configuration is a further confound: {subsets['subset_config_or_time_anomaly']} recordings "
-        f"differ systematically in {cfg_feats} acoustic features.",
+        (f"- Recording configuration is a further confound: {subsets['subset_config_or_time_anomaly']} {rec_noun} "
+         f"differ systematically in {cfg_feats} acoustic features." if cfg_feats else
+         f"- Recording configuration remains a possible confound ({subsets['subset_config_or_time_anomaly']} {rec_noun}), "
+         "although no feature differs significantly in this analysis."),
         "- These are associations in a small observational sample. Nothing here shows that classes, activities or "
         "words *cause* any affective state.",
         "- A negative or null result at this sample size is informative for the class study: it argues for the "
@@ -623,8 +692,13 @@ def main() -> int:
         "",
         "## 11. Limitations",
         "",
-        f"1. **Small sample, below the protocol minimum:** n = {n} < {MIN_VALID_OBSERVATIONS}; no participant "
-        f"recording for {', '.join(missing_rec)}.",
+        (f"1. **Small sample, below the protocol minimum:** n = {n} < {MIN_VALID_OBSERVATIONS}; no participant "
+         f"recording for {', '.join(missing_rec)}." if n < MIN_VALID_OBSERVATIONS else
+         f"1. **Small sample:** n = {n} meets the protocol minimum of {MIN_VALID_OBSERVATIONS}, but only correlations "
+         f"of about |ρ| ≥ {np.tanh(2.8016 * np.sqrt(1.06 / (n - 3))):.2f} are reliably detectable (80% power, "
+         "two-sided α = 0.05)"
+         + (f", and {len(no_orig)} of the {n} observations rest on copies without a verified original."
+            if supplied_mode and no_orig else ".")),
         f"2. **Class imbalance and sparse categories:** unpleasant valence n = "
         f"{train['tasks']['valence_3']['class_counts']['Unpleasant']}; {', '.join(not_run)} could not be "
         "modelled; derived groupings merge categories.",
@@ -633,19 +707,29 @@ def main() -> int:
         f"utterance-to-background ratio (< 10 dB) in {dq['flag_counts_selected'].get('LOW_SBR', 0)}.",
         f"5. **Automatic segmentation** ({bounds_text}); {dq['selected_segmentation_critical']} recordings "
         "have segmentation-critical flags.",
-        f"6. **Device/setting variability:** {subsets['subset_config_or_time_anomaly']} recordings with a different "
-        f"audio configuration shift {cfg_feats} features. F0 in Hz is dominated by voice type (no speaker baseline).",
+        f"6. **Device/setting variability:** {subsets['subset_config_or_time_anomaly']} "
+        + ("files are copies of recordings" if supplied_mode else "recordings")
+        + " with a different audio configuration"
+        + (f", which shifts {cfg_feats} features." if cfg_feats else
+           "; no feature differs significantly here, but the test has little power.")
+        + " F0 in Hz is dominated by voice type (no speaker baseline).",
         "7. **Limited contextual variation:** one year level, one activity, one session; RQ2 is not answerable "
         "within Group 3.",
         f"8. **Possible lexical influence:** {n_offlist} of {len(words)} words are off the protocol list and words "
         "differ phonetically, so acoustic features can encode word identity.",
         f"9. **Self-report uncertainty:** single-item ratings; {n_feel_eq} rows with feeling text identical to the "
         f"word; {n_feel_missing} rows without a description; {n_struck} struck-through rating{'' if n_struck == 1 else 's'}.",
+        (f"10. **The analysed audio is not the original recordings:** by the group's decision the analysis uses the "
+         f"{delivery} copies (trimmed 16 kHz WAVs made by a group member), so capture times and native-format QA are "
+         f"lost; {len(no_orig)} files have no verified original ({', '.join(no_orig)}) and {len(edited)} contain inserted "
+         f"digital silence or clipping ({', '.join(edited) or 'none'}). Sensitivity analyses exclude them. Where a "
+         "participant was recorded more than once, the delivery's take is used."
+         if supplied_mode else
         f"10. **Duplicates and missing observations:** {len(retakes)} retake sets were resolved by the complete-word "
         f"rule ({retake_text}); {len(missing_rec)} participants have no recording"
         + (f"; {supplied_note}" if supplied_note else "") + "."
         + (f" The delivery's file for {', '.join(supplied_odd['participant_code'])} does not match the original "
-           "recording and is unexplained." if len(supplied_odd) else ""),
+           "recording and is unexplained." if len(supplied_odd) else "")),
         "11. **No demographic variables were collected** (the protocol allows optional variables only when approved), "
         "so speaker characteristics such as sex confound F0.",
         ("12. **Consent documentation not supplied;** dissemination is blocked until it is verified."
@@ -695,7 +779,9 @@ def main() -> int:
         "### C. Decisions awaiting confirmation",
         "",
         "See `docs/decision_log.md` (items marked PENDING):",
-        "- the retake choices;",
+        *(["- the supplied copies: the original recordings behind the files without a verified original "
+           f"({', '.join(no_orig)}) and the edits in {', '.join(edited) or 'none'} (`reports/supplied_audio_audit.md`);"]
+          if supplied_mode else ["- the retake choices;"]),
         "- the config-B recordings;",
         "- Y2-076's arousal;",
         "- off-list words;",
@@ -704,7 +790,8 @@ def main() -> int:
         "- consent documentation;",
         *([f"- the supplied audio delivery: original recordings for {', '.join(supplied_new['participant_code'])}"
            + (f", and an explanation for {', '.join(supplied_odd['participant_code'])}" if len(supplied_odd) else "")
-           + " (`reports/supplied_audio_audit.md`);"] if len(supplied_new) or len(supplied_odd) else []),
+           + " (`reports/supplied_audio_audit.md`);"] if (len(supplied_new) or len(supplied_odd)) and not supplied_mode
+          else []),
         *([] if bounds_verified == n and "Y2-073" in words_from_review else
           ["- the blind listening review (utterance boundaries, retakes, Y2-073's word): "
            "`data/review/listening_review.html`, results in `reports/listening_review_report.md`."]),
@@ -727,20 +814,28 @@ def main() -> int:
         "full detail in the report.*",
         "",
         "- **Data:**",
-        f"  - {n_meta} metadata participants; {dq['total_files']} recordings (iPhone MOV) covering "
-        f"{dq['participants_with_recordings']} participants.",
+        (f"  - {n_meta} metadata participants. By the group's decision the analysis uses the {delivery} delivery: "
+         f"{dq['total_files']} trimmed 16 kHz WAV copies covering {dq['participants_with_recordings']} participants "
+         f"({len(no_orig)} without a verified original, {len(edited)} edited or clipped). The original recordings are "
+         "archived, not analysed." if supplied_mode else
+         f"  - {n_meta} metadata participants; {dq['total_files']} recordings (iPhone MOV) covering "
+         f"{dq['participants_with_recordings']} participants."),
         f"  - {len(missing_rec)} participants have no recording, so the protocol minimum of "
         f"{MIN_VALID_OBSERVATIONS} is **{'met' if n >= MIN_VALID_OBSERVATIONS else 'not met'}** (n = {n})"
         + (f"; {supplied_note}" if supplied_note else "") + ".",
-        f"  - {len(retakes)} participants had retakes; one take each was chosen by the label-blind complete-word "
-        "rule.",
-        f"- **Self-reports:** valence 3–5 for {v35} of {n} and arousal 3–5 for {a35} of {n}. Valence and arousal "
+        ("  - One file per participant (the delivery's take for participants recorded more than once)."
+         if supplied_mode else
+         f"  - {len(retakes)} participants had retakes; one take each was chosen by the label-blind complete-word "
+         "rule."),
+        f"- **Self-reports:** valence 3–5 for {v35} of {n_val} and arousal 3–5 for {a35} of {n_aro}. Valence and arousal "
         f"correlate (ρ = {va[0]:.2f}). Only {train['tasks']['valence_3']['class_counts']['Unpleasant']} "
         f"participants reported unpleasant valence; not modelled (too few per class): {', '.join(not_run)}.",
         f"- **Acoustics vs affect:** after FDR correction, {fdr['arousal']} of {fsum['n_features']} features are "
         f"associated with arousal and {fdr['valence']} with valence. "
-        f"{subsets['subset_config_or_time_anomaly']} recordings with a different audio configuration shift "
-        f"{cfg_feats} features (a device confound).",
+        f"{subsets['subset_config_or_time_anomaly']} {rec_noun} with a different audio configuration "
+        + ("(copies of the originals) " if supplied_mode else "")
+        + (f"shift {cfg_feats} features (a device confound)." if cfg_feats else
+           "do not differ significantly in any feature."),
         f"- **Speaker-independent ML** (logistic regression, RBF SVM, random forest vs dummy baselines; "
         f"{train['n_repeats']}× repeated nested grouped CV):",
         f"  - {ml_statement}",

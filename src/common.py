@@ -8,6 +8,7 @@ path, the random seed) is defined exactly once.
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 import os
 import re
@@ -99,6 +100,43 @@ def normalise_code(raw: str) -> str | None:
 
 def session_key(value: str) -> str:
     return value.translate(DASHES).casefold().replace(" ", "")
+
+
+# ---- which recordings the analysis uses -----------------------------------------------
+AUDIO_SOURCE_FILE = DATA / "audio_source.json"
+SUPPLIED_DIR = DATA / "supplied_audio"
+SUPPLIED_AUDIT_CSV = REPORTS / "supplied_audio_audit.csv"
+DIGITAL_SILENCE_S = 0.05      # exact zeros for >= 50 ms never occur in a phone recording: the file was edited
+
+
+def audio_source() -> dict:
+    """The recordings to analyse. Without data/audio_source.json: the original phone recordings in data/raw.
+
+    With {"source": "supplied", "delivery": "<folder in data/supplied_audio>"}: that delivery's WAVs replace them
+    (a group decision; the originals stay untouched in data/raw). The delivery needs a <delivery>_files.csv with
+    each file's SHA-256 and an audit made while the originals were still analysed (step 03c), which records
+    where each copy came from.
+    """
+    if not AUDIO_SOURCE_FILE.is_file():
+        return {"source": "original"}
+    cfg = json.loads(AUDIO_SOURCE_FILE.read_text(encoding="utf-8"))
+    if cfg.get("source") == "original":
+        return cfg
+    if cfg.get("source") != "supplied" or not cfg.get("delivery"):
+        raise ValueError(f"{AUDIO_SOURCE_FILE.name}: 'source' must be 'original' or 'supplied' (with 'delivery')")
+    cfg["folder"] = SUPPLIED_DIR / cfg["delivery"]
+    cfg["files_csv"] = SUPPLIED_DIR / f"{cfg['delivery']}_files.csv"
+    for need in (cfg["folder"], cfg["files_csv"]):
+        if not need.exists():
+            raise FileNotFoundError(f"{AUDIO_SOURCE_FILE.name} selects {cfg['delivery']}, but {need} is missing")
+    return cfg
+
+
+def longest_zero_run(y: np.ndarray) -> int:
+    """Length (samples) of the longest run of exact zeros (inserted digital silence)."""
+    z = np.concatenate([[0], (np.asarray(y) == 0).astype(np.int8), [0]])
+    edges = np.flatnonzero(np.diff(z))
+    return int((edges[1::2] - edges[::2]).max()) if len(edges) else 0
 
 
 # ---- consent documentation (Protocol Section VI) ------------------------------------

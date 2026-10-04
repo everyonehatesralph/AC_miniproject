@@ -5,17 +5,17 @@
   "n_permutations": 500,
   "min_class_size": 5,
   "n_features": 108,
-  "features_sha256": "7e77b98c279e7fb1cd93bf7621daf7a21b685211c23f0765902a468500477889",
+  "features_sha256": "2dd12b5b4b499e468c92120764380a4c7ec08a2d0b09229b7f8420989fb95281",
   "tasks": {
     "valence_5": {
       "role": "attempted",
-      "n": 32,
+      "n": 40,
       "class_counts": {
         "1": 1,
-        "2": 1,
-        "3": 12,
-        "4": 9,
-        "5": 9
+        "2": 2,
+        "3": 15,
+        "4": 11,
+        "5": 11
       },
       "viable": false,
       "outer_folds": null,
@@ -23,37 +23,37 @@
     },
     "arousal_5": {
       "role": "attempted",
-      "n": 32,
+      "n": 39,
       "class_counts": {
-        "1": 2,
-        "2": 4,
+        "1": 3,
+        "2": 6,
         "3": 13,
-        "4": 9,
-        "5": 4
+        "4": 12,
+        "5": 5
       },
       "viable": false,
       "outer_folds": null,
-      "reason": "smallest class has 2 < 5 participants"
+      "reason": "smallest class has 3 < 5 participants"
     },
     "valence_3": {
       "role": "attempted",
-      "n": 32,
+      "n": 40,
       "class_counts": {
-        "Unpleasant": 2,
-        "Neutral": 12,
-        "Pleasant": 18
+        "Unpleasant": 3,
+        "Neutral": 15,
+        "Pleasant": 22
       },
       "viable": false,
       "outer_folds": null,
-      "reason": "smallest class has 2 < 5 participants"
+      "reason": "smallest class has 3 < 5 participants"
     },
     "arousal_3": {
       "role": "primary",
-      "n": 32,
+      "n": 39,
       "class_counts": {
-        "Low": 6,
+        "Low": 9,
         "Moderate": 13,
-        "High": 13
+        "High": 17
       },
       "viable": true,
       "outer_folds": 5,
@@ -61,10 +61,10 @@
     },
     "valence_2": {
       "role": "primary",
-      "n": 32,
+      "n": 40,
       "class_counts": {
-        "NotPleasant": 14,
-        "Pleasant": 18
+        "NotPleasant": 18,
+        "Pleasant": 22
       },
       "viable": true,
       "outer_folds": 5,
@@ -72,83 +72,46 @@
     },
     "arousal_2": {
       "role": "secondary",
-      "n": 32,
+      "n": 39,
       "class_counts": {
-        "NotHigh": 19,
-        "High": 13
+        "NotHigh": 22,
+        "High": 17
       },
       "viable": true,
       "outer_folds": 5,
       "reason": ""
     },
     "sensitivity": {
-      "no_retakes": {
-        "arousal_3": {
-          "n": 27,
-          "removed": [
-            "Y2-044",
-            "Y2-047",
-            "Y2-056",
-            "Y2-057",
-            "Y2-064"
-          ],
-          "class_counts": {
-            "Low": 5,
-            "Moderate": 12,
-            "High": 10
-          },
-          "viable": true,
-          "outer_folds": 5
-        },
-        "valence_2": {
-          "n": 27,
-          "removed": [
-            "Y2-044",
-            "Y2-047",
-            "Y2-056",
-            "Y2-057",
-            "Y2-064"
-          ],
-          "class_counts": {
-            "NotPleasant": 13,
-            "Pleasant": 14
-          },
-          "viable": true,
-          "outer_folds": 5
-        }
-      },
       "no_config_B": {
         "arousal_3": {
-          "n": 26,
+          "n": 34,
           "removed": [
             "Y2-050",
             "Y2-063",
             "Y2-068",
             "Y2-069",
-            "Y2-070",
-            "Y2-075"
+            "Y2-070"
           ],
           "class_counts": {
-            "Low": 4,
+            "Low": 8,
             "Moderate": 10,
-            "High": 12
+            "High": 16
           },
-          "viable": false,
-          "outer_folds": null
+          "viable": true,
+          "outer_folds": 5
         },
         "valence_2": {
-          "n": 26,
+          "n": 35,
           "removed": [
             "Y2-050",
             "Y2-063",
             "Y2-068",
             "Y2-069",
-            "Y2-070",
-            "Y2-075"
+            "Y2-070"
           ],
           "class_counts": {
-            "NotPleasant": 10,
-            "Pleasant": 16
+            "NotPleasant": 15,
+            "Pleasant": 20
           },
           "viable": true,
           "outer_folds": 5
@@ -156,48 +119,124 @@
       },
       "high_confidence_segmentation": {
         "arousal_3": {
-          "n": 20,
+          "n": 27,
           "removed": [
-            "Y2-041",
             "Y2-045",
             "Y2-046",
-            "Y2-047",
             "Y2-048",
             "Y2-049",
             "Y2-051",
             "Y2-052",
             "Y2-055",
-            "Y2-059",
+            "Y2-057",
             "Y2-062",
-            "Y2-066"
+            "Y2-075",
+            "Y2-076",
+            "Y2-078",
+            "Y2-079"
           ],
           "class_counts": {
-            "Low": 6,
-            "Moderate": 6,
-            "High": 8
+            "Low": 7,
+            "Moderate": 7,
+            "High": 13
           },
           "viable": true,
           "outer_folds": 5
         },
         "valence_2": {
-          "n": 20,
+          "n": 27,
           "removed": [
-            "Y2-041",
             "Y2-045",
             "Y2-046",
-            "Y2-047",
             "Y2-048",
             "Y2-049",
             "Y2-051",
             "Y2-052",
             "Y2-055",
-            "Y2-059",
+            "Y2-057",
             "Y2-062",
-            "Y2-066"
+            "Y2-075",
+            "Y2-076",
+            "Y2-078",
+            "Y2-079"
           ],
           "class_counts": {
-            "NotPleasant": 11,
-            "Pleasant": 9
+            "NotPleasant": 12,
+            "Pleasant": 15
+          },
+          "viable": true,
+          "outer_folds": 5
+        }
+      },
+      "no_unverified_source": {
+        "arousal_3": {
+          "n": 31,
+          "removed": [
+            "Y2-053",
+            "Y2-071",
+            "Y2-074",
+            "Y2-075",
+            "Y2-076",
+            "Y2-077",
+            "Y2-078",
+            "Y2-079",
+            "Y2-080"
+          ],
+          "class_counts": {
+            "Low": 5,
+            "Moderate": 13,
+            "High": 13
+          },
+          "viable": true,
+          "outer_folds": 5
+        },
+        "valence_2": {
+          "n": 31,
+          "removed": [
+            "Y2-053",
+            "Y2-071",
+            "Y2-074",
+            "Y2-075",
+            "Y2-076",
+            "Y2-077",
+            "Y2-078",
+            "Y2-079",
+            "Y2-080"
+          ],
+          "class_counts": {
+            "NotPleasant": 13,
+            "Pleasant": 18
+          },
+          "viable": true,
+          "outer_folds": 5
+        }
+      },
+      "no_edited_or_clipped": {
+        "arousal_3": {
+          "n": 37,
+          "removed": [
+            "Y2-076",
+            "Y2-077",
+            "Y2-078"
+          ],
+          "class_counts": {
+            "Low": 8,
+            "Moderate": 13,
+            "High": 16
+          },
+          "viable": true,
+          "outer_folds": 5
+        },
+        "valence_2": {
+          "n": 37,
+          "removed": [
+            "Y2-076",
+            "Y2-077",
+            "Y2-078"
+          ],
+          "class_counts": {
+            "NotPleasant": 17,
+            "Pleasant": 20
           },
           "viable": true,
           "outer_folds": 5
@@ -213,18 +252,18 @@
       "best_params": {
         "clf__C": 0.01
       },
-      "inner_cv_balanced_accuracy": 0.4166666666666667,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.39814814814814814,
+      "n_train": 39
     },
     {
       "task": "arousal_3",
       "model": "svm_rbf",
       "file": "models/final/arousal_3__svm_rbf.joblib",
       "best_params": {
-        "clf__C": 1.0
+        "clf__C": 10.0
       },
-      "inner_cv_balanced_accuracy": 0.3444444444444444,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.3611111111111111,
+      "n_train": 39
     },
     {
       "task": "arousal_3",
@@ -233,18 +272,18 @@
       "best_params": {
         "clf__min_samples_leaf": 3
       },
-      "inner_cv_balanced_accuracy": 0.4222222222222222,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.45740740740740743,
+      "n_train": 39
     },
     {
       "task": "valence_2",
       "model": "logistic_regression",
       "file": "models/final/valence_2__logistic_regression.joblib",
       "best_params": {
-        "clf__C": 0.01
+        "clf__C": 0.1
       },
-      "inner_cv_balanced_accuracy": 0.5416666666666666,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.7073412698412698,
+      "n_train": 40
     },
     {
       "task": "valence_2",
@@ -253,18 +292,18 @@
       "best_params": {
         "clf__C": 1.0
       },
-      "inner_cv_balanced_accuracy": 0.5916666666666667,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.6517857142857143,
+      "n_train": 40
     },
     {
       "task": "valence_2",
       "model": "random_forest",
       "file": "models/final/valence_2__random_forest.joblib",
       "best_params": {
-        "clf__min_samples_leaf": 1
+        "clf__min_samples_leaf": 3
       },
-      "inner_cv_balanced_accuracy": 0.5805555555555556,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.7033730158730158,
+      "n_train": 40
     },
     {
       "task": "arousal_2",
@@ -273,18 +312,18 @@
       "best_params": {
         "clf__C": 0.01
       },
-      "inner_cv_balanced_accuracy": 0.5801587301587302,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.4694444444444444,
+      "n_train": 39
     },
     {
       "task": "arousal_2",
       "model": "svm_rbf",
       "file": "models/final/arousal_2__svm_rbf.joblib",
       "best_params": {
-        "clf__C": 1.0
+        "clf__C": 0.1
       },
-      "inner_cv_balanced_accuracy": 0.6444444444444444,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.44166666666666665,
+      "n_train": 39
     },
     {
       "task": "arousal_2",
@@ -293,8 +332,8 @@
       "best_params": {
         "clf__min_samples_leaf": 1
       },
-      "inner_cv_balanced_accuracy": 0.5563492063492063,
-      "n_train": 32
+      "inner_cv_balanced_accuracy": 0.49583333333333335,
+      "n_train": 39
     }
   ],
   "grids": {
@@ -322,6 +361,6 @@
       ]
     }
   },
-  "runtime_s": 3528.8,
+  "runtime_s": 5103.4,
   "quick_mode": false
 }

@@ -17,6 +17,7 @@ failing step and reports which one failed; every step also writes its own log
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 import time
@@ -42,18 +43,32 @@ STEPS = [
     ("09b", "09b_build_html_report.py", "browser version of all reports (reports/html/index.html)"),
     ("09c", "09c_build_presentation.py", "results presentation (reports/presentation/)"),
     ("10", "10_validate_project.py", "Phase 20: validation"),
+    ("11", "11_build_submission.py", "submission package (submission/G3_submission_<date>.zip)"),
 ]
+
+
+def supplied_audio() -> str:
+    """The supplied delivery that data/audio_source.json selects ('' = the original recordings)."""
+    cfg = ROOT / "data" / "audio_source.json"
+    if not cfg.is_file():
+        return ""
+    data = json.loads(cfg.read_text(encoding="utf-8"))
+    return data.get("delivery", "") if data.get("source") == "supplied" else ""
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--skip-fetch", action="store_true", help="do not contact Google Drive")
-    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10")
+    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10, 11")
     ap.add_argument("--quick", action="store_true", help="smoke test: fewer CV repeats/permutations in step 06")
     args = ap.parse_args()
     t_all = time.time()
+    delivery = supplied_audio()
+    if delivery:
+        print(f"Audio source: the supplied delivery {delivery} (data/audio_source.json); the original recordings are "
+              "not downloaded or analysed.", flush=True)
     for num, script, label in STEPS:
-        if num < args.start or (args.skip_fetch and script == "00_fetch_recordings.py"):
+        if num < args.start or ((args.skip_fetch or delivery) and script == "00_fetch_recordings.py"):
             continue
         cmd = [sys.executable, script] + (["--quick"] if args.quick and script == "06_train_models.py" else [])
         print(f"\n=== step {num}: {label} ({script}) ===", flush=True)

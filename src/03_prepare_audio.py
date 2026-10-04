@@ -3,7 +3,9 @@
 standardisation, file naming and the data-quality report.
 
 Inputs
-    data/raw/download_log.csv                  raw file <-> Drive id <-> participant code
+    data/raw/download_log.csv                  raw file <-> Drive id <-> participant code (the original phone
+                                               recordings, used unless data/audio_source.json selects a supplied
+                                               delivery: then data/supplied_audio/<delivery>_files.csv is used)
     data/metadata_cleaned.csv                  Phase 1 output
     data/processed_audio/take_overrides.csv    OPTIONAL group decision on which take to use:
                                                participant_code, drive_file_id, reason, decided_by
@@ -53,11 +55,11 @@ import viz
 from viz import plt
 
 from common import (BACKGROUND_VOICED_S, CLEAN_METADATA_CSV, CLEARER_TAKE_DB, CLIP_FRACTION_LIMIT, DATA,  # noqa: E402
-                    DOWNLOAD_LOG, FIGURES, FILENAME_RE, HOP_S, LOW_SBR_DB, MIN_SYLLABLE_S, MIN_VOICED_FRAMES,
-                    PROCESSED_AUDIO_DIR, PROJECT_ROOT, REPORTS, SEG_COMPETING_DB, SEG_LONG_S, TARGET_SR,
-                    UNVERIFIED_WORD_TOKEN, count_syllables, decode_audio, ffmpeg_exe, frame_energy_db,
-                    load_consent_log,
-                    locate_utterance, praat_pitch, probe_media, rel, setup_logging, sha256_of)
+                    DIGITAL_SILENCE_S, DOWNLOAD_LOG, FIGURES, FILENAME_RE, HOP_S, LOW_SBR_DB, MIN_SYLLABLE_S,
+                    MIN_VOICED_FRAMES, PROCESSED_AUDIO_DIR, PROJECT_ROOT, REPORTS, SEG_COMPETING_DB, SEG_LONG_S,
+                    SUPPLIED_AUDIT_CSV, TARGET_SR, UNVERIFIED_WORD_TOKEN, audio_source, count_syllables, decode_audio,
+                    ffmpeg_exe, frame_energy_db, load_consent_log, locate_utterance, longest_zero_run, praat_pitch,
+                    probe_media, rel, setup_logging, sha256_of, sniff_container)
 
 PROC_REC = PROCESSED_AUDIO_DIR / "recordings"
 PROC_SEG = PROCESSED_AUDIO_DIR / "segments"
@@ -166,6 +168,7 @@ def analyse_file(row: pd.Series) -> dict:
     y16 = decode_16k_int16(path)
     y = y16.astype(np.float32) / 32768.0
     rec["proc_duration_s"] = round(len(y) / TARGET_SR, 3)
+    rec["longest_digital_silence_s"] = round(longest_zero_run(y16) / TARGET_SR, 3)
     rec.update(locate_utterance(y, TARGET_SR))
     rec["segmentation_source"] = "automatic"
     times, f0 = praat_pitch(y, TARGET_SR)
@@ -199,6 +202,8 @@ def file_flags(rec: dict, median_capture: datetime | None, majority_config: tupl
         flags.append("NO_SPEECH")
     if rec["proc_duration_s"] > 4.0:
         flags.append("LONG_CLIP")
+    if rec["longest_digital_silence_s"] >= DIGITAL_SILENCE_S:
+        flags.append("DIGITAL_SILENCE")
     cap = parse_capture(rec["capture_time"])
     if cap is None:
         flags.append("NO_CAPTURE_TIME")
@@ -419,12 +424,60 @@ def md_table(df: pd.DataFrame) -> str:
                                                 else str(v) for v in row) + " |" for row in df.itertuples(index=False))
 
 
+def supplied_sections(manifest: pd.DataFrame, s: dict) -> list[str]:
+    """Data-quality sections 5-6 when the analysis uses a supplied delivery instead of the originals."""
+    rec = manifest[manifest["n_takes"] > 0]
+    copies = rec[rec["audio_source"].str.endswith("COPY_OF_ORIGINAL")]
+    other = rec[~rec["audio_source"].str.endswith("COPY_OF_ORIGINAL")]
+    cfg = rec[rec["config_b_origin"]]
+    edited = rec[rec["subset_edited_or_clipped"]]
+    return [
+        "## 5. Source of the audio", "",
+        f"The delivery has one file per participant, so there are no retakes to resolve here. Its provenance was "
+        f"audited while the original recordings were still analysed (`reports/supplied_audio_audit.md`): "
+        f"**{len(copies)}** files are trimmed copies of the participant's original, and **{len(other)}** have no "
+        f"verified original ({', '.join(other['participant_code'])}). For participants recorded more than once, the "
+        "delivery's take is used as supplied. "
+        + (f"{len(edited)} files contain inserted digital silence or clipping ({', '.join(edited['participant_code'])})."
+           if len(edited) else ""),
+        "",
+        "Sensitivity analyses repeat the models without the files that have no verified original, and without the "
+        "edited or clipped files.", "",
+        md_table(rec[["participant_code", "audio_source", "selected_file", "selected_flags"]].assign(
+            selected_flags=lambda d: d["selected_flags"].str.replace(";", ", "))), "",
+        "## 6. Recording configuration of the originals", "",
+        (f"{len(cfg)} supplied files ({', '.join(cfg['participant_code'])}) are copies of recordings made with a "
+         "different audio configuration (stereo plus a second track; most captured about 9 hours after the session). "
+         "The conversion keeps that acoustic difference, so the confound remains; a sensitivity analysis excludes "
+         "these participants." if len(cfg) else "No supplied file is a copy of a recording with a different "
+         "configuration."), "",
+    ]
+
+
 def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: dict) -> None:
     s = summary
     retake_rows = qa[qa["n_takes"] > 1].sort_values(["participant_code", "capture_time"])
     sel_qa = qa[qa["selected"]]
     n_take_human = int(((sel_qa["n_takes"] > 1) & sel_qa["selection_reason"].str.startswith("group decision")).sum())
     n_seg_human = int(sel_qa["segmentation_source"].str.startswith("human").sum())
+    supplied = s["audio_source"] != "original"
+    if supplied:
+        qa_text = (f"1. **Audio QA of the supplied files.** By the group's decision the analysis uses the `{s['audio_source']}` "
+                   "delivery: WAV, PCM 16-bit, mono, 16 kHz, already converted and trimmed by the supplier. The original "
+                   "phone recordings stay untouched in `data/raw/` and are not analysed. Peak, clipping "
+                   f"(> {CLIP_FRACTION_LIMIT:.1%} of samples at |x| ≥ 0.999), DC offset, level and inserted digital silence "
+                   "are measured on these files.")
+        std_text = (f"2. **Standardisation:** `ffmpeg -i <supplied.wav> {' '.join(FFMPEG_ARGS)} <name>.wav`. The files are "
+                    "already 16 kHz mono PCM, so the samples pass through unchanged; each WAV is read back and checked to "
+                    "be bit-identical to the analysed samples. No filtering, denoising, normalisation, pitch or speed change.")
+    else:
+        qa_text = ("1. **Original audio QA** at native format (all files: AAC audio, 48 kHz, in MOV containers; see table). "
+                   f"Peak, clipping (> {CLIP_FRACTION_LIMIT:.1%} of samples at |x| ≥ 0.999), DC offset and level are "
+                   "measured before any processing.")
+        std_text = (f"2. **Standardisation:** `ffmpeg -i <original.mov> {' '.join(FFMPEG_ARGS)} <name>.wav` writes the first "
+                    "audio stream as WAV, PCM 16-bit, mono (channel average), 16 kHz, metadata stripped. Each WAV is read "
+                    "back and checked to be bit-identical to the analysed samples. There is no filtering, denoising, "
+                    "loudness normalisation, pitch or speed change.")
     lines = [
         "# Data Quality Report (Phases 2–5)",
         "",
@@ -451,11 +504,8 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         "",
         "## 2. Preprocessing (identical for every recording)",
         "",
-        "1. **Original audio QA** at native format (all files: AAC audio, 48 kHz, in MOV containers; see table). Peak, clipping "
-        f"(> {CLIP_FRACTION_LIMIT:.1%} of samples at |x| ≥ 0.999), DC offset and level are measured before any processing.",
-        f"2. **Standardisation:** `ffmpeg -i <original.mov> {' '.join(FFMPEG_ARGS)} <name>.wav` writes the first audio stream as WAV, PCM 16-bit, mono "
-        "(channel average), 16 kHz, metadata stripped. Each WAV is read back and checked to be bit-identical to the "
-        "analysed samples. There is no filtering, denoising, loudness normalisation, pitch or speed change.",
+        qa_text,
+        std_text,
         "3. **Utterance localisation** (label-blind; `common.locate_utterance`). The clips contain continuous background "
         "babble, so the participant's word is located as the dominant short-time-energy event. Frame RMS is "
         "25 ms/10 ms in dB, smoothed over 50 ms. The floor is the 20th percentile and the threshold is the larger of "
@@ -483,6 +533,9 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         "- `LONG_CLIP`: the clip is longer than 4 s.",
         f"- `CAPTURE_TIME_OUTLIER`: captured more than {CAPTURE_OUTLIER_MIN} min from the median capture time.",
         "- `RECORDING_CONFIG_DIFFERS`: the channels or number of audio streams differ from the majority of recordings.",
+        f"- `DIGITAL_SILENCE`: at least {DIGITAL_SILENCE_S * 1000:.0f} ms of exact zeros, which a phone recording never "
+        "contains: the file was edited (for example silence inserted).",
+        "- `NO_CAPTURE_TIME`: the file carries no capture time (true of every converted WAV).",
         "",
         f"![overview](../{figs['overview']})",
         "",
@@ -500,6 +553,7 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         md_table(manifest[["participant_code", "n_takes", "include_primary", "exclusion_reason", "selected_file",
                            "selected_flags"]].assign(selected_flags=lambda d: d["selected_flags"].str.replace(";", ", "))),
         "",
+        *(supplied_sections(manifest, s) if supplied else [
         "## 5. Duplicate (retake) resolution",
         "",
         f"The {len(s['retake_participants'])} duplicate sets are separate recordings, not copies. They have different "
@@ -546,6 +600,7 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
         "primary analysis keeps them, because the metadata records them as post-class observations; a sensitivity "
         "analysis excludes them.",
         "",
+        ]),
         "## 7. Segmentation review (human verification needed)",
         "",
         "The utterance location is automatic and label-blind; "
@@ -562,8 +617,40 @@ def write_report(qa: pd.DataFrame, manifest: pd.DataFrame, summary: dict, figs: 
 
 
 # ---- main -----------------------------------------------------------------------------
+def input_table(src: dict) -> pd.DataFrame:
+    """The recordings to analyse, in the download-log format: the original phone recordings, or the supplied
+    delivery that data/audio_source.json selects (a group decision; the originals stay untouched in data/raw)."""
+    if src["source"] == "original":
+        return pd.read_csv(DOWNLOAD_LOG, dtype=str, keep_default_na=False)
+    files = pd.read_csv(src["files_csv"], dtype=str, keep_default_na=False)
+    if files["participant_code"].duplicated().any():
+        raise ValueError(f"{rel(src['files_csv'])}: more than one file for a participant")
+    return pd.DataFrame([{"participant_code": f["participant_code"], "drive_name": f["file"],
+                          "drive_file_id": f["sha256"][:16], "local_file": rel(src["folder"] / f["file"]),
+                          "sha256": f["sha256"], "container": sniff_container(src["folder"] / f["file"])}
+                         for _, f in files.iterrows()])
+
+
+def supplied_provenance(src: dict) -> dict[str, dict]:
+    """Where each supplied copy came from, from the audit made while the originals were analysed (step 03c)."""
+    if src["source"] == "original":
+        return {}
+    if not SUPPLIED_AUDIT_CSV.is_file():
+        raise FileNotFoundError(f"{rel(SUPPLIED_AUDIT_CSV)} is needed: audit the delivery (step 03c) with the "
+                                "original recordings before switching the audio source")
+    audit = pd.read_csv(SUPPLIED_AUDIT_CSV, dtype=str, keep_default_na=False, encoding="utf-8-sig")
+    audit = audit[audit["delivery"] == src["delivery"]]
+    if audit.empty or "original_flags" not in audit:
+        raise ValueError(f"{rel(SUPPLIED_AUDIT_CSV)} has no up-to-date audit of {src['delivery']}: re-run step 03c "
+                         "with the original recordings first")
+    return {r.participant_code: {"verdict": r.verdict, "original_flags": r.original_flags.split(";")}
+            for r in audit.itertuples()}
+
+
 def main() -> int:
-    downloads = pd.read_csv(DOWNLOAD_LOG, dtype=str, keep_default_na=False)
+    src = audio_source()
+    downloads = input_table(src)
+    provenance = supplied_provenance(src)
     meta = pd.read_csv(CLEAN_METADATA_CSV, dtype=str, keep_default_na=False, encoding="utf-8-sig")
     meta_by_code = meta.set_index("participant_code")
     for p in (PROC_REC, PROC_SEG, QA_FIG, REVIEW_AUDIO):
@@ -700,6 +787,9 @@ def main() -> int:
         else:
             excl = ""
         flags = chosen["flags"] if chosen is not None else []
+        prov = provenance.get(code, {})
+        # a supplied copy keeps the configuration and timing of the original it was cut from (audit, step 03c)
+        origin_flags = prov.get("original_flags", []) if src["source"] == "supplied" else flags
         manifest_rows.append({
             "participant_code": code, "n_takes": n, "include_primary": include, "exclusion_reason": excl,
             "consent_documented": "" if documented is None else documented,
@@ -709,8 +799,13 @@ def main() -> int:
             "segment_file": chosen["segment_file"] if chosen else "",
             "selected_flags": ";".join(flags),
             "subset_retake": n > 1,
-            "subset_config_or_time_anomaly": bool({"CAPTURE_TIME_OUTLIER", "RECORDING_CONFIG_DIFFERS"} & set(flags)),
+            "subset_config_or_time_anomaly": bool({"CAPTURE_TIME_OUTLIER", "RECORDING_CONFIG_DIFFERS"} & set(origin_flags)),
             "subset_segmentation_critical": bool(set(SEGMENTATION_CRITICAL) & set(flags)),
+            "subset_no_original": src["source"] == "supplied" and prov.get("verdict") != "COPY_OF_ORIGINAL" and n > 0,
+            "subset_edited_or_clipped": bool({"DIGITAL_SILENCE", "CLIPPING"} & set(flags)),
+            "config_b_origin": "RECORDING_CONFIG_DIFFERS" in origin_flags,
+            "audio_source": ("original recording" if src["source"] == "original" else
+                             f"{src['delivery']}: {prov.get('verdict', 'not audited')}" if n else ""),
             "word_in_filename": word_token,
         })
 
@@ -770,7 +865,11 @@ def main() -> int:
         "median_capture": median_capture.isoformat() if median_capture else "",
         "flag_counts_selected": pd.Series([f for fl in sel["flags"] for f in fl.split(";") if f]).value_counts().to_dict(),
         "subsets": {k: int(manifest[k].sum()) for k in ("subset_retake", "subset_config_or_time_anomaly",
-                                                        "subset_segmentation_critical")},
+                                                        "subset_segmentation_critical", "subset_no_original",
+                                                        "subset_edited_or_clipped")},
+        "config_b_origin": int(manifest["config_b_origin"].sum()),
+        "audio_source": "original" if src["source"] == "original" else src["delivery"],
+        "audio_source_decision": "" if src["source"] == "original" else src.get("decision", ""),
     }
     (REPORTS / "data_quality_summary.json").write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
     write_report(qa, manifest, summary, figs)

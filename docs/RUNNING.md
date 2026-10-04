@@ -64,6 +64,14 @@ Check the installation (it should print `ok`):
 - the list of recordings (`data/raw/drive_manifest.csv`)
 - all results produced so far
 
+**Which recordings are analysed.** By the group's decision, `data/audio_source.json` selects the **CS2B_v2
+16 kHz WAV copies**.
+- Copy the 40 WAVs from the group's private share into `data/supplied_audio/CS2B_v2_wav_16k/`. Every run checks
+  them against `data/supplied_audio/CS2B_v2_wav_16k_files.csv`.
+- With that setting, step 00 does not download the original videos.
+- To analyse the original recordings instead, delete `data/audio_source.json`; everything below then applies
+  to them. See `docs/DOCUMENTATION.md` §5.18.
+
 **Not in the repository, on purpose:** the **recordings** (videos show faces; voices are personal data).
 Step 00 downloads them for you from the group's Google Drive folder, using the file list. The folder must stay
 shared as "anyone with the link".
@@ -100,6 +108,7 @@ The run prints each step as it starts and finishes:
 | 08 | `08_lexical_control.py` | same-word analysis | ~3 min |
 | 09, 09b, 09c | `09_build_final_report.py`, `09b_build_html_report.py`, `09c_build_presentation.py` | final report, browser version, slides | seconds |
 | 10 | `10_validate_project.py` | automated checks | seconds |
+| 11 | `11_build_submission.py` | submission zip in `submission/` (report, slides, figures, CSVs) | seconds |
 
 Useful options:
 

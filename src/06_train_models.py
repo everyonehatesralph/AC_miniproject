@@ -63,7 +63,9 @@ SCENARIOS = {  # sensitivity analyses: (manifest column whose True rows are remo
     "no_retakes": ("subset_retake", "participants with retakes removed"),
     "no_config_B": ("subset_config_or_time_anomaly", "different recording configuration / capture-time outliers removed"),
     "high_confidence_segmentation": ("subset_segmentation_critical", "segmentation-critical flags removed"),
-}
+    "no_unverified_source": ("subset_no_original", "supplied files without a verified original recording removed"),
+    "no_edited_or_clipped": ("subset_edited_or_clipped", "files with inserted digital silence or clipping removed"),
+}  # a scenario that would remove nobody (e.g. no retakes in a supplied delivery) is skipped
 SENSITIVITY_TASKS = ("arousal_3", "valence_2")
 
 log = setup_logging("train", REPORTS / "logs" / "06_train_models.log")
@@ -220,7 +222,10 @@ def main() -> int:
 
     # sensitivity scenarios (primary tasks, all models, same design)
     for scen, (col, _) in SCENARIOS.items():
-        drop = set(manifest.loc[manifest[col] == "True", "participant_code"])
+        drop = set(manifest.loc[manifest[col] == "True", "participant_code"]) if col in manifest else set()
+        if not drop:
+            log.info("sensitivity %s: nobody to remove, skipped", scen)
+            continue
         for task in SENSITIVITY_TASKS:
             X, y, codes, counts, viable, k = task_data(task, feats, meta, feature_cols, drop)
             task_info.setdefault("sensitivity", {}).setdefault(scen, {})[task] = {

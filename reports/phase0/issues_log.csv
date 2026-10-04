@@ -1,6 +1,5 @@
 ﻿scope,participant_code_raw,participant_code,field,issue_code,severity,raw_value,detail
 dataset,,,,CONSENT_DOCUMENTATION_NOT_SUPPLIED,BLOCKER,,"Section XVIII item 2 requires consent documentation; the sheet's 'Yes' is an attestation, not documentation"
-dataset,,,,FEWER_RECORDED_PARTICIPANTS_THAN_MINIMUM,BLOCKER,,recordings exist for 32 participant codes; the protocol minimum is 40
 dataset,,,,CONSTANT_YEAR,INFO,,every row has Year Level = '2nd year'; Year Level x Affect cannot be analysed within Group 3
 dataset,,,,CONSTANT_ACTIVITY,INFO,,every row has Class Activity = 'Lecture'; Class Activity x Affect cannot be analysed within Group 3
 dataset,,,,CONSTANT_SESSION,INFO,,every row has Session = 'Afternoon-Evening'; Session x Affect cannot be analysed within Group 3
@@ -9,43 +8,43 @@ dataset,,,,METADATA_SOURCE_IS_PDF_EXPORT,REVIEW,,only a PDF export of the Google
 participant,Y2- 041,Y2-041,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-042,Y2-042,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-043,Y2-043,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-044,Y2-044,recording,DUPLICATE_RECORDING_REQUIRES_REVIEW,BLOCKER,,"2 files: Y2-044 (18:18:26), Y2-044 (18:18:14); resolved (or not) in Phase 2 by 03_prepare_audio.py"
+participant,Y2-044,Y2-044,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-045,Y2-045,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-046,Y2-046,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-047,Y2-047,recording,DUPLICATE_RECORDING_REQUIRES_REVIEW,BLOCKER,,"2 files: Y2-047 (18:17:06), y2-047 (18:16:23); resolved (or not) in Phase 2 by 03_prepare_audio.py"
+participant,Y2-047,Y2-047,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-048,Y2-048,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-049,Y2-049,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-050,Y2-050,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-051,Y2-051,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-052,Y2-052,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-053,Y2-053,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
+participant,Y2-053,Y2-053,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-054,Y2-054,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-055,Y2-055,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-056,Y2-056,recording,DUPLICATE_RECORDING_REQUIRES_REVIEW,BLOCKER,,"2 files: Y2-056.MOV (18:10:17), Y2-056 (18:10:22); resolved (or not) in Phase 2 by 03_prepare_audio.py"
-participant,Y2-057,Y2-057,recording,DUPLICATE_RECORDING_REQUIRES_REVIEW,BLOCKER,,"3 files: Y2-057 (18:12:43), Y2-057 (18:12:16), Y2-057 (18:12:29); resolved (or not) in Phase 2 by 03_prepare_audio.py"
+participant,Y2-056,Y2-056,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
+participant,Y2-057,Y2-057,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-058,Y2-058,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-059,Y2-059,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-060,Y2-060,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-061,Y2-061,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-062,Y2-062,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-063,Y2-063,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-064,Y2-064,recording,DUPLICATE_RECORDING_REQUIRES_REVIEW,BLOCKER,,"2 files: Y2-064 (18:09:55), Y2-064MOV (18:09:34); resolved (or not) in Phase 2 by 03_prepare_audio.py"
+participant,Y2-064,Y2-064,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-065,Y2-065,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-066,Y2-066,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-067,Y2-067,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-068,Y2-068,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-069,Y2-069,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-070,Y2-070,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-071,Y2-071,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
+participant,Y2-071,Y2-071,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-072,Y2-072,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-073,Y2-073,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-074,Y2-074,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
+participant,Y2-074,Y2-074,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2-075,Y2-075,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
-participant,Y2-076,Y2-076,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
-participant,Y2-077,Y2-077,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
-participant,Y2-078,Y2-078,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
-participant,Y2-079,Y2-079,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
-participant,Y2-080,Y2-080,recording,NO_RECORDING,BLOCKER,,no media file matched to this participant code
+participant,Y2-076,Y2-076,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
+participant,Y2-077,Y2-077,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
+participant,Y2-078,Y2-078,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
+participant,Y2-079,Y2-079,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
+participant,Y2-080,Y2-080,recording,AUDIO_QA_PENDING,BLOCKER,,signal-level QA runs in 03_prepare_audio.py
 participant,Y2- 041,Y2-041,Participant Code,CODE_WHITESPACE,MINOR,Y2- 041,whitespace inside/around code; Phase 1 candidate 'Y2-041'
 participant,Y2- 041,Y2-041,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2- 041,Y2-041,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
@@ -345,79 +344,43 @@ participant,Y2-080,Y2-080,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section X
 participant,Y2-080,Y2-080,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-080,Y2-080,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-080,Y2-080,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
-media,,Y2-041,data/raw/Y2-041__1IH39pGd506VnzX-tze6hwa7AR1ceFx4E.mov,FORMAT_NOT_WAV,MINOR,Y2-041,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-041,data/raw/Y2-041__1IH39pGd506VnzX-tze6hwa7AR1ceFx4E.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-041,raw name 'Y2-041' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-042,data/raw/Y2-042__1aTN8At0izIxGDvPFDdTNt_fOU0q6lZYv.mov,FORMAT_NOT_WAV,MINOR,Y2-042,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-042,data/raw/Y2-042__1aTN8At0izIxGDvPFDdTNt_fOU0q6lZYv.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-042,raw name 'Y2-042' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-043,data/raw/Y2-043__1jevSr79WtFEHbqx3IE5p_bDVIiL1tjwv.mov,FORMAT_NOT_WAV,MINOR,Y2-043,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-043,data/raw/Y2-043__1jevSr79WtFEHbqx3IE5p_bDVIiL1tjwv.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-043,raw name 'Y2-043' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-044,data/raw/Y2-044__18UUJM0upwHlkusHbVeAo7NKYihDCxFLX.mov,FORMAT_NOT_WAV,MINOR,Y2-044,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-044,data/raw/Y2-044__18UUJM0upwHlkusHbVeAo7NKYihDCxFLX.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-044,raw name 'Y2-044' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-044,data/raw/Y2-044__1rfaOs-5BpEmX2wsoeV4tv4IVnDCE-_Bg.mov,FORMAT_NOT_WAV,MINOR,Y2-044,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-044,data/raw/Y2-044__1rfaOs-5BpEmX2wsoeV4tv4IVnDCE-_Bg.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-044,raw name 'Y2-044' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-045,data/raw/Y2-045__1wPq0KmYeOv-AfwMJBZnY7V8EmjMoj169.mov,FORMAT_NOT_WAV,MINOR,Y2-045,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-045,data/raw/Y2-045__1wPq0KmYeOv-AfwMJBZnY7V8EmjMoj169.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-045,raw name 'Y2-045' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-046,data/raw/Y2-046__1McpDSPXQ-Y12_-dtDLDkuE29ltfAxQFb.mov,FORMAT_NOT_WAV,MINOR,Y2-046,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-046,data/raw/Y2-046__1McpDSPXQ-Y12_-dtDLDkuE29ltfAxQFb.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-046,raw name 'Y2-046' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-047,data/raw/Y2-047__1ANB_sY3f7mVjBvpP5actAgbz2w0LizW-.mov,FORMAT_NOT_WAV,MINOR,Y2-047,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-047,data/raw/Y2-047__1ANB_sY3f7mVjBvpP5actAgbz2w0LizW-.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-047,raw name 'Y2-047' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-047,data/raw/y2-047__1NwD4jRnKPuFHRASePVW0DaTVrTGgy8IG.mov,FORMAT_NOT_WAV,MINOR,y2-047,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-047,data/raw/y2-047__1NwD4jRnKPuFHRASePVW0DaTVrTGgy8IG.mov,RAW_NAME_NOT_CONVENTION,INFO,y2-047,raw name 'y2-047' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-048,data/raw/Y2-048__1_4xe847g4t44TFYv4ppLIpI7U1OPKtnU.mov,FORMAT_NOT_WAV,MINOR,Y2-048,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-048,data/raw/Y2-048__1_4xe847g4t44TFYv4ppLIpI7U1OPKtnU.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-048,raw name 'Y2-048' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-049,data/raw/Y2-049__1mYO9TopL_ZH31CDzKeThLrQ6QUu1093m.mov,FORMAT_NOT_WAV,MINOR,Y2-049,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-049,data/raw/Y2-049__1mYO9TopL_ZH31CDzKeThLrQ6QUu1093m.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-049,raw name 'Y2-049' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-050,data/raw/Y2-050__1J99t80QuwDXUBjKPDHnCQBTKaxwT0Wby.mov,FORMAT_NOT_WAV,MINOR,Y2-050,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-050,data/raw/Y2-050__1J99t80QuwDXUBjKPDHnCQBTKaxwT0Wby.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-050,raw name 'Y2-050' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-051,data/raw/Y2-051__1t8k9cpIH-98LvKR9r2UvM29lDDTQcCO9.mov,FORMAT_NOT_WAV,MINOR,Y2-051,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-051,data/raw/Y2-051__1t8k9cpIH-98LvKR9r2UvM29lDDTQcCO9.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-051,raw name 'Y2-051' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-052,data/raw/Y2-052__1_PfXY_cvRcsB1NRde3hG0rpeWPsfDZk5.mov,FORMAT_NOT_WAV,MINOR,Y2-052,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-052,data/raw/Y2-052__1_PfXY_cvRcsB1NRde3hG0rpeWPsfDZk5.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-052,raw name 'Y2-052' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-054,data/raw/Y2-054__1uiqL0GiuIS51CJ0nwUV-8WCpTt1ULwME.mov,FORMAT_NOT_WAV,MINOR,Y2-054,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-054,data/raw/Y2-054__1uiqL0GiuIS51CJ0nwUV-8WCpTt1ULwME.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-054,raw name 'Y2-054' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-055,data/raw/Y2-055__1XNfi8Doc6Td977DqrIvKqWRCr1UDyAwJ.mov,FORMAT_NOT_WAV,MINOR,Y2-055,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-055,data/raw/Y2-055__1XNfi8Doc6Td977DqrIvKqWRCr1UDyAwJ.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-055,raw name 'Y2-055' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-056,data/raw/Y2-056.MOV__1SxBPrms9GmYijLSn_-FYYt_YHC7_igeQ.mov,FORMAT_NOT_WAV,MINOR,Y2-056.MOV,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-056,data/raw/Y2-056.MOV__1SxBPrms9GmYijLSn_-FYYt_YHC7_igeQ.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-056.MOV,raw name 'Y2-056.MOV' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-056,data/raw/Y2-056__1BXJgv8WXik2CMP4CWA0vxuwFi9RFjVZ4.mov,FORMAT_NOT_WAV,MINOR,Y2-056,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-056,data/raw/Y2-056__1BXJgv8WXik2CMP4CWA0vxuwFi9RFjVZ4.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-056,raw name 'Y2-056' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-057,data/raw/Y2-057__1S2IgxfH6c-NKW8HE9G1NYgDQ8YcsZf78.mov,FORMAT_NOT_WAV,MINOR,Y2-057,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-057,data/raw/Y2-057__1S2IgxfH6c-NKW8HE9G1NYgDQ8YcsZf78.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-057,raw name 'Y2-057' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-057,data/raw/Y2-057__1tccS9z-vTSPT1FbTA9X6nKsrAAXKmVP7.mov,FORMAT_NOT_WAV,MINOR,Y2-057,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-057,data/raw/Y2-057__1tccS9z-vTSPT1FbTA9X6nKsrAAXKmVP7.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-057,raw name 'Y2-057' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-057,data/raw/Y2-057__1zAA5yeZ_8r6XAsJUpOOM6IdZn9j03P6v.mov,FORMAT_NOT_WAV,MINOR,Y2-057,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-057,data/raw/Y2-057__1zAA5yeZ_8r6XAsJUpOOM6IdZn9j03P6v.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-057,raw name 'Y2-057' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-058,data/raw/Y2-058__1bej5V3TNEf7DCevrqGP1UoUUxcDGQSTO.mov,FORMAT_NOT_WAV,MINOR,Y2-058,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-058,data/raw/Y2-058__1bej5V3TNEf7DCevrqGP1UoUUxcDGQSTO.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-058,raw name 'Y2-058' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-059,data/raw/Y2-059__1bNxtnhyIGfAdBvuG0LZc96_YlUioQU4O.mov,FORMAT_NOT_WAV,MINOR,Y2-059,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-059,data/raw/Y2-059__1bNxtnhyIGfAdBvuG0LZc96_YlUioQU4O.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-059,raw name 'Y2-059' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-060,data/raw/Y2-060__1NsVJyD47jN2suPqmeWVp8nrQ3A36u3_r.mov,FORMAT_NOT_WAV,MINOR,Y2-060,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-060,data/raw/Y2-060__1NsVJyD47jN2suPqmeWVp8nrQ3A36u3_r.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-060,raw name 'Y2-060' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-061,data/raw/Y2-061__1VKHupIAX2cuBhKADt1hdG8YpP03A_5-0.mov,FORMAT_NOT_WAV,MINOR,Y2-061,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-061,data/raw/Y2-061__1VKHupIAX2cuBhKADt1hdG8YpP03A_5-0.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-061,raw name 'Y2-061' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-062,data/raw/Y2-062__1LvWUYYC873St2h_I6p-0b77r72ibw0uW.mov,FORMAT_NOT_WAV,MINOR,Y2-062,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-062,data/raw/Y2-062__1LvWUYYC873St2h_I6p-0b77r72ibw0uW.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-062,raw name 'Y2-062' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-063,data/raw/Y2-063__1Ej_liE6kIfCWbb9N09clEEvNgIJiRp6w.mov,FORMAT_NOT_WAV,MINOR,Y2-063,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-063,data/raw/Y2-063__1Ej_liE6kIfCWbb9N09clEEvNgIJiRp6w.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-063,raw name 'Y2-063' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-064,data/raw/Y2-064__12xsne3N1emI1wlcCsf40ZN8fX-Hy5qtV.mov,FORMAT_NOT_WAV,MINOR,Y2-064,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-064,data/raw/Y2-064__12xsne3N1emI1wlcCsf40ZN8fX-Hy5qtV.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-064,raw name 'Y2-064' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-064,data/raw/Y2-064MOV__1Z7TbObkfT9ICOsrGsiSLCBeSSLKaq3o2.mov,FORMAT_NOT_WAV,MINOR,Y2-064MOV,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-064,data/raw/Y2-064MOV__1Z7TbObkfT9ICOsrGsiSLCBeSSLKaq3o2.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-064MOV,raw name 'Y2-064MOV' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-065,data/raw/Y2-065__1KQ9KeYwOOMnCl4TnXcphF_5KHfljh0WU.mov,FORMAT_NOT_WAV,MINOR,Y2-065,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-065,data/raw/Y2-065__1KQ9KeYwOOMnCl4TnXcphF_5KHfljh0WU.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-065,raw name 'Y2-065' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-066,data/raw/Y2-066__1yoqGkPtZUXiaEaSmgA0Et-UHb2OGAPmb.mov,FORMAT_NOT_WAV,MINOR,Y2-066,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-066,data/raw/Y2-066__1yoqGkPtZUXiaEaSmgA0Et-UHb2OGAPmb.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-066,raw name 'Y2-066' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-067,data/raw/Y2-067__1cH9EDMhMhIxhkpkUwOk1VLX-_AKahs7u.mov,FORMAT_NOT_WAV,MINOR,Y2-067,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-067,data/raw/Y2-067__1cH9EDMhMhIxhkpkUwOk1VLX-_AKahs7u.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-067,raw name 'Y2-067' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-068,data/raw/Y2-068.MOV__1lJQBv1UaUBhgZyH5lmUuTcSLcQ9HYPTh.mov,FORMAT_NOT_WAV,MINOR,Y2-068.MOV,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-068,data/raw/Y2-068.MOV__1lJQBv1UaUBhgZyH5lmUuTcSLcQ9HYPTh.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-068.MOV,raw name 'Y2-068.MOV' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-069,data/raw/Y2-069__1IfTDNhNPbfQTt3tj_r6qVf4KCyPhq_l8.mov,FORMAT_NOT_WAV,MINOR,Y2-069,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-069,data/raw/Y2-069__1IfTDNhNPbfQTt3tj_r6qVf4KCyPhq_l8.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-069,raw name 'Y2-069' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-070,data/raw/Y2-070__1zL2nlav98sMrsK8eYIh9GLqXGQcFtW0g.mov,FORMAT_NOT_WAV,MINOR,Y2-070,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-070,data/raw/Y2-070__1zL2nlav98sMrsK8eYIh9GLqXGQcFtW0g.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-070,raw name 'Y2-070' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-072,data/raw/Y2-072.MOV__1HxDT9t6MqgZg-wd_dZjpjA_kSwozFuY3.mov,FORMAT_NOT_WAV,MINOR,Y2-072.MOV,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-072,data/raw/Y2-072.MOV__1HxDT9t6MqgZg-wd_dZjpjA_kSwozFuY3.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-072.MOV,raw name 'Y2-072.MOV' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-073,data/raw/Y2-073__1zFRZdxJEtGrQehJoVPUePowzjiyQw1pj.mov,FORMAT_NOT_WAV,MINOR,Y2-073,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-073,data/raw/Y2-073__1zFRZdxJEtGrQehJoVPUePowzjiyQw1pj.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-073,raw name 'Y2-073' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
-media,,Y2-075,data/raw/Y2-075__1pJWzGTjQ6eRsHW_OqiUbn3xgorS5FbNH.mov,FORMAT_NOT_WAV,MINOR,Y2-075,"QuickTime MOV; Phase 3 derives WAV, original kept"
-media,,Y2-075,data/raw/Y2-075__1pJWzGTjQ6eRsHW_OqiUbn3xgorS5FbNH.mov,RAW_NAME_NOT_CONVENTION,INFO,Y2-075,raw name 'Y2-075' is not ParticipantCode_YearLevel_Session_Word; Phase 4 assigns the convention name to the processed WAV
+media,,Y2-041,data/supplied_audio/CS2B_v2_wav_16k/Y2-041_Y2_PM_Katulgon.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-041_Y2_PM_Katulgon.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-042,data/supplied_audio/CS2B_v2_wav_16k/Y2-042_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-042_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-043,data/supplied_audio/CS2B_v2_wav_16k/Y2-043_Y2_PM_Lipay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-043_Y2_PM_Lipay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-044,data/supplied_audio/CS2B_v2_wav_16k/Y2-044_Y2_PM_Salamat.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-044_Y2_PM_Salamat.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-045,data/supplied_audio/CS2B_v2_wav_16k/Y2-045_Y2_PM_Maayo.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-045_Y2_PM_Maayo.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-046,data/supplied_audio/CS2B_v2_wav_16k/Y2-046_Y2_PM_Tsadahan.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-046_Y2_PM_Tsadahan.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-047,data/supplied_audio/CS2B_v2_wav_16k/Y2-047_Y2_PM_Milamdag.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-047_Y2_PM_Milamdag.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-048,data/supplied_audio/CS2B_v2_wav_16k/Y2-048_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-048_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-049,data/supplied_audio/CS2B_v2_wav_16k/Y2-049_Y2_PM_Okay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-049_Y2_PM_Okay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-050,data/supplied_audio/CS2B_v2_wav_16k/Y2-050.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-050.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-051,data/supplied_audio/CS2B_v2_wav_16k/Y2-051_Y2_PM_Gutom.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-051_Y2_PM_Gutom.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-052,data/supplied_audio/CS2B_v2_wav_16k/Y2-052_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-052_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-053,data/supplied_audio/CS2B_v2_wav_16k/Y2-053_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-053_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-054,data/supplied_audio/CS2B_v2_wav_16k/Y2-054_Y2_PM_Nalipay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-054_Y2_PM_Nalipay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-055,data/supplied_audio/CS2B_v2_wav_16k/Y2-055_Y2_PM_Nalingaw.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-055_Y2_PM_Nalingaw.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-056,data/supplied_audio/CS2B_v2_wav_16k/Y2-056_Y2_PM_Libog.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-056_Y2_PM_Libog.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-057,data/supplied_audio/CS2B_v2_wav_16k/Y2-057_Y2_PM_Katulgon.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-057_Y2_PM_Katulgon.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-058,data/supplied_audio/CS2B_v2_wav_16k/Y2-058_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-058_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-059,data/supplied_audio/CS2B_v2_wav_16k/Y2-059_Y2_PM_Hangak.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-059_Y2_PM_Hangak.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-060,data/supplied_audio/CS2B_v2_wav_16k/Y2-060_Y2_PM_Gutom.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-060_Y2_PM_Gutom.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-061,data/supplied_audio/CS2B_v2_wav_16k/Y2-061_Y2_PM_Malipayon.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-061_Y2_PM_Malipayon.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-062,data/supplied_audio/CS2B_v2_wav_16k/Y2-062_Y2_PM_Nalingaw.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-062_Y2_PM_Nalingaw.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-063,data/supplied_audio/CS2B_v2_wav_16k/Y2-063_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-063_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-064,data/supplied_audio/CS2B_v2_wav_16k/Y2-064_Y2_PM_Nalipay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-064_Y2_PM_Nalipay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-065,data/supplied_audio/CS2B_v2_wav_16k/Y2-065_Y2_PM_Lingaw.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-065_Y2_PM_Lingaw.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-066,data/supplied_audio/CS2B_v2_wav_16k/Y2-066_Y2_PM_Nalipay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-066_Y2_PM_Nalipay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-067,data/supplied_audio/CS2B_v2_wav_16k/Y2-067_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-067_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-068,data/supplied_audio/CS2B_v2_wav_16k/Y2-068_Y2_PM_Lingaw.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-068_Y2_PM_Lingaw.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-069,data/supplied_audio/CS2B_v2_wav_16k/Y2-069_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-069_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-070,data/supplied_audio/CS2B_v2_wav_16k/Y2-070_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-070_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-071,data/supplied_audio/CS2B_v2_wav_16k/Y2-071_Y2_PM_Lipay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-071_Y2_PM_Lipay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-072,data/supplied_audio/CS2B_v2_wav_16k/Y2-072_Y2_PM_Salamat.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-072_Y2_PM_Salamat.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-073,data/supplied_audio/CS2B_v2_wav_16k/Y2-073_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-073_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-074,data/supplied_audio/CS2B_v2_wav_16k/Y2-074_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-074_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-075,data/supplied_audio/CS2B_v2_wav_16k/Y2-075_Y2_PM_Hangak.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-075_Y2_PM_Hangak.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-076,data/supplied_audio/CS2B_v2_wav_16k/Y2-076_Y2_PM_Okay.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-076_Y2_PM_Okay.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-077,data/supplied_audio/CS2B_v2_wav_16k/Y2-077_Y2_PM_Salamat.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-077_Y2_PM_Salamat.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-078,data/supplied_audio/CS2B_v2_wav_16k/Y2-078_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-078_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-079,data/supplied_audio/CS2B_v2_wav_16k/Y2-079_Y2_PM_Grabe.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-079_Y2_PM_Grabe.wav,move a copy into data/raw/ (originals stay untouched)
+media,,Y2-080,data/supplied_audio/CS2B_v2_wav_16k/Y2-080_Y2_PM_Kapoy.wav,MEDIA_OUTSIDE_DATA_RAW,MINOR,Y2-080_Y2_PM_Kapoy.wav,move a copy into data/raw/ (originals stay untouched)

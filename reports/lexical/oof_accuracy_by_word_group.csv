@@ -1,28 +1,28 @@
 task,model,word_group,participants,accuracy_over_repeats
-arousal_2,logistic_regression,Kapoy,10,0.79
-arousal_2,logistic_regression,other words,21,0.49523809523809526
-arousal_2,logistic_regression,word unknown,1,0.1
-arousal_2,random_forest,Kapoy,10,0.82
-arousal_2,random_forest,other words,21,0.5904761904761905
-arousal_2,random_forest,word unknown,1,0.0
-arousal_2,svm_rbf,Kapoy,10,0.79
-arousal_2,svm_rbf,other words,21,0.5619047619047619
-arousal_2,svm_rbf,word unknown,1,1.0
-arousal_3,logistic_regression,Kapoy,10,0.36
-arousal_3,logistic_regression,other words,21,0.44761904761904764
-arousal_3,logistic_regression,word unknown,1,0.0
-arousal_3,random_forest,Kapoy,10,0.46
-arousal_3,random_forest,other words,21,0.49523809523809526
-arousal_3,random_forest,word unknown,1,0.0
-arousal_3,svm_rbf,Kapoy,10,0.26
-arousal_3,svm_rbf,other words,21,0.43333333333333335
-arousal_3,svm_rbf,word unknown,1,0.1
-valence_2,logistic_regression,Kapoy,10,0.63
-valence_2,logistic_regression,other words,21,0.6142857142857143
-valence_2,logistic_regression,word unknown,1,0.6
-valence_2,random_forest,Kapoy,10,0.67
-valence_2,random_forest,other words,21,0.6190476190476191
-valence_2,random_forest,word unknown,1,0.0
-valence_2,svm_rbf,Kapoy,10,0.57
-valence_2,svm_rbf,other words,21,0.5666666666666667
-valence_2,svm_rbf,word unknown,1,0.0
+arousal_2,logistic_regression,Kapoy,10,0.63
+arousal_2,logistic_regression,other words,21,0.47619047619047616
+arousal_2,logistic_regression,word unknown,8,0.4375
+arousal_2,random_forest,Kapoy,10,0.56
+arousal_2,random_forest,other words,21,0.5857142857142857
+arousal_2,random_forest,word unknown,8,0.5125
+arousal_2,svm_rbf,Kapoy,10,0.84
+arousal_2,svm_rbf,other words,21,0.40476190476190477
+arousal_2,svm_rbf,word unknown,8,0.4
+arousal_3,logistic_regression,Kapoy,10,0.43
+arousal_3,logistic_regression,other words,21,0.4142857142857143
+arousal_3,logistic_regression,word unknown,8,0.4
+arousal_3,random_forest,Kapoy,10,0.44
+arousal_3,random_forest,other words,21,0.5142857142857142
+arousal_3,random_forest,word unknown,8,0.4875
+arousal_3,svm_rbf,Kapoy,10,0.44
+arousal_3,svm_rbf,other words,21,0.3761904761904762
+arousal_3,svm_rbf,word unknown,8,0.1375
+valence_2,logistic_regression,Kapoy,10,0.55
+valence_2,logistic_regression,other words,21,0.6
+valence_2,logistic_regression,word unknown,9,0.5666666666666667
+valence_2,random_forest,Kapoy,10,0.54
+valence_2,random_forest,other words,21,0.6523809523809524
+valence_2,random_forest,word unknown,9,0.5444444444444444
+valence_2,svm_rbf,Kapoy,10,0.49
+valence_2,svm_rbf,other words,21,0.5761904761904761
+valence_2,svm_rbf,word unknown,9,0.5777777777777777
