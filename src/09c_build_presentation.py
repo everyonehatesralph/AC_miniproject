@@ -474,7 +474,10 @@ def main() -> int:
         *([(f"Recording setting: {n_cfg} files " + ("come from recordings made with" if supplied_mode else "used")
             + " a different audio setting"
             + (f", which changes {eda['config_effect_features_fdr05']} of {n_features} features"
-               if eda["config_effect_features_fdr05"] else "; no significant difference was found"), 1)] if n_cfg else []),
+               if eda["config_effect_features_fdr05"] else
+               (f". {facts['cfg_raw']} of {n_features} features differ before the correction and none after it "
+                f"(closest p = {facts['cfg_min_q']:.3f})" if facts["cfg_raw"] else "; no difference was found")), 1)]
+          if n_cfg else []),
         ("One word per person: we cannot separate a person's normal voice from their feeling", 1),
         ("One context: one year level, one class activity and one session, so contexts cannot be compared", 1),
         ("We measured links, not causes", 1),

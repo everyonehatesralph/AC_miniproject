@@ -395,8 +395,12 @@ def main() -> int:
         strip_by_class(ax, data[f].to_numpy(), data["config"].to_numpy(), cfg_order, LABELS[f], "")
         ax.set_xticks(range(2), ["A: mono", "B: stereo\n+ 2nd track"], fontsize=7.5)
     axes[0].legend(loc="best", fontsize=7)
-    fig.suptitle("Recording configuration changes the acoustics (not affect): config B = 6 files with a different "
-                 "audio setup", x=0.01, ha="left", fontsize=10, fontweight="semibold")
+    n_cfg_sig = int((mw["q_value_bh"] < 0.05).sum())
+    fig.suptitle(f"Recording configuration and the acoustics: config B = {int((data['config'] == cfg_order[1]).sum())} "
+                 "files with a different audio setup; "
+                 + (f"{n_cfg_sig} of {len(mw)} features differ at FDR q < 0.05" if n_cfg_sig else
+                    f"no feature differs at FDR q < 0.05 (smallest q = {mw['q_value_bh'].min():.3f})"),
+                 x=0.01, ha="left", fontsize=10, fontweight="semibold")
     fig.tight_layout()
     viz.save(fig, FIG / "fig11_recording_configuration_effect.png")
     assoc = {}

@@ -144,6 +144,12 @@ def facts() -> dict:
     f["valid"] = {s: sum(1 for x in valid if x["status"] == s) for s in ("PASS", "BLOCKED", "WARNING", "FAIL")}
     f["blocked_items"] = [r["Deliverable"] for r in status if r["Status"] != "COMPLETE"]
     f["complete"], f["n_deliverables"] = sum(r["Status"] == "COMPLETE" for r in status), len(status)
+    f["flags_all"], f["sheet_flags"], f["changes_by_rule"] = flags, clean["flags"], clean.get("changes_by_rule", {})
+    f["train_minutes"] = round(train.get("runtime_s", 0) / 60)
+    cfg_file = REPORTS / "eda" / "recording_configuration_effect.csv"  # config A vs B, one row per feature
+    cfg_rows = table(cfg_file) if cfg_file.exists() else []
+    f["cfg_raw"] = sum(float(r["p_value"]) < 0.05 for r in cfg_rows)
+    f["cfg_min_q"] = min((float(r["q_value_bh"]) for r in cfg_rows), default=None)
     learned = [r for r in summary if r["model"] in LEARNED]
     f["n_learned"] = len(learned)
     f["crossing"] = sum(float(r["pooled_ba_ci_low"]) <= float(r["chance_ba"]) for r in learned)
@@ -388,7 +394,9 @@ def slide_script(f: dict) -> list[dict]:
          f"{len(f['edited'])} show signs of editing." if f["supplied"] else "Some recordings were retaken."),
         f"The recordings are noisy: we detected background voices in {f['bg']} of {n}, in a hallway right after class."
         + (f" And {len(f['cfg'])} files come from recordings made with a different audio setting"
-           + (", although that setting shows no significant difference here." if not f["cfg_feats"] else ".")
+           + ((". Some features look different for those files, but with so few files the difference does not "
+               "pass the correction. We also ran the models without them." if f["cfg_raw"] else
+               ", and we found no difference for them.") if not f["cfg_feats"] else ".")
            if f["cfg"] else ""),
         "Each person said only one word, so we cannot separate a person's normal voice from their feeling at that "
         "moment.",
@@ -398,7 +406,10 @@ def slide_script(f: dict) -> list[dict]:
         f"*Power* is the chance of finding an effect that really exists. With {n} participants our study can only find "
         f"links of about {f['rho_min']:.2f} or more."
         + (f" *A different audio setting* ({len(f['cfg'])} files) means the original was saved in stereo with a second "
-           "audio track, unlike the others." if f["cfg"] else ""))
+           f"audio track, unlike the others. {f['cfg_raw']} of {f['n_features']} features differ between the two "
+           f"settings before the correction and {f['cfg_feats']} after it"
+           + (f"; the closest corrected p-value is {f['cfg_min_q']:.3f}." if f["cfg_min_q"] is not None else ".")
+           if f["cfg"] else ""))
     add("conclusion", "Conclusion", 45, [
         f"Our conclusion: {d.headline[0].lower() + d.headline[1:]}.",
         "That is a real result, not a failure. A careful analysis that finds no reliable signal is more useful than an "
@@ -621,6 +632,15 @@ def build(f: dict) -> str:
            "We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no "
            "personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the "
            f"*one word per person* limit on slide {num['limits']}, and it is one reason we do not over-read the pitch features.")]
+    if f["cfg"] and f["cfg_raw"] and not f["cfg_feats"]:
+        without = lead_sens.get("no_config_B")
+        qa.append(("The figure of the two recording settings shows a clear difference. Why do you say it is not "
+                   "significant?",
+                   f"Because of the correction. We compared {f['n_features']} features. {f['cfg_raw']} differ before "
+                   f"the correction, and the closest corrected p-value is {f['cfg_min_q']:.3f}, just above 0.05. With only "
+                   f"{len(f['cfg'])} files the test is weak, so we do not claim a difference and we do not rule one out."
+                   + (f" That is why we also ran the models without those files: the main arousal score moves from "
+                      f"{lead['ba']:.2f} to {without[0]:.2f}." if without else "")))
     if f["supplied"]:
         cv = f["conversion"]
         qa.append(("Who prepared the version-2 audio files, and how?",
@@ -696,7 +716,7 @@ def inline(text: str) -> str:
     return re.sub(r"(?<![\w*])\*([^*\n]+)\*(?![\w*])", r"<em>\1</em>", text)
 
 
-def to_html(md: str) -> str:
+def to_html(md: str, title: str = "Presentation script") -> str:
     out, lines, i = [], md.split("\n"), 0
     toc = []
     while i < len(lines):
@@ -756,7 +776,7 @@ def to_html(md: str) -> str:
                 i += 1
             out.append(f"<p>{inline(' '.join(para))}</p>")
     nav = "".join(f'<a href="#{slug}">{html.escape(text)}</a>' for slug, text in toc)
-    return PAGE.replace("__NAV__", nav).replace("__BODY__", "\n".join(out))
+    return PAGE.replace("__TITLE__", html.escape(title)).replace("__NAV__", nav).replace("__BODY__", "\n".join(out))
 
 
 PAGE = """<!doctype html>
@@ -764,7 +784,7 @@ PAGE = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Presentation script</title>
+<title>__TITLE__</title>
 <style>
 :root { --bg: #f7f7f4; --surface: #ffffff; --ink: #1c1c1a; --ink-2: #4f4f4a; --line: #e2e2dc; --accent: #2563c9;
   --say: #f1f5fc; --code: #efefea; }

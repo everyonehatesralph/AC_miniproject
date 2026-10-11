@@ -109,6 +109,7 @@ The run prints each step as it starts and finishes:
 | 09, 09b, 09c | `09_build_final_report.py`, `09b_build_html_report.py`, `09c_build_presentation.py` | final report, browser version, slides | seconds |
 | 10 | `10_validate_project.py` | automated checks | seconds |
 | 10b | `10b_build_presentation_script.py` | presenter script and defense guide (standard library only) | seconds |
+| 10c | `10c_build_defense_documentation.py` | the project explained for the defense (standard library only) | seconds |
 | 11 | `11_build_submission.py` | submission zip in `submission/` (report, slides, figures, CSVs) | seconds |
 
 Useful options:
@@ -133,6 +134,8 @@ or restore the committed ones with `git checkout -- models reports figures data 
   - `reports/presentation/G3_results_presentation.pptx` (slides in plain English with speaker notes, built from the results)
   - `reports/presentation/presentation_script.html` (what to say on each slide, every idea in plain words, likely
     questions with answers; also as `.md`)
+  - `reports/presentation/defense_documentation.html` (how the project works and why: every step with its reason,
+    how to read each table and figure, where each slide number comes from, a glossary; also as `.md`)
   - `reports/validation_report.md`
   - `docs/DOCUMENTATION.md` (how everything works)
   - `docs/decision_log.md` (decisions still awaiting confirmation)

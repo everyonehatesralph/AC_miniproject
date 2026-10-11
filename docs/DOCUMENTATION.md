@@ -113,6 +113,7 @@ all outputs --09_build_final_report--> final_group_research_report.md --09b/09c-
 | 09c | `09c_build_presentation.py` | presentation | `reports/presentation/G3_results_presentation.pptx` (slides with speaker notes) |
 | 10 | `10_validate_project.py` | Phase 20 | `reports/validation_report.md` (exit 1 if any check FAILS) |
 | 10b | `10b_build_presentation_script.py` | presentation | `reports/presentation/presentation_script.md` and `.html` |
+| 10c | `10c_build_defense_documentation.py` | presentation | `reports/presentation/defense_documentation.md` and `.html` |
 | 11 | `11_build_submission.py` | packaging | `submission/G3_submission_<date>/` and `.zip` with CONTENTS.txt (not in Git) |
 
 Every script writes a log (`reports/logs/`; steps 01 and 02 log to `reports/phase0/audit.log` and `reports/phase1/cleaning.log`) and raises an explicit error rather than continuing on bad input.
@@ -441,6 +442,13 @@ likely questions with answers, and the numbers to remember. It needs only the st
 slide titles and the spoken text: step 09c imports its `slide_script()` and uses each entry's title as the slide
 title and its text as the speaker notes, and stops if the two lists of slides differ. It runs after step 10
 because it quotes the validation counts.
+
+`src/10c_build_defense_documentation.py` writes the defense documentation
+(`reports/presentation/defense_documentation.md` and `.html`). Where the script says what to say, this document
+explains how the project works and why: the path from recording to result, each step with its reason and the
+questions it may raise, how to read each table and figure, the file behind each number on the slides, and a
+glossary. It takes the results from 10b's `facts()` and the method's settings (frame length, thresholds, folds,
+seed) from `src/common.py`, so it cannot state a number that the results or the code do not contain.
 
 ### 5.16 Unit tests and continuous integration
 

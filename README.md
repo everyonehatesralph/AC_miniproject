@@ -22,6 +22,7 @@ number in every report is generated from the data, and the whole run is reproduc
 | why each methodological choice was made (and what still needs confirmation) | [docs/decision_log.md](docs/decision_log.md) |
 | slides to present the results, in plain English, with speaker notes | [reports/presentation/G3_results_presentation.pptx](reports/presentation/G3_results_presentation.pptx) |
 | what to say on each slide, the ideas in plain words, likely questions and answers | [reports/presentation/presentation_script.md](reports/presentation/presentation_script.md) |
+| the project explained for the defense: every step with its reason, how to read each figure, where each number comes from, a glossary | [reports/presentation/defense_documentation.md](reports/presentation/defense_documentation.md) |
 | the blind listening review (words, boundaries, retakes) | `data/review/listening_review.html` after a local run; results in [reports/listening_review_report.md](reports/listening_review_report.md) |
 | what to do next: collecting more data, the pre-registered plan, open questions | [docs/data_collection_checklist.md](docs/data_collection_checklist.md), [docs/analysis_plan_pooled_study.md](docs/analysis_plan_pooled_study.md), [docs/next_steps/](docs/next_steps/) |
 
@@ -96,7 +97,7 @@ The recordings are not in the repository (participants' personal data).
 
 Options:
 - `--skip-fetch`: the recordings are already in `data/raw/`.
-- `--from 05`: resume from a step (`01b`, `03b`, `09b`, `09c` and `10b` are steps too).
+- `--from 05`: resume from a step (`01b`, `03b`, `09b`, `09c`, `10b` and `10c` are steps too).
 - `--quick`: installation test only. It overwrites the results; see RUNNING.md.
 
 Unit tests (synthetic signals and small tables; no recordings needed). They also run on GitHub for every push
@@ -130,6 +131,7 @@ validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 | 09c | `09c_build_presentation.py` | the results presentation (`reports/presentation/`) |
 | 10 | `10_validate_project.py` | Phase 20 validation |
 | 10b | `10b_build_presentation_script.py` | the presenter script and defense guide (`reports/presentation/`); it also gives the slides their titles and speaker notes |
+| 10c | `10c_build_defense_documentation.py` | the project explained for the defense (`reports/presentation/`) |
 | 11 | `11_build_submission.py` | submission package: `submission/G3_submission_<date>.zip` (report, slides, figures, CSVs; `--with-audio` adds the named WAVs) |
 
 ## Things the group still has to do

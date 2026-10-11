@@ -214,7 +214,7 @@
 >
 > The audio is converted copies, not the original recordings: 9 could not be checked and 3 show signs of editing.
 >
-> The recordings are noisy: we detected background voices in 16 of 40, in a hallway right after class. And 5 files come from recordings made with a different audio setting, although that setting shows no significant difference here.
+> The recordings are noisy: we detected background voices in 16 of 40, in a hallway right after class. And 5 files come from recordings made with a different audio setting. Some features look different for those files, but with so few files the difference does not pass the correction. We also ran the models without them.
 >
 > Each person said only one word, so we cannot separate a person's normal voice from their feeling at that moment.
 >
@@ -222,7 +222,7 @@
 
 **Point at:** The first three bullets.
 
-**In plain words:** *Power* is the chance of finding an effect that really exists. With 40 participants our study can only find links of about 0.44 or more. *A different audio setting* (5 files) means the original was saved in stereo with a second audio track, unlike the others.
+**In plain words:** *Power* is the chance of finding an effect that really exists. With 40 participants our study can only find links of about 0.44 or more. *A different audio setting* (5 files) means the original was saved in stereo with a second audio track, unlike the others. 18 of 108 features differ between the two settings before the correction and 0 after it; the closest corrected p-value is 0.053.
 
 ### Slide 12 · Conclusion
 
@@ -400,6 +400,10 @@ The sheet records Yes for every participant, but the log of the signed forms is 
 **“Did you account for different voices, for example male and female?”**
 
 We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 11, and it is one reason we do not over-read the pitch features.
+
+**“The figure of the two recording settings shows a clear difference. Why do you say it is not significant?”**
+
+Because of the correction. We compared 108 features. 18 differ before the correction, and the closest corrected p-value is 0.053, just above 0.05. With only 5 files the test is weak, so we do not claim a difference and we do not rule one out. That is why we also ran the models without those files: the main arousal score moves from 0.48 to 0.46.
 
 **“Who prepared the version-2 audio files, and how?”**
 

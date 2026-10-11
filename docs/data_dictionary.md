@@ -225,4 +225,5 @@ so that one file can be read and submitted. The models never read this file as a
 | `reports/lexical/*.csv` | word feasibility, within-word correlations, accuracy by word group |
 | `reports/presentation/G3_results_presentation.pptx` | slides with speaker notes, generated from the files above (`09c`) |
 | `reports/presentation/presentation_script.md`, `.html` | what to say on each slide, the ideas in plain words, likely questions with answers, numbers to remember (`10b`) |
+| `reports/presentation/defense_documentation.md`, `.html` | the project explained for the defense: the path from recording to result, every step with its reason, how to read each table and figure, the source of each slide number, a glossary (`10c`) |
 | `consent/consent_log.csv` (supplied by the group) | `participant_code`, `consent_date`, `collector_initials`, `consent_form_version`, `voice_recording_consented_Y_N`, `video_recording_consented_Y_N`, `data_use_for_research_consented_Y_N`, `notes` (template: `consent/consent_log_TEMPLATE.csv`; codes only, never names) |

@@ -30,7 +30,8 @@ OUT = ROOT / "submission"
 CONTENT = [
     ("01_report", ["reports/final_group_research_report.md", "reports/deliverable_status_matrix.csv",
                    "reports/presentation/G3_results_presentation.pptx", "reports/presentation/presentation_script.md",
-                   "reports/presentation/presentation_script.html", "reports/validation_report.md"]),
+                   "reports/presentation/presentation_script.html", "reports/presentation/defense_documentation.md",
+                   "reports/presentation/defense_documentation.html", "reports/validation_report.md"]),
     ("02_open_in_browser", ["reports/html/*.html"]),
     ("03_data", ["data/acoustic_features.csv", "data/acoustic_features_with_labels.csv",
                  "data/acoustic_features_dictionary.csv", "data/metadata_cleaned.csv", "data/analysis_manifest.csv",
