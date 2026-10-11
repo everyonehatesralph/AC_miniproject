@@ -382,6 +382,10 @@ The sheet records Yes for every participant, but the log of the signed forms is 
 
 We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 10, and it is one reason we do not over-read the pitch features.
 
+**“Who prepared the version-2 audio files, and how?”**
+
+A group member converted the recordings using ChatGPT: each clip was cut to the part around the word and saved as a 16 kHz WAV file. We did not take that conversion on trust. For the 31 files where we have the original, our audit shows that the copy matches the original (similarity 0.97 or higher out of 1), that it is a cut of 1.3 to 2.6 seconds from it, and that the loudness was not changed. For the other 9 we have nothing to compare with, so they are flagged and the models were re-run without them. Before you present, open that conversation and note the steps or code it used, so you can describe them in your own words. The project has no record of them.
+
 **“Your earlier submission had different numbers. Why?”**
 
 The earlier analysis used the original phone recordings, which covered 32 participants. This one uses the version-2 audio for all 40. Different audio and more people give different numbers. The conclusion is the same in both: no model beats chance after correction, and the word confound is present. One detail did change: 3 features passed the correction for arousal before, and none do now.

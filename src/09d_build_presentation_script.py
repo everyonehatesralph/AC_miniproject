@@ -41,6 +41,9 @@ SCENARIO = {"no_unverified_source": "without the files that have no verified ori
 # The analysis before decision D33 (original recordings only, commit 15df591). History, so it is fixed here; it is
 # quoted only in the answer to "why did your numbers change".
 EARLIER = {"n": 32, "fdr_arousal": 3}
+# How the supplied files were made, as reported by the group on 2026-10-12 (decision D34). The pipeline cannot
+# measure this; what it can measure about the conversion comes from the audit of the files against the originals.
+PREPARED_WITH = "ChatGPT"
 
 
 def table(path: Path) -> list[dict]:
@@ -143,9 +146,14 @@ def facts() -> dict:
     f["crossing"] = sum(float(r["pooled_ba_ci_low"]) <= float(r["chance_ba"]) for r in learned)
     f["lazy_acc"] = {r["task"]: float(r["pooled_accuracy"]) for r in summary if r["model"] == "dummy_majority"}
     audit = REPORTS / "supplied_audio_audit.csv"
-    had = ({r["participant_code"] for r in table(audit) if r["delivery"] == f["delivery"] and r["verdict"] != "NEW_RECORDING"}
-           if f["supplied"] and audit.exists() else set())
+    rows = ([r for r in table(audit) if r["delivery"] == f["delivery"]] if f["supplied"] and audit.exists() else [])
+    had = {r["participant_code"] for r in rows if r["verdict"] != "NEW_RECORDING"}
     f["with_original"] = len(had) or None  # participants for whom an original recording exists
+    copies = [r for r in rows if r["verdict"] == "COPY_OF_ORIGINAL"]
+    col = lambda k: [float(r[k]) for r in copies if r[k] not in ("", "nan")]  # noqa: E731
+    f["conversion"] = ({"n": len(copies), "ncc_min": min(col("best_ncc")), "dur": (min(col("duration_s")), max(col("duration_s"))),
+                        "level_unchanged": all(abs(g - 1.0) < 0.01 for g in col("gain"))}
+                       if copies else None)  # what the audit shows the conversion did to the verified copies
     return f
 
 
@@ -558,6 +566,17 @@ def build(f: dict) -> str:
            "personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the "
            "*one word per person* limit on slide 10, and it is one reason we do not over-read the pitch features.")]
     if f["supplied"]:
+        cv = f["conversion"]
+        qa.append(("Who prepared the version-2 audio files, and how?",
+                   f"A group member converted the recordings using {PREPARED_WITH}: each clip was cut to the part around "
+                   "the word and saved as a 16 kHz WAV file. We did not take that conversion on trust. "
+                   + (f"For the {cv['n']} files where we have the original, our audit shows that the copy matches the "
+                      f"original (similarity {cv['ncc_min']:.2f} or higher out of 1), that it is a cut of "
+                      f"{cv['dur'][0]:.1f} to {cv['dur'][1]:.1f} seconds from it"
+                      + (", and that the loudness was not changed. " if cv["level_unchanged"] else ". ") if cv else "")
+                   + f"For the other {len(f['no_orig'])} we have nothing to compare with, so they are flagged and the models "
+                   "were re-run without them. Before you present, open that conversation and note the steps or code it "
+                   "used, so you can describe them in your own words. The project has no record of them."))
         qa.append(("Your earlier submission had different numbers. Why?",
                    f"The earlier analysis used the original phone recordings, which covered {EARLIER['n']} participants. "
                    f"This one uses the version-2 audio for all {n}. Different audio and more people give different "
