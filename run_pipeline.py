@@ -28,6 +28,7 @@ SRC = ROOT / "src"
 STEPS = [
     ("00", "00_fetch_recordings.py", "fetch recordings from Google Drive (verified, idempotent)"),
     ("00", "00_extract_metadata_pdf.py", "metadata PDF -> verbatim CSV"),
+    ("00b", "00b_compare_sheet_versions.py", "a newer sheet that is not analysed yet: every cell that differs"),
     ("01", "01_audit_data.py", "Phase 0: data audit"),
     ("01b", "01b_merge_listening_reviews.py", "blind listening review: answers -> agreement -> decisions"),
     ("02", "02_clean_metadata.py", "Phase 1: metadata cleaning"),
@@ -61,7 +62,7 @@ def supplied_audio() -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--skip-fetch", action="store_true", help="do not contact Google Drive")
-    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10, 10b, 10c, 11")
+    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 00b, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10, 10b, 10c, 11")
     ap.add_argument("--quick", action="store_true", help="smoke test: fewer CV repeats/permutations in step 06")
     args = ap.parse_args()
     t_all = time.time()

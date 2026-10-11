@@ -95,6 +95,7 @@ The run prints each step as it starts and finishes:
 |---|---|---|---|
 | 00 | `00_fetch_recordings.py` | downloads the 38 recordings, checks their hashes | 2–3 min |
 | 00 | `00_extract_metadata_pdf.py` | reads the metadata PDF (or a CSV export of the sheet) into a CSV; no value changed | seconds |
+| 00b | `00b_compare_sheet_versions.py` | if a newer sheet is waiting in `data/metadata_raw/received/`: lists every cell that differs; applies nothing | seconds |
 | 01 | `01_audit_data.py` | Phase 0 audit | seconds |
 | 01b | `01b_merge_listening_reviews.py` | merges the listeners' answers (if any) into decisions | seconds |
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning (raw values kept) | seconds |
@@ -205,6 +206,25 @@ Only with the instructor's approval, and with the checklist (`docs/data_collecti
 3. **Consent.** Add each new code to `consent/consent_log.csv`.
 4. **Run everything:** `run_pipeline.py` (without `--skip-fetch`, so the new recordings are downloaded). Then do
    the listening review for the new participants (6.1).
+
+### 7.1 A completed or corrected sheet
+
+A newer export of the sheet never goes over the sheet in use.
+
+1. Put the PDF in `data/metadata_raw/received/` with the date in its name.
+2. Extract it with step 00 (use quotes around the path; write the output as one line):
+   `.venv\Scripts\python.exe src\00_extract_metadata_pdf.py --pdf "data/metadata_raw/received/<file>.pdf"
+   --out data/metadata_raw/received/G3_metadata_extracted_raw_<date>.csv`
+3. Add a row to `data/metadata_raw/received/sheet_versions.csv`: when it arrived and, in the group's own words,
+   where the changes come from. A rating may be changed only to correct a copying mistake against the
+   participant's own answer, and a word may not be taken from the feeling text.
+4. Run `src\00b_compare_sheet_versions.py`. It writes `reports/sheet_update_pending.md`: every changed cell,
+   and what the change means for the analysis. Nothing is applied.
+5. To use the new sheet: move the PDF in use to `data/metadata_raw/archive/` (do not delete it), put the new PDF
+   in its place under the name step 00 reads, and run the whole pipeline. If any rating changed, step 06
+   (training) must run. Afterwards the pending report disappears by itself.
+
+While a newer sheet is waiting, the slides, the presenter script and the defense documentation say so.
 
 **Converted copies are not recordings.**
 - Files that someone converted or trimmed (such as the `CS2B_v2` 16 kHz WAVs) are audited by step 03c

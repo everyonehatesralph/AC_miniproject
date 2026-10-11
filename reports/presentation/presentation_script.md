@@ -62,6 +62,8 @@
 >
 > 9 spoken words are blank in the sheet. We never guessed a word from the feeling text; those files carry the label UNVERIFIED.
 >
+> One update. On 12 October the group completed the sheet: 9 blank words are now filled in by a group member who listened to each recording, and the ratings of 3 participants were corrected from the participants' answer forms, because the first sheet had typing mistakes. The results we show today use the earlier sheet. Running the analysis again with the completed sheet is our first next step.
+>
 > The recordings were made in a hallway right after class, so they are noisy: we detected background voices in 16 of 40.
 >
 > And consent: the sheet says Yes for everyone, but the log of the signed forms still has to be completed.
@@ -240,7 +242,7 @@
 
 **Say** (about 30 seconds)
 
-> Our next steps are concrete. Complete the consent log from the signed forms. Have two group members listen to every clip without seeing the ratings. Find the original recordings for the files we could not check. Record more participants with one device, one setting and one take. Follow the analysis plan we wrote before seeing new data. And confirm the open protocol questions with our instructor.
+> Our next steps are concrete. First, run the analysis again with the completed sheet. Complete the consent log from the signed forms. Have two group members listen to every clip without seeing the ratings. Find the original recordings for the files we could not check. Record more participants with one device, one setting and one take. Follow the analysis plan we wrote before seeing new data. And confirm the open protocol questions with our instructor.
 >
 > Thank you. We are happy to take your questions.
 
@@ -401,6 +403,10 @@ The sheet records Yes for every participant, but the log of the signed forms is 
 
 We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 11, and it is one reason we do not over-read the pitch features.
 
+**“The sheet now has all the words, and some ratings are different. Why do your slides not match it?”**
+
+The group completed the sheet on 12 October, after this analysis. 9 blank words were filled in by a group member who listened to each recording, 1 word was corrected, and the ratings of Y2-076, Y2-077, Y2-080 were corrected from the participants' answer forms, because the first sheet had typing mistakes. A rating is what the models learn from, so the whole analysis must be run again, and that could not be done and checked before today. We did not mix the two: the results use the earlier sheet, the new sheet is stored beside it, and every changed cell is listed in `reports/sheet_update_pending.md`. Bring the answer forms of those participants: they are the evidence for the corrected ratings.
+
 **“The figure of the two recording settings shows a clear difference. Why do you say it is not significant?”**
 
 Because of the correction. We compared 108 features. 18 differ before the correction, and the closest corrected p-value is 0.053, just above 0.05. With only 5 files the test is weak, so we do not claim a difference and we do not rule one out. That is why we also ran the models without those files: the main arousal score moves from 0.48 to 0.46.
@@ -440,6 +446,7 @@ Answer this truthfully. The pipeline was implemented with an AI coding assistant
 | Files without a verified original | 9 (Y2-053, Y2-071, Y2-074, Y2-075, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080) |
 | Edited or clipped files | 3 (Y2-076, Y2-077, Y2-078) |
 | Words missing in the sheet | 9 |
+| Completed sheet, not analysed yet | received 12 October: 9 words filled in, ratings of 3 participants corrected |
 | Smallest detectable correlation | about 0.44; 0.3 needs about 90 people |
 | Validation | 24 pass, 1 blocked (consent) |
 

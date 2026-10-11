@@ -75,6 +75,7 @@ One command runs steps 1 to 10: `python run_pipeline.py`. Step 6 is the slow one
   - R7: do not use a rating that is crossed out in the sheet (1 change)
   - R8: write consent as Y or N (40 changes)
 - **Two more rules for later:** the group can supply corrections in a file, and a blank word can be filled from the listening review, but only when two listeners agree and only with a protocol word. Neither has been used yet.
+- **A newer sheet is waiting:** on 12 October the group completed the sheet. 9 blank words were filled in by a group member who listened to each recording, and the ratings of Y2-076, Y2-077, Y2-080 were corrected from the participants' answer forms, because the first sheet had typing mistakes. It is stored beside the sheet in use and is not analysed yet. Every changed cell is listed in `reports/sheet_update_pending.md`. A rating is what the models learn from, so the whole analysis must be run again before any number may be quoted from the new sheet.
 - **Why this way:** no cell is edited by hand, so every change can be traced. The original value stays in the data beside the cleaned one, and each change is a line in `reports/phase1/cleaning_log.csv`.
 - **If asked “How do we know you did not edit the data?”** Every change is one of the rules above and is logged with the old and the new value.
 

@@ -115,6 +115,7 @@ validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 |---|---|---|
 | 00 | `00_fetch_recordings.py` | download the 38 recordings from the shared Drive folder by file id (hash-logged) |
 | 00 | `00_extract_metadata_pdf.py` | metadata PDF (or a CSV export of the sheet) → verbatim CSV |
+| 00b | `00b_compare_sheet_versions.py` | lists every cell in which a newer sheet (in `data/metadata_raw/received/`) differs from the sheet in use; applies nothing |
 | 01 | `01_audit_data.py` | Phase 0 audit |
 | 01b | `01b_merge_listening_reviews.py` | blind listening review: answers → agreement → decisions |
 | 02 | `02_clean_metadata.py` | Phase 1 cleaning |

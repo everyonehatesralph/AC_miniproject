@@ -125,6 +125,7 @@ def build(ps, f: dict) -> str:
     d = ps.derive(f)
     n, a3, v2, sm, probe, kapoy, other, lead = d.n, d.a3, d.v2, d.sm, d.probe, d.kapoy, d.other, d.lead
     slides = ps.slide_script(f)
+    pt = ps.pending_text(f)
     num = {s["key"]: i for i, s in enumerate(slides, 1)}
     title = {s["key"]: s["title"] for s in slides}
     flag_text = {k: v.format(**{c: const(c) for c in re.findall(r"\{(\w+)\}", v)}) for k, v in FLAGS.items()}
@@ -226,6 +227,11 @@ def build(ps, f: dict) -> str:
     L += ["- **Two more rules for later:** the group can supply corrections in a file, and a blank word can be filled "
           "from the listening review, but only when two listeners agree and only with a protocol word. Neither has been "
           "used yet.",
+          *([f"- **A newer sheet is waiting:** on {pt['day']} the group completed the sheet. {pt['words']} blank words "
+             f"were filled in {pt['words_source']}, and the ratings of {pt['codes']} were corrected "
+             f"{pt['ratings_source']}. It is stored beside the sheet in use and is not analysed yet. Every changed "
+             "cell is listed in `reports/sheet_update_pending.md`. A rating is what the models learn from, so the "
+             "whole analysis must be run again before any number may be quoted from the new sheet."] if pt else []),
           "- **Why this way:** no cell is edited by hand, so every change can be traced. The original value stays in the "
           "data beside the cleaned one, and each change is a line in `reports/phase1/cleaning_log.csv`.",
           "- **If asked “How do we know you did not edit the data?”** Every change is one of the rules above and is "

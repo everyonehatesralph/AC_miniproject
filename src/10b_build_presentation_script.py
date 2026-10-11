@@ -20,6 +20,7 @@ import json
 import math
 import re
 import sys
+from datetime import date
 from pathlib import Path
 from statistics import NormalDist
 from types import SimpleNamespace
@@ -163,7 +164,20 @@ def facts() -> dict:
     f["conversion"] = ({"n": len(copies), "ncc_min": min(col("best_ncc")), "dur": (min(col("duration_s")), max(col("duration_s"))),
                         "level_unchanged": all(abs(g - 1.0) < 0.01 for g in col("gain"))}
                        if copies else None)  # what the audit shows the conversion did to the verified copies
+    pending = REPORTS / "sheet_update_pending.json"  # written by step 00b while a newer sheet waits to be analysed
+    f["pending_sheet"] = load(pending) if pending.exists() else None
     return f
+
+
+def pending_text(f: dict) -> dict | None:
+    """Counts and phrases about a newer sheet that is not analysed yet (step 00b), or None when there is none."""
+    p = f.get("pending_sheet")
+    if not p:
+        return None
+    day = date.fromisoformat(p["received_on"]).strftime("%d %B").lstrip("0") if p.get("received_on") else "a later date"
+    return {"day": day, "words": len(p["words_filled"]), "word_changes": len(p["words_changed"]),
+            "ratings": len(p["ratings_changed"]), "codes": ", ".join(p["ratings_changed"]),
+            "words_source": p.get("words_source", ""), "ratings_source": p.get("ratings_source", "")}
 
 
 def codes(xs) -> str:
@@ -196,6 +210,7 @@ def slide_script(f: dict) -> list[dict]:
     n, a3, sm, exp_false, kapoy, other, probe, no_src, fg = (d.n, d.a3, d.sm, d.exp_false, d.kapoy, d.other, d.probe,
                                                              d.no_src, d.fg)
     S: list[dict] = []
+    pt = pending_text(f)
 
     def add(key, title, seconds, say, point, plain=None, asked=()):
         S.append({"key": key, "title": title, "seconds": seconds, "say": say, "point": point, "plain": plain,
@@ -236,6 +251,10 @@ def slide_script(f: dict) -> list[dict]:
          "The analysis uses the original phone recordings."),
         f"{f['words_missing']} spoken words are blank in the sheet. We never guessed a word from the feeling text; those "
         "files carry the label UNVERIFIED.",
+        *([f"One update. On {pt['day']} the group completed the sheet: {pt['words']} blank words are now filled in "
+           f"{pt['words_source']}, and the ratings of {pt['ratings']} participants were corrected "
+           f"{pt['ratings_source']}. The results we show today use the earlier sheet. Running the analysis again "
+           "with the completed sheet is our first next step."] if pt else []),
         f"The recordings were made in a hallway right after class, so they are noisy: we detected background voices in "
         f"{f['bg']} of {n}.",
         "And consent: the sheet says Yes for everyone, but the log of the signed forms still has to be completed."],
@@ -419,7 +438,8 @@ def slide_script(f: dict) -> list[dict]:
         f"much data a real study needs: about {f['n_for_03']} participants."],
         "The blue sentence.")
     add("next", "Next steps", 30, [
-        "Our next steps are concrete. Complete the consent log from the signed forms. Have two group members listen to "
+        "Our next steps are concrete. " + ("First, run the analysis again with the completed sheet. " if pt else "")
+        + "Complete the consent log from the signed forms. Have two group members listen to "
         "every clip without seeing the ratings. "
         + ("Find the original recordings for the files we could not check. " if f["supplied"] else "")
         + "Record more participants with one device, one setting and one take. Follow the analysis plan we wrote "
@@ -437,6 +457,7 @@ def build(f: dict) -> str:
     slides = slide_script(f)
     num = {s["key"]: i for i, s in enumerate(slides, 1)}
     last = len(slides)
+    pt = pending_text(f)
 
     total = sum(s["seconds"] for s in slides)
     L = ["# Presentation script and defense guide", "",
@@ -632,6 +653,17 @@ def build(f: dict) -> str:
            "We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no "
            "personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the "
            f"*one word per person* limit on slide {num['limits']}, and it is one reason we do not over-read the pitch features.")]
+    if pt:
+        qa.append(("The sheet now has all the words, and some ratings are different. Why do your slides not match it?",
+                   f"The group completed the sheet on {pt['day']}, after this analysis. {pt['words']} blank words were "
+                   f"filled in {pt['words_source']}"
+                   + (f", {pt['word_changes']} word was corrected" if pt["word_changes"] == 1 else
+                      f", {pt['word_changes']} words were corrected" if pt["word_changes"] else "")
+                   + f", and the ratings of {pt['codes']} were corrected {pt['ratings_source']}. A rating is what the "
+                   "models learn from, so the whole analysis must be run again, and that could not be done and "
+                   "checked before today. We did not mix the two: the results use the earlier sheet, the new sheet "
+                   "is stored beside it, and every changed cell is listed in `reports/sheet_update_pending.md`. "
+                   "Bring the answer forms of those participants: they are the evidence for the corrected ratings."))
     if f["cfg"] and f["cfg_raw"] and not f["cfg_feats"]:
         without = lead_sens.get("no_config_B")
         qa.append(("The figure of the two recording settings shows a clear difference. Why do you say it is not "
@@ -693,6 +725,8 @@ def build(f: dict) -> str:
         L += [f"| Files without a verified original | {len(f['no_orig'])} ({codes(f['no_orig'])}) |",
               f"| Edited or clipped files | {len(f['edited'])} ({codes(f['edited'])}) |"]
     L += [f"| Words missing in the sheet | {f['words_missing']} |",
+          *([f"| Completed sheet, not analysed yet | received {pt['day']}: {pt['words']} words filled in, ratings of "
+             f"{pt['ratings']} participants corrected |"] if pt else []),
           f"| Smallest detectable correlation | about {f['rho_min']:.2f}; 0.3 needs about {f['n_for_03']} people |",
           f"| Validation | {f['valid']['PASS']} pass, {f['valid']['BLOCKED']} blocked (consent) |", "",
           "## Part 5 · What not to say", "",

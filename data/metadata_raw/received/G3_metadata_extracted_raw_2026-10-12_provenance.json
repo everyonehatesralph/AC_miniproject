@@ -1,0 +1,23 @@
+{
+  "source_pdf": "data/metadata_raw/received/G3 - mini project - TEmplate (2026-10-12).pdf",
+  "source_sha256": "fcf7513e8b62f7747653ff01a34f646eaaeab657dd8b21ecdf03a2490f87fc0c",
+  "source_bytes": 65508,
+  "pdf_metadata": {
+    "format": "PDF 1.4",
+    "title": "G3 - mini project",
+    "creator": "Google Sheets"
+  },
+  "pages": 2,
+  "rows_extracted": 40,
+  "text_outside_grid": [],
+  "pymupdf_version": "1.28.2",
+  "extracted_at_utc": "2026-10-11T22:38:08+00:00",
+  "rules": [
+    "cell text rebuilt from PDF characters; internal spaces preserved; no normalisation",
+    "cells located by drawn grid lines; empty cells stay empty",
+    "wrapped lines joined without space after a trailing hyphen, else one space",
+    "mid-height horizontal line through text recorded as strikethrough; text kept"
+  ],
+  "output_csv": "data/metadata_raw/received/G3_metadata_extracted_raw_2026-10-12.csv",
+  "output_sha256": "0d8143a4b019b06ce75f441db5261ca3562e4168b161905e53f222cd06e00363"
+}

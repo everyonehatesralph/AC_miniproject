@@ -1,0 +1,75 @@
+{
+  "received_extraction": "data/metadata_raw/received/G3_metadata_extracted_raw_2026-10-12.csv",
+  "received_pdf": "data/metadata_raw/received/G3 - mini project - TEmplate (2026-10-12).pdf",
+  "received_pdf_sha256": "fcf7513e8b62f7747653ff01a34f646eaaeab657dd8b21ecdf03a2490f87fc0c",
+  "received_on": "2026-10-12",
+  "in_use_extraction": "data/metadata_raw/G3_metadata_extracted_raw.csv",
+  "in_use_pdf": "data/metadata_raw/G3 - mini project - TEmplate.pdf",
+  "changed_cells": 28,
+  "participants_changed": [
+    "Y2-046",
+    "Y2-053",
+    "Y2-071",
+    "Y2-072",
+    "Y2-073",
+    "Y2-074",
+    "Y2-075",
+    "Y2-076",
+    "Y2-077",
+    "Y2-078",
+    "Y2-079",
+    "Y2-080"
+  ],
+  "words_filled": [
+    "Y2-053",
+    "Y2-071",
+    "Y2-073",
+    "Y2-074",
+    "Y2-076",
+    "Y2-077",
+    "Y2-078",
+    "Y2-079",
+    "Y2-080"
+  ],
+  "words_changed": [
+    "Y2-046"
+  ],
+  "ratings_changed": [
+    "Y2-076",
+    "Y2-077",
+    "Y2-080"
+  ],
+  "feelings_filled": [
+    "Y2-071",
+    "Y2-080"
+  ],
+  "subjects_filled": [
+    "Y2-071",
+    "Y2-072",
+    "Y2-073",
+    "Y2-074",
+    "Y2-075",
+    "Y2-076",
+    "Y2-077",
+    "Y2-078",
+    "Y2-079",
+    "Y2-080"
+  ],
+  "strikethrough_removed": [
+    "Y2-076"
+  ],
+  "blank_words_in_use": 9,
+  "blank_words_received": 0,
+  "kapoy_in_use": 10,
+  "kapoy_received": 15,
+  "word_differs_from_audio_file_name": [
+    "Y2-056",
+    "Y2-059",
+    "Y2-061",
+    "Y2-066",
+    "Y2-072"
+  ],
+  "ratings_source": "from the participants' answer forms, because the first sheet had typing mistakes",
+  "words_source": "by a group member who listened to each recording",
+  "reported_on": "2026-10-12"
+}

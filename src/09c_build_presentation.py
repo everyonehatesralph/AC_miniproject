@@ -258,6 +258,7 @@ def main() -> int:
     script = ps.slide_script(facts)
     by_key = {entry["key"]: entry for entry in script}
     headline = ps.headline(any_sig)
+    pending = ps.pending_text(facts)
 
     prs = Presentation()
     prs.slide_width, prs.slide_height = Inches(W), Inches(H)
@@ -323,6 +324,9 @@ def main() -> int:
                f"{int((supplied_new['flags'] != '').sum())} edited or damaged. They are not counted until the originals "
                "are supplied", 2)] if len(supplied_new) else [])]),
         (f"{missing_words} spoken words are blank in the sheet. We never guess a word from the feeling text", 1),
+        *([(f"Since then ({pending['day']}) the group completed the sheet: the words are filled in and the ratings of "
+            f"{pending['ratings']} participants are corrected. These slides use the earlier sheet", 2)]
+          if pending else []),
         (f"Noise: background voices in {flags.get('BACKGROUND_VOICES', 0)} of {n} recordings", 1),
         ("Consent: " + ("documented for all analysed participants" if consent and all(
             consent.get(c, False) for c in manifest.loc[manifest["include_primary"] == "True", "participant_code"])
@@ -495,6 +499,8 @@ def main() -> int:
     # next steps
     s = start("next")
     text_box(s, MARGIN, 1.95, W - 2 * MARGIN, 4.9, [
+        *([(f"Run the analysis again with the completed sheet of {pending['day']}: {pending['words']} words filled "
+            f"in, ratings of {pending['ratings']} participants corrected", 1)] if pending else []),
         ("Complete the consent log from the signed forms", 1),
         ("Two group members listen to every clip, without seeing the ratings, to check the words and where they "
          "start and end", 1),
