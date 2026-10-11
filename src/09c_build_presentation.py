@@ -343,8 +343,8 @@ def main() -> int:
     text_box(s, 8.3, 1.95, 4.45, 4.9, [
         ("None of the six passes FDR correction" if not pre_sig else "At least one of the six passes FDR correction", 1),
         (f"Across all {fsum['n_features']} features: {fdr['arousal']} pass for arousal, {fdr['valence']} for valence", 1),
-    ] + ([(f"{r.feature} (ρ = {r.spearman_rho:+.2f})", 2) for r in top_sig.itertuples()][:4]) + [
-        ("Those were not chosen in advance, and their meaning is unclear", 1),
+    ] + ([(f"{r.feature} (ρ = {r.spearman_rho:+.2f})", 2) for r in top_sig.itertuples()][:4]) + (
+        [("Those were not chosen in advance, and their meaning is unclear", 1)] if len(top_sig) else []) + [
         (f"With n = {n}, only correlations of about |ρ| ≥ {rho_min:.2f} can be detected reliably (80% power)", 1),
     ], size=15)
     footer(s, number)

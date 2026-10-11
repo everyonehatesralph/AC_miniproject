@@ -107,6 +107,7 @@ The run prints each step as it starts and finishes:
 | 07 | `07_evaluate_models.py` | metrics, intervals, comparisons | ~40 s |
 | 08 | `08_lexical_control.py` | same-word analysis | ~3 min |
 | 09, 09b, 09c | `09_build_final_report.py`, `09b_build_html_report.py`, `09c_build_presentation.py` | final report, browser version, slides | seconds |
+| 09d | `09d_build_presentation_script.py` | presenter script and defense guide (standard library only) | seconds |
 | 10 | `10_validate_project.py` | automated checks | seconds |
 | 11 | `11_build_submission.py` | submission zip in `submission/` (report, slides, figures, CSVs) | seconds |
 
@@ -130,6 +131,8 @@ or restore the committed ones with `git checkout -- models reports figures data 
 - **Main documents:**
   - `reports/final_group_research_report.md` (the research report)
   - `reports/presentation/G3_results_presentation.pptx` (12 slides with speaker notes, built from the results)
+  - `reports/presentation/presentation_script.html` (what to say on each slide, every idea in plain words, likely
+    questions with answers; also as `.md`)
   - `reports/validation_report.md`
   - `docs/DOCUMENTATION.md` (how everything works)
   - `docs/decision_log.md` (decisions still awaiting confirmation)

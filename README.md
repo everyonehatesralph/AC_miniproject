@@ -21,6 +21,7 @@ number in every report is generated from the data, and the whole run is reproduc
 | what every column means | [docs/data_dictionary.md](docs/data_dictionary.md) |
 | why each methodological choice was made (and what still needs confirmation) | [docs/decision_log.md](docs/decision_log.md) |
 | slides to present the results (12 slides, speaker notes) | [reports/presentation/G3_results_presentation.pptx](reports/presentation/G3_results_presentation.pptx) |
+| what to say on each slide, the ideas in plain words, likely questions and answers | [reports/presentation/presentation_script.md](reports/presentation/presentation_script.md) |
 | the blind listening review (words, boundaries, retakes) | `data/review/listening_review.html` after a local run; results in [reports/listening_review_report.md](reports/listening_review_report.md) |
 | what to do next: collecting more data, the pre-registered plan, open questions | [docs/data_collection_checklist.md](docs/data_collection_checklist.md), [docs/analysis_plan_pooled_study.md](docs/analysis_plan_pooled_study.md), [docs/next_steps/](docs/next_steps/) |
 
@@ -95,7 +96,7 @@ The recordings are not in the repository (participants' personal data).
 
 Options:
 - `--skip-fetch`: the recordings are already in `data/raw/`.
-- `--from 05`: resume from a step (`01b`, `03b`, `09b` and `09c` are steps too).
+- `--from 05`: resume from a step (`01b`, `03b`, `09b`, `09c` and `09d` are steps too).
 - `--quick`: installation test only. It overwrites the results; see RUNNING.md.
 
 Unit tests (synthetic signals and small tables; no recordings needed). They also run on GitHub for every push
@@ -127,6 +128,7 @@ validation: `PASS 22, BLOCKED 2, WARNING 1, FAIL 0`.
 | 09 | `09_build_final_report.py` | Phases 14–19 report |
 | 09b | `09b_build_html_report.py` | browser version of all reports (`reports/html/`) |
 | 09c | `09c_build_presentation.py` | the results presentation (`reports/presentation/`) |
+| 09d | `09d_build_presentation_script.py` | the presenter script and defense guide (`reports/presentation/`) |
 | 10 | `10_validate_project.py` | Phase 20 validation |
 | 11 | `11_build_submission.py` | submission package: `submission/G3_submission_<date>.zip` (report, slides, figures, CSVs; `--with-audio` adds the named WAVs) |
 
