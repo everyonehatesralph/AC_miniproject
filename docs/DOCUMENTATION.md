@@ -110,8 +110,9 @@ all outputs --09_build_final_report--> final_group_research_report.md --09b/09c-
 | 08 | `08_lexical_control.py` | Phase 13 | `reports/lexical_control_analysis.md`, `figures/lexical/` |
 | 09 | `09_build_final_report.py` | Phases 14–19 | `reports/final_group_research_report.md` |
 | 09b | `09b_build_html_report.py` | presentation | `reports/html/*.html` (self-contained pages, figures embedded) |
-| 09c | `09c_build_presentation.py` | presentation | `reports/presentation/G3_results_presentation.pptx` (12 slides, speaker notes) |
+| 09c | `09c_build_presentation.py` | presentation | `reports/presentation/G3_results_presentation.pptx` (slides with speaker notes) |
 | 10 | `10_validate_project.py` | Phase 20 | `reports/validation_report.md` (exit 1 if any check FAILS) |
+| 10b | `10b_build_presentation_script.py` | presentation | `reports/presentation/presentation_script.md` and `.html` |
 | 11 | `11_build_submission.py` | packaging | `submission/G3_submission_<date>/` and `.zip` with CONTENTS.txt (not in Git) |
 
 Every script writes a log (`reports/logs/`; steps 01 and 02 log to `reports/phase0/audit.log` and `reports/phase1/cleaning.log`) and raises an explicit error rather than continuing on bad input.
@@ -423,12 +424,23 @@ Automatic localisation and the take rule are label-blind but not perfect, so the
 6. **Precedence.** A row in the group's own `take_overrides.csv`, `segment_overrides.csv` or
    `metadata_corrections.csv` always wins over the listening review.
 
-### 5.15 Presentation (step 09c)
+### 5.15 Presentation (steps 09c and 10b)
 
-`src/09c_build_presentation.py` builds `reports/presentation/G3_results_presentation.pptx`: 12 slides with speaker
+`src/09c_build_presentation.py` builds `reports/presentation/G3_results_presentation.pptx`: slides with speaker
 notes, from the same generated files the final report reads. No number is typed by hand: counts, statistics and
 the headline sentence come from the data, and power statements use the Fisher-z approximation with the Spearman
 variance factor.
+
+The slides are written in plain English. Each title states the slide's message (for example "The models did not
+beat chance"), targets and features carry words instead of code names, and one slide ("How to read our results")
+explains chance, balanced accuracy, the 95% interval, the p-value and the correction before the results appear.
+
+`src/10b_build_presentation_script.py` writes the presenter script and defense guide
+(`reports/presentation/presentation_script.md` and `.html`): what to say on each slide, every idea in plain words,
+likely questions with answers, and the numbers to remember. It needs only the standard library. It owns the
+slide titles and the spoken text: step 09c imports its `slide_script()` and uses each entry's title as the slide
+title and its text as the speaker notes, and stops if the two lists of slides differ. It runs after step 10
+because it quotes the validation counts.
 
 ### 5.16 Unit tests and continuous integration
 

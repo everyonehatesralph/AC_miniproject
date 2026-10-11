@@ -1,14 +1,15 @@
 """
-09d_build_presentation_script.py -- presenter script and defense guide for the results presentation.
+10b_build_presentation_script.py -- presenter script and defense guide for the results presentation.
 
 Writes reports/presentation/presentation_script.md and a printable, self-contained
-reports/presentation/presentation_script.html. The document follows the 12 slides of
-G3_results_presentation.pptx: what to say on each slide, every idea explained in plain words, the questions
-most likely to be asked with honest answers, and the numbers to remember.
+reports/presentation/presentation_script.html. The document follows the slides of G3_results_presentation.pptx:
+what to say on each slide, every idea explained in plain words, the questions most likely to be asked with
+honest answers, and the numbers to remember. slide_script() is also what 09c_build_presentation.py uses for the
+slide titles and the speaker notes, so the deck and this script cannot disagree.
 
 Every number is read from the pipeline's result files, so the script cannot disagree with the slides or the
 report. Only the standard library is used, so it runs even where the project environment is not installed:
-    python src/09d_build_presentation_script.py
+    python src/10b_build_presentation_script.py
 """
 
 from __future__ import annotations
@@ -21,6 +22,7 @@ import re
 import sys
 from pathlib import Path
 from statistics import NormalDist
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
@@ -68,7 +70,8 @@ def facts() -> dict:
     train = load(ROOT / "models" / "training_summary.json")
     feats = load(REPORTS / "features_summary.json")
     clean = load(REPORTS / "phase1" / "cleaning_summary.json")
-    valid = load(REPORTS / "validation_results.json")
+    valid_file = REPORTS / "validation_results.json"  # written by step 10; absent on a first run
+    valid = load(valid_file) if valid_file.exists() else []
     summary = table(REPORTS / "evaluation" / "summary_metrics.csv")
     sens = table(REPORTS / "evaluation" / "sensitivity_summary.csv")
     comp = table(REPORTS / "evaluation" / "model_comparison.csv")
@@ -157,52 +160,72 @@ def facts() -> dict:
     return f
 
 
-def build(f: dict) -> str:
-    n, t3 = f["n"], {t["task"]: t for t in f["tasks"]}
-    a3, v2, a2 = t3.get("arousal_3"), t3.get("valence_2"), t3.get("arousal_2")
-    sm = f["smallest"]
-    exp_false = 0.05 * f["n_tests"]
-    kapoy, other = f["assoc_v"]["table"]["Kapoy"], f["assoc_v"]["table"]["other"]
-    probe = f["probe"]
-    lead, lead_sens = f["lead"], f["sens"][f["lead"]["task"]]
-    val_sens = f["sens"].get("valence_2", {})
-    no_src = lead_sens.get("no_unverified_source")
-    fg = f["feature_groups"]
-    codes = lambda xs: ", ".join(xs) if xs else "none"  # noqa: E731
-    headline = ("the data do not support a claim that post-class affect can be recognised from speech"
-                if not f["any_holm"] else "some models carry statistically supported information about affect")
+def codes(xs) -> str:
+    return ", ".join(xs) if xs else "none"
 
-    slides = []  # (title, seconds, say paragraphs, point at, plain words, [(question, answer)])
-    slides.append(("1 · Title", 20, [
+
+def headline(any_supported: bool) -> str:
+    """The conclusion in one sentence. The deck (09c) and this script both use it."""
+    return ("For some targets, the voice features carry information about the ratings that holds after correction"
+            if any_supported else "Our data do not show that post-class feelings can be recognised from the voice")
+
+
+def derive(f: dict) -> SimpleNamespace:
+    """Values that both the slide script and the rest of the guide quote."""
+    by_task = {t["task"]: t for t in f["tasks"]}
+    lead_sens = f["sens"][f["lead"]["task"]]
+    return SimpleNamespace(
+        n=f["n"], a3=by_task.get("arousal_3"), v2=by_task.get("valence_2"), sm=f["smallest"],
+        exp_false=0.05 * f["n_tests"], kapoy=f["assoc_v"]["table"]["Kapoy"], other=f["assoc_v"]["table"]["other"],
+        probe=f["probe"], lead=f["lead"], lead_sens=lead_sens, val_sens=f["sens"].get("valence_2", {}),
+        no_src=lead_sens.get("no_unverified_source"), fg=f["feature_groups"], headline=headline(f["any_holm"]))
+
+
+def slide_script(f: dict) -> list[dict]:
+    """One entry per slide of the deck, in order: key, title, seconds, say, point, plain, asked.
+
+    09c_build_presentation.py takes every slide title and its speaker notes from here, so the deck and this
+    script cannot disagree."""
+    d = derive(f)
+    n, a3, sm, exp_false, kapoy, other, probe, no_src, fg = (d.n, d.a3, d.sm, d.exp_false, d.kapoy, d.other, d.probe,
+                                                             d.no_src, d.fg)
+    S: list[dict] = []
+
+    def add(key, title, seconds, say, point, plain=None, asked=()):
+        S.append({"key": key, "title": title, "seconds": seconds, "say": say, "point": point, "plain": plain,
+                  "asked": list(asked)})
+
+    add("title", "Title", 20, [
         "Good day. We are Group 3. Our project asks one simple question: can a single spoken word, said right after "
         "class, tell us how a student feels?",
         "We studied second-year Computer Science students. We will show what we collected, how we analysed it, what we "
-        "found, and, honestly, what we could not show."],
-        "Nothing yet. Look at the audience.", None, []))
-    slides.append(("2 · The question and how we asked it", 60, [
+        "found, and what we could not show."],
+        "Nothing yet. Look at the audience.")
+    add("question", "What we asked", 60, [
         "Right after class, each participant said one Bisaya word that matched their reaction, for example Kapoy, "
         "Salamat or Lingaw. Then they rated how they felt on two scales from 1 to 5.",
-        "Valence is how pleasant the feeling is. Arousal is how much energy it has: calm and tired at the low end, "
+        "Valence is how pleasant the feeling is. Arousal is how much energy it has: calm or tired at the low end, "
         "excited or tense at the high end.",
-        f"Our research question: does the sound of the word, not its meaning, carry information about those ratings? "
-        f"From each recording we measured {f['n_features']} acoustic features.",
-        "And we made the test speaker-independent: the model is always tested on people it has never heard. That is "
-        "the honest version of the problem, because a real system would meet new students."],
-        f"The three tiles on the right: 1 word, 2 scales, {f['n_features']} features.",
-        "The label is the participant's own rating. We never decide the feeling from the meaning of the word. Someone "
-        "can say *Kapoy* and still report feeling fine.",
+        f"Our question: can the sound of the word, not its meaning, tell us those ratings? From each recording the "
+        f"computer took {f['n_features']} voice measurements.",
+        "And we made the test strict. The computer is always tested on people it has never heard, because a real "
+        "system would meet new students."],
+        f"The three tiles on the right: 1 word, 2 ratings, {f['n_features']} measurements.",
+        "The correct answer is the participant's own rating. We never decide the feeling from the meaning of the word. "
+        "Someone can say *Kapoy* and still report feeling fine. The technical name for the strict test is "
+        "*speaker-independent*.",
         [("Why use self-report as the correct answer?",
           "The protocol defines it that way. The feeling belongs to the participant. A listener's impression, or the "
-          "meaning of the word, would be our own assumption.")]))
-    slides.append(("3 · The data we actually had", 75, [
+          "meaning of the word, would be our own assumption.")])
+    add("data", "The data we had", 75, [
         f"The sheet lists {f['n_meta']} participants and we analysed " + (f"all {n}" if n == f["n_meta"] else str(n))
         + ", which " + ("meets" if n >= 40 else "is below") + " the protocol minimum of 40.",
-        (f"We want to be transparent about the audio. By our group's decision, the analysis uses the version-2 audio "
-         f"set: 16 kHz WAV files, one per participant. We audited every file against the original phone recordings. "
-         f"{f['n_copies']} are confirmed trimmed copies of an original. {len(f['no_orig'])} have no verified original, and "
-         f"{len(f['edited'])}" + (" of those" if set(f["edited"]) <= set(f["no_orig"]) else "")
-         + " show signs of editing, such as stretches of exact digital silence. We kept them, flagged them, and re-ran "
-         "the models without them. You will see that result later."
+        (f"We want to be open about the audio. We recorded phone videos, and a group member converted them to short "
+         f"16 kHz WAV files. Those files are what we analysed. We checked every file against the original recordings. "
+         f"{f['n_copies']} match an original. {len(f['no_orig'])} could not be checked, and {len(f['edited'])}"
+         + (" of those" if set(f["edited"]) <= set(f["no_orig"]) else "")
+         + " show signs of editing, such as stretches of exact silence. We kept them, marked them, and ran the models "
+         "again without them. You will see that result later."
          if f["supplied"] else
          "The analysis uses the original phone recordings."),
         f"{f['words_missing']} spoken words are blank in the sheet. We never guessed a word from the feeling text; those "
@@ -210,12 +233,10 @@ def build(f: dict) -> str:
         f"The recordings were made in a hallway right after class, so they are noisy: we detected background voices in "
         f"{f['bg']} of {n}.",
         "And consent: the sheet says Yes for everyone, but the log of the signed forms still has to be completed."],
-        "The four tiles, then the second bullet about the files without a verified original.",
-        "*No verified original* means we cannot prove when that file was recorded or that it is unedited. *Digital "
-        "silence* is a stretch of exact zeros. A real phone recording always contains a little noise, so exact zeros "
-        "mean someone edited the file."
-        + (f" *A different recording setting* ({len(f['cfg'])} files) means the original was saved in stereo with a "
-           "second audio track, unlike the others." if f["cfg"] else ""),
+        "The four tiles, then the first bullet about the audio.",
+        "*Could not be checked* means we have no original recording to compare with, so we cannot prove when the file "
+        "was recorded or that it is unedited. *Exact silence* is a stretch of perfect zeros. A real phone recording "
+        "always contains a little noise, so perfect zeros mean the file was edited.",
         [("Why did you analyse copies and not the original recordings?",
           (f"We had original recordings for only {f['with_original']} of the {f['n_meta']} participants. "
            if f["with_original"] else "The original recordings covered fewer participants. ")
@@ -224,32 +245,33 @@ def build(f: dict) -> str:
           "without the uncertain files."),
          ("Did you use the denoised files?",
           "No. The protocol forbids denoising, and denoising changes exactly the properties we measure. We analysed "
-          "only the non-denoised set, and the pipeline passes those files through sample for sample.")]))
-    slides.append(("4 · How the pipeline works", 70, [
-        "Everything runs with one command, in eight stages.",
-        "Audit: every file and every sheet cell is checked and nothing is changed. Clean: only rule-based fixes, each "
-        "one logged, with the raw value kept beside it. Audio: the computer finds the spoken word inside each clip "
-        f"without ever looking at the labels. Features: {f['n_features']} numbers per recording.",
-        "Then we explore the data, train the models, test them statistically, and run a lexical control, which asks "
-        "whether the model hears the voice or just the word.",
-        "The three safeguards at the bottom are what make the numbers trustworthy. No participant is in both the "
-        "training and the test data. All preprocessing is fitted inside the training folds only. And the labels are "
-        "never used to cut or choose audio."],
-        "Walk along the eight boxes with your hand, then point at the safeguards line.",
-        "The safeguards prevent *data leakage*: the model must not see the answers before the exam. If we scaled the "
-        "features using all the data, a little information about the test students would leak into training.",
+          "only the non-denoised set, and the pipeline passes those files through sample for sample.")])
+    add("pipeline", "How we analysed it", 70, [
+        "Everything runs with one command, in eight steps.",
+        "Check: every file and every sheet cell is checked, and nothing is changed. Clean: fixes are made by fixed "
+        "rules only, and each fix is logged. Find the word: the computer finds the spoken word inside each clip "
+        f"without ever seeing the ratings. Measure: {f['n_features']} numbers for each voice.",
+        "Then we explore the data, train the models, test whether the scores are better than luck, and run the word "
+        "check, which asks whether the model hears the feeling or only the word.",
+        "The three rules at the bottom keep the test fair. No participant is in both the training and the test data. "
+        "The model's settings are learned from the training data only. And the ratings are never used to cut or "
+        "choose audio."],
+        "Walk along the eight boxes with your hand, then point at the three rules.",
+        "The three rules prevent *data leakage*: the model must not see the answers before the exam. If we prepared "
+        "the measurements using all the data, a little information about the test participants would leak into "
+        "training.",
         [(f"What are the {f['n_features']} features?",
           "; ".join(f"{k} ({v})" for k, v in fg.items()) + ". Pitch is how high the voice is, energy is loudness, and "
-          "the MFCCs describe the shape of the sound spectrum, which is what makes voices and vowels sound different.")]))
-    slides.append(("5 · What the participants reported", 45, [
-        f"Most students reported neutral-to-pleasant feelings and moderate-to-high energy. Valence and arousal move "
-        f"together: the Spearman correlation is {f['va_rho']:.2f}.",
-        "Some rating levels were chosen by only one to three people, so we cannot model all five levels. We grouped the "
-        "ratings, and we fixed the groups before modelling: arousal into low, moderate and high; valence into pleasant "
-        "versus not pleasant; and arousal into high versus not high.",
-        "Any grouping with fewer than five people in a class was not modelled."],
-        "The two bar charts, then the list of modelled classes.",
-        f"Valence 3–5: {f['v35']} of {f['n_val']}. Arousal 3–5: {f['a35']} of {f['n_aro']}. Class sizes: "
+          "the MFCCs describe the shape of the sound spectrum, which is what makes voices and vowels sound different.")])
+    add("ratings", "What the participants reported", 45, [
+        f"Most participants reported neutral to pleasant feelings and moderate to high energy. The two ratings rise "
+        f"together: the correlation is {f['va_rho']:.2f}.",
+        "Some scores were chosen by very few people, so we cannot model all five scores. We grouped them, and we fixed "
+        "the groups before modelling: arousal into low, moderate and high; valence into pleasant and not pleasant; "
+        "and arousal into high and not high.",
+        "We modelled a grouping only if every group has at least five people."],
+        "The two bar charts, then the groupings on the right.",
+        f"Valence 3–5: {f['v35']} of {f['n_val']}. Arousal 3–5: {f['a35']} of {f['n_aro']}. Group sizes: "
         + "; ".join(f"{t}: {f['targets'][t]['classes']}" for t in ("arousal_3", "valence_2", "arousal_2") if t in f["targets"])
         + (f". Arousal has one person fewer because {codes(f['no_arousal'])}'s arousal rating is crossed out in the "
            "sheet, so we did not use it." if f["no_arousal"] else ".")
@@ -257,85 +279,101 @@ def build(f: dict) -> str:
            "analysed." if n == f["n_meta"] else ""),
         [("Why not predict all 25 combinations of valence and arousal?",
           f"With {n} people, most of the 25 cells would be empty or hold one person. A model cannot learn or be tested "
-          "on a class with one example."),
-         ("Did you invent these classes?",
+          "on a group with one example."),
+         ("Did you invent these groups?",
           "No. They are groupings of the participants' own 1-to-5 ratings. The original ratings stay in the data, and "
-          "the groupings are marked as derived.")]))
+          "the groupings are marked as derived.")])
     pa, pv = f["pre_top"]["arousal"], f["pre_top"]["valence"]
-    slides.append(("6 · Acoustic features and the ratings", 60, [
-        "Before any machine learning, we checked simple relationships. We chose six classic voice features in advance: "
-        "pitch level, pitch range, loudness, duration, brightness and voiced ratio.",
-        f"{'None of them is' if not f['pre_sig'] else str(f['pre_sig']) + ' of them are'} significantly related to the "
+    no_link = not f["pre_sig"] and not f["fdr"]["arousal"] and not f["fdr"]["valence"]
+    add("features", "Simple voice measures show no clear link" if no_link else "Voice measures and the ratings", 60, [
+        "Before any machine learning, we checked simple links. We chose six well-known voice features in advance: "
+        "pitch level, pitch range, loudness, duration, brightness and the share of voiced sound.",
+        f"{'None of them is' if not f['pre_sig'] else str(f['pre_sig']) + ' of them are'} significantly linked to the "
         f"ratings. The strongest are {PRESPECIFIED[pa['feature']]} with arousal at {float(pa['spearman_rho']):+.2f} and "
         f"{PRESPECIFIED[pv['feature']]} with valence at {float(pv['spearman_rho']):+.2f}. Those are weak.",
-        f"Across all {f['n_features']} features, {f['fdr']['arousal']} pass the correction for multiple testing for "
-        f"arousal and {f['fdr']['valence']} for valence.",
-        f"With {n} people, only correlations of about {f['rho_min']:.2f} or stronger can be detected reliably. A "
-        f"moderate correlation of 0.3 would need about {f['n_for_03']} participants."],
+        f"Across all {f['n_features']} features, {f['fdr']['arousal']} pass the correction for testing many features at "
+        f"once for arousal, and {f['fdr']['valence']} for valence.",
+        f"With {n} people, only links of about {f['rho_min']:.2f} or stronger can be found reliably. A moderate link of "
+        f"0.3 would need about {f['n_for_03']} participants."],
         "The table, then the last bullet about sample size.",
-        "The symbol ρ (rho) is the Spearman correlation: +1 means the two rise together perfectly, 0 means no "
-        "relationship, −1 means one rises as the other falls. We use Spearman because the ratings are ranks from 1 to 5.",
+        "The symbol ρ (rho) is the Spearman correlation: +1 means the two rise together perfectly, 0 means no link, "
+        "−1 means one rises as the other falls. We use Spearman because the ratings are ranks from 1 to 5.",
         [("Why choose six features in advance?",
           "If you test many features and report only the best ones, you will always find something by luck. Choosing "
-          "in advance keeps us honest. We still report all of them, with a correction for multiple testing.")]))
+          "in advance keeps us honest. We still report all of them, with a correction for testing many features.")])
+    add("reading", "How to read our results", 50, [
+        "Before the results, five ideas.",
+        "Chance is the score you get by pure guessing: "
+        + ", ".join(f"{1 / k:.2f} with {k} groups"
+                    for k in sorted({round(1 / t["chance"]) for t in f["tasks"]}, reverse=True)) + ".",
+        "Balanced accuracy is the average of the scores for each group. A model cannot look good by always giving the "
+        "most common answer.",
+        f"The 95% interval is the range where the true score probably lies. Ours are wide, because {n} people is few.",
+        "The p-value tells us how often shuffled ratings, which mean nothing, score as high as the real ones. A small "
+        "p-value means the score is unlikely to be luck.",
+        f"And the correction. We ran {f['n_tests']} tests, and with {f['n_tests']} tries a lucky result is expected. The "
+        "Holm correction accounts for that."],
+        "Each row, as you explain it.",
+        None,
+        [("Why is the limit 0.05?",
+          "It is the usual limit in research. It means we accept a 5% risk of calling luck a real effect.")])
     task_lines = "; ".join(f"{t['ba']:.2f} for {TASK.get(t['task'], t['task'])}, where chance is {t['chance']:.2f}"
                            for t in f["tasks"])
-    slides.append(("7 · Speaker-independent classification", 80, [
+    add("models", "The models did not beat chance" if not f["any_holm"] else "Some models beat chance", 70, [
         "Now the main test. For each target we show the best of three models.",
-        "Balanced accuracy is the average of how well the model does on each class. Pure guessing gives one divided by "
-        "the number of classes: 0.33 for three classes and 0.50 for two.",
         f"The {MODEL[f['tasks'][0]['model']]} was best: {task_lines}.",
-        f"Is that better than luck? We shuffled the labels {f['n_perm']} times and re-ran the whole procedure each time. "
-        f"{len(f['raw_sig'])} of {f['n_tests']} tests "
+        f"Is that better than luck? We shuffled the ratings {f['n_perm']} times and ran the whole procedure again each "
+        f"time. {len(f['raw_sig'])} of {f['n_tests']} tests "
         + ("has" if len(f["raw_sig"]) == 1 else "have") + f" a p-value below 0.05: the smallest is "
         f"{float(sm['perm_p']):.3f}, for the {MODEL[sm['model']]} on {TASK.get(sm['task'], sm['task'])}.",
-        f"But we ran {f['n_tests']} tests. With {f['n_tests']} tries, about {exp_false:.2f} false alarms are expected by "
-        f"luck alone. After the Holm correction that p-value becomes {float(sm['perm_p_holm']):.3f}, which is "
+        f"But we ran {f['n_tests']} tests. With {f['n_tests']} tries, about {exp_false:.2f} lucky results are expected. "
+        f"After the Holm correction that p-value becomes {float(sm['perm_p_holm']):.3f}, which is "
         + ("still significant." if float(sm["perm_p_holm"]) < 0.05 else "not significant.")
-        + (" So no model survives the correction." if not f["any_holm"] else "")],
-        "The Permutation p column, then the Holm p column.",
-        "The *Majority baseline* column is the chance level: what a model scores if it always gives the same answer. "
+        + (" So no model stays significant after the correction." if not f["any_holm"] else "")],
+        "The p-value column, then the column *p after correction*.",
+        "The *Chance* column is what a model scores if it always gives the same answer. "
         f"Holm in one line: multiply the smallest p-value by the number of tests. "
         f"{float(sm['perm_p']):.4f} × {f['n_tests']} = {float(sm['perm_p']) * f['n_tests']:.3f}.",
         [(f"Isn't {a3['ba']:.2f} against {a3['chance']:.2f} a good result?" if a3 else "Isn't the best score a good result?",
           (f"It looks promising, but three things stop us from claiming it. The 95% interval runs from {a3['lo']:.2f} to "
            f"{a3['hi']:.2f}, so the low end is close to chance. It does not survive the correction for {f['n_tests']} tests. "
-           + (f"And without the {len(f['no_orig'])} files that have no verified original, it falls to "
+           + (f"And without the {len(f['no_orig'])} files that could not be checked, it falls to "
               f"{no_src[0]:.2f}." if no_src else "")) if a3 else "The intervals are wide and the result does not survive correction.")]
         + ([(f"That interval starts at {a3['lo']:.2f}, which is above {a3['chance']:.2f}. Doesn't that mean it beats chance?",
-             f"Only just, and only for this one test. It says the same thing as the raw p-value of {a3['p']:.3f}. But it is "
-             f"one of {f['n_tests']} tests, and with that many tests about {exp_false:.2f} false alarms are expected by "
-             f"luck. After the correction it is not significant"
-             + (f", and it drops to {no_src[0]:.2f} when the unverified files are left out." if no_src else "."))]
+             f"Only just, and only for this one test. It says the same thing as the p-value of {a3['p']:.3f} before "
+             f"correction. But it is one of {f['n_tests']} tests, and with that many tests about {exp_false:.2f} lucky "
+             f"results are expected. After the correction it is not significant"
+             + (f", and it drops to {no_src[0]:.2f} when the unchecked files are left out." if no_src else "."))]
            if a3 and a3["lo"] > a3["chance"] else []) + [
          ("Why three models? Which is best?",
           f"A linear model (logistic regression), a kernel model (SVM) and a tree ensemble (random forest) make different "
           f"assumptions, so together they are a fair test. The random forest scored highest, but "
           + (f"only {len(f['pairs_sig'])} of the pairwise comparisons has p below 0.05, uncorrected, so we do not claim one "
-             "model is truly better." if f["pairs_sig"] else "no pair of models differs significantly."))]))
-    slides.append(("8 · Model results against chance", 40, [
+             "model is truly better." if f["pairs_sig"] else "no pair of models differs significantly."))])
+    add("figure", "The same result as a picture", 40, [
         "This figure shows the same result as a picture, with one panel for each target. Each dot is a model's "
-        "balanced accuracy. The horizontal bar is its 95% confidence interval. The vertical line is chance.",
-        "The grey rows are dummy baselines that never listen to the audio. The blue rows are our models.",
+        "balanced accuracy. The horizontal bar is its 95% interval. The vertical line is chance.",
+        "The grey rows are baselines that never listen to the audio. The blue rows are our models.",
         f"The bars are wide. {f['crossing']} of the {f['n_learned']} blue bars cross the chance line."
         + (f" The one that just clears it is the {MODEL[sm['model']]} for three-level arousal, and that is the result "
            "that did not survive the correction." if f["n_learned"] - f["crossing"] == 1 and sm["task"] == "arousal_3" else "")
         + " This is what an inconclusive result looks like."],
         "One blue bar that crosses the vertical line.",
-        "A wide bar means the estimate is uncertain. If the bar crosses the chance line, the true performance could be "
-        "no better than guessing.", []))
-    slides.append(("9 · Is it the voice, or just the word?", 75, [
-        "This is our most important finding. Is the model hearing emotion, or only recognising the word?",
-        f"First test: can the audio alone tell Kapoy apart from the other words? Yes. Balanced accuracy "
+        "A wide bar means the score is uncertain. If the bar crosses the chance line, the true score could be no "
+        "better than guessing.")
+    add("word", "Is it the voice, or just the word?", 75, [
+        "This is our most important finding. Is the model hearing the feeling, or only recognising the word?",
+        f"First test: can the computer tell Kapoy from the other words by sound alone? Yes. Balanced accuracy "
         f"{probe['balanced_accuracy_mean_10_repeats']:.2f}, with p = {probe['permutation_p']:.3f}.",
         f"Second test: is the word linked to the feeling? Yes. Of {sum(kapoy.values())} Kapoy speakers, "
         f"{kapoy['NotPleasant']} felt not pleasant. Of {sum(other.values())} speakers of other words, only "
         f"{other['NotPleasant']} did.",
         "So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any "
-        "emotion at all.",
-        f"When we look inside Kapoy alone, the same word with different feelings, {f['within_sig']} of "
-        f"{f['within_tests']} voice-to-rating relationships hold up."],
-        "The small table: Kapoy 8 and 2, other words 5 and 16.",
+        "feeling at all.",
+        f"When we look at Kapoy speakers alone, the same word with different feelings, {f['within_sig']} of "
+        f"{f['within_tests']} links between voice and rating are significant."],
+        f"The small table: Kapoy {kapoy['NotPleasant']} and {kapoy['Pleasant']}, other words {other['NotPleasant']} and "
+        f"{other['Pleasant']}.",
         "This is called a *confound*: a hidden third thing that explains the link. Here the word explains both the "
         "sound and the feeling. It is like concluding that umbrellas cause rain because they appear together.",
         [("How would you fix the word problem?",
@@ -343,43 +381,56 @@ def build(f: dict) -> str:
           "separately. Both are in our plan for a larger study."),
          ("Why only Kapoy?",
           f"It is the only word said by enough people ({probe['n_kapoy']}). Every other word was said by three people or "
-          "fewer, which is too few to analyse.")]))
-    slides.append(("10 · Other confounds and limits", 55, [
-        f"We want to be clear about the limits. The sample is small. With {n} people only strong relationships are "
-        "detectable.",
-        (f"The audio is trimmed copies, not the original recordings: {len(f['no_orig'])} have no verified original and "
-         f"{len(f['edited'])} were edited." if f["supplied"] else "Some recordings were retaken."),
+          "fewer, which is too few to analyse.")])
+    add("limits", "Limits of this study", 55, [
+        f"We want to be clear about the limits. The sample is small. With {n} people only strong links can be found.",
+        (f"The audio is converted copies, not the original recordings: {len(f['no_orig'])} could not be checked and "
+         f"{len(f['edited'])} show signs of editing." if f["supplied"] else "Some recordings were retaken."),
         f"The recordings are noisy: we detected background voices in {f['bg']} of {n}, in a hallway right after class."
         + (f" And {len(f['cfg'])} files come from recordings made with a different audio setting"
-           + (", although that setting shows no significant feature difference here." if not f["cfg_feats"] else ".")
+           + (", although that setting shows no significant difference here." if not f["cfg_feats"] else ".")
            if f["cfg"] else ""),
-        "Each person said only one word, so we cannot separate a person's normal voice from their state at that moment.",
-        "Everyone came from the same year level, class activity and session, so we cannot compare contexts. And the "
-        "design is correlational, so we make no causal claims."],
+        "Each person said only one word, so we cannot separate a person's normal voice from their feeling at that "
+        "moment.",
+        "Everyone came from the same year level, class activity and session, so we cannot compare contexts. And we "
+        "measured links, not causes."],
         "The first three bullets.",
-        f"*Power* is the chance of detecting an effect that really exists. With {n} participants our study can only "
-        f"detect correlations of about {f['rho_min']:.2f} or more.", []))
-    slides.append(("11 · Conclusion", 45, [
-        f"Our conclusion: {headline}.",
+        f"*Power* is the chance of finding an effect that really exists. With {n} participants our study can only find "
+        f"links of about {f['rho_min']:.2f} or more."
+        + (f" *A different audio setting* ({len(f['cfg'])} files) means the original was saved in stereo with a second "
+           "audio track, unlike the others." if f["cfg"] else ""))
+    add("conclusion", "Conclusion", 45, [
+        f"Our conclusion: {d.headline[0].lower() + d.headline[1:]}.",
         "That is a real result, not a failure. A careful analysis that finds no reliable signal is more useful than an "
         "impressive number that would not hold up.",
-        "What we contribute is three things. A complete, reproducible and validated pipeline that re-runs everything "
-        "with one command. The discovery that the chosen word is linked to the feeling and must be controlled. And a "
-        f"clear statement of how much data a real study needs: about {f['n_for_03']} participants."],
-        "The blue sentence.", None, []))
-    slides.append(("12 · Next steps", 30, [
-        "Our next steps are concrete. Complete the consent log from the signed forms. Run the blind listening review "
-        "with two group members. "
-        + ("Find the original recordings behind the copies we could not verify. " if f["supplied"] else "")
-        + "Collect more participants with one device, one setting and one take. Follow the analysis plan we wrote in "
-        "advance for a larger study. And confirm the open protocol questions with our instructor.",
+        "We contribute three things. A complete, tested pipeline that repeats the whole analysis with one command. The "
+        "finding that the chosen word is linked to the feeling and must be controlled. And a clear statement of how "
+        f"much data a real study needs: about {f['n_for_03']} participants."],
+        "The blue sentence.")
+    add("next", "Next steps", 30, [
+        "Our next steps are concrete. Complete the consent log from the signed forms. Have two group members listen to "
+        "every clip without seeing the ratings. "
+        + ("Find the original recordings for the files we could not check. " if f["supplied"] else "")
+        + "Record more participants with one device, one setting and one take. Follow the analysis plan we wrote "
+        "before seeing new data. And confirm the open protocol questions with our instructor.",
         "Thank you. We are happy to take your questions."],
-        "The audience.", None, []))
+        "The audience.")
+    return S
 
-    total = sum(s[1] for s in slides)
+
+def build(f: dict) -> str:
+    d = derive(f)
+    n, a3, v2, sm, exp_false, kapoy, other, probe = d.n, d.a3, d.v2, d.sm, d.exp_false, d.kapoy, d.other, d.probe
+    lead, lead_sens, val_sens, no_src, fg = d.lead, d.lead_sens, d.val_sens, d.no_src, d.fg
+    headline = d.headline[0].lower() + d.headline[1:]
+    slides = slide_script(f)
+    num = {s["key"]: i for i, s in enumerate(slides, 1)}
+    last = len(slides)
+
+    total = sum(s["seconds"] for s in slides)
     L = ["# Presentation script and defense guide", "",
          f"*Group 3 · Bisaya post-class speech and self-reported affect · {n} participants"
-         + (f" · audio: {f['delivery']}" if f["supplied"] else "") + ". Built by `src/09d_build_presentation_script.py` "
+         + (f" · audio: {f['delivery']}" if f["supplied"] else "") + ". Built by `src/10b_build_presentation_script.py` "
          "from the result files, so every number matches the slides and the report.*", "",
          "## How to use this", "",
          f"- **Part 1** is what to say, slide by slide. It takes about {round(total / 60)} minutes.",
@@ -388,8 +439,11 @@ def build(f: dict) -> str:
          "- **Part 4** is the short list of numbers to remember.",
          "- **Part 5** lists what not to say, and what to say instead.",
          "- Don't read the script word for word. Learn the first sentence of each slide and the number you point at.",
-         "- For four speakers, split the slides 1–3, 4–6, 7–9 and 10–12.",
-         "- If you are given only five minutes, present slides 2, 3, 7, 9 and 11 and skip the rest.", "",
+         f"- For four speakers, split the slides 1–{num['data']}, {num['pipeline']}–{num['reading']}, "
+         f"{num['models']}–{num['word']} and {num['limits']}–{last}.",
+         f"- If you are given only five minutes, present slides {num['question']}, {num['data']}, {num['models']}, "
+         f"{num['word']} and {num['conclusion']} and skip the rest.",
+         "- The speaker notes under each slide in PowerPoint are the same words as Part 1.", "",
          "## The whole story in one minute", "",
          f"> We asked {n} second-year CS students to say one Bisaya word right after class and to rate how they felt. We "
          f"measured {f['n_features']} properties of each voice clip and trained three kinds of models to guess the feeling "
@@ -402,8 +456,9 @@ def build(f: dict) -> str:
          f"> Our honest conclusion: with {n} noisy one-word recordings, {headline}. What we built is a complete, tested "
          "pipeline that re-runs everything with one command when better data arrives.", "",
          "## Part 1 · What to say, slide by slide", ""]
-    for title, seconds, say, point, plain, asked in slides:
-        L += [f"### Slide {title}", "", f"**Say** (about {seconds} seconds)", ""]
+    for i, s in enumerate(slides, 1):
+        say, point, plain, asked = s["say"], s["point"], s["plain"], s["asked"]
+        L += [f"### Slide {i} · {s['title']}", "", f"**Say** (about {s['seconds']} seconds)", ""]
         for i, para in enumerate(say):
             L += ([">"] if i else []) + [f"> {para}"]
         L += ["", f"**Point at:** {point}", ""]
@@ -419,9 +474,10 @@ def build(f: dict) -> str:
           "- **Examples:** tired is low arousal; excited is high arousal and pleasant; stressed is high arousal and "
           "unpleasant.",
           f"- **In our project:** each participant rated both from 1 to 5. The two ratings rise together (ρ = {f['va_rho']:.2f}).", "",
-          "### Derived classes", "",
-          "- **What it is:** groups made from the 1-to-5 ratings, because some single levels have too few people.",
-          "- **The rule:** a grouping is modelled only if every class has at least 5 people.",
+          "### Groups (derived classes)", "",
+          "- **What it is:** groups made from the 1-to-5 ratings, because some single scores have too few people. The "
+          "slides say *group*; the technical word is *class*.",
+          "- **The rule:** a grouping is modelled only if every group has at least 5 people.",
           "- **In our project:** " + "; ".join(f"`{t}` ({f['targets'][t]['classes']})" for t in f["targets"] if f["targets"][t]["viable"])
           + ". Not modelled: " + ", ".join(f"`{t}`" for t in f["targets"] if not f["targets"][t]["viable"]) + ".", "",
           "### Acoustic features", "",
@@ -564,7 +620,7 @@ def build(f: dict) -> str:
           ("Did you account for different voices, for example male and female?",
            "We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no "
            "personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the "
-           "*one word per person* limit on slide 10, and it is one reason we do not over-read the pitch features.")]
+           f"*one word per person* limit on slide {num['limits']}, and it is one reason we do not over-read the pitch features.")]
     if f["supplied"]:
         cv = f["conversion"]
         qa.append(("Who prepared the version-2 audio files, and how?",

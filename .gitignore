@@ -48,3 +48,6 @@ data/supplied_audio/*
 
 # --- submission package: rebuilt by src/11_build_submission.py ---
 submission/
+
+# PowerPoint exports of the deck (made by hand from the .pptx, not by the pipeline)
+reports/presentation/*.pdf

@@ -65,7 +65,7 @@ GUIDES = [  # pages listed on the overview under "Guides and next steps" (kept o
 LOCAL_LINKS = [  # (label, path relative to reports/html, description): files that exist only after a local run
     ("Listening review tool", "../../data/review/listening_review.html",
      "the blind listening page (needs the audio from a local pipeline run)"),
-    ("Presentation slides", "../presentation/G3_results_presentation.pptx", "12 slides with speaker notes (PowerPoint)"),
+    ("Presentation slides", "../presentation/G3_results_presentation.pptx", "slides in plain English with speaker notes (PowerPoint)"),
 ]
 
 CSS = """

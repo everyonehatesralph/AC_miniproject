@@ -42,8 +42,8 @@ STEPS = [
     ("09", "09_build_final_report.py", "Phases 14-19: final group research report"),
     ("09b", "09b_build_html_report.py", "browser version of all reports (reports/html/index.html)"),
     ("09c", "09c_build_presentation.py", "results presentation (reports/presentation/)"),
-    ("09d", "09d_build_presentation_script.py", "presenter script and defense guide (reports/presentation/)"),
     ("10", "10_validate_project.py", "Phase 20: validation"),
+    ("10b", "10b_build_presentation_script.py", "presenter script and defense guide (reports/presentation/)"),
     ("11", "11_build_submission.py", "submission package (submission/G3_submission_<date>.zip)"),
 ]
 
@@ -60,7 +60,7 @@ def supplied_audio() -> str:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--skip-fetch", action="store_true", help="do not contact Google Drive")
-    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 09d, 10, 11")
+    ap.add_argument("--from", dest="start", default="00", help="first step to run: 00, 01, 01b, 02, 03, 03b, 03c, 04 ... 09, 09b, 09c, 10, 10b, 11")
     ap.add_argument("--quick", action="store_true", help="smoke test: fewer CV repeats/permutations in step 06")
     args = ap.parse_args()
     t_all = time.time()

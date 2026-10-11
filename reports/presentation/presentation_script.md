@@ -1,17 +1,18 @@
 # Presentation script and defense guide
 
-*Group 3 · Bisaya post-class speech and self-reported affect · 40 participants · audio: CS2B_v2_wav_16k. Built by `src/09d_build_presentation_script.py` from the result files, so every number matches the slides and the report.*
+*Group 3 · Bisaya post-class speech and self-reported affect · 40 participants · audio: CS2B_v2_wav_16k. Built by `src/10b_build_presentation_script.py` from the result files, so every number matches the slides and the report.*
 
 ## How to use this
 
-- **Part 1** is what to say, slide by slide. It takes about 11 minutes.
+- **Part 1** is what to say, slide by slide. It takes about 12 minutes.
 - **Part 2** explains every idea in plain words. Read it once before you present.
 - **Part 3** has the questions you are most likely to get, with honest answers.
 - **Part 4** is the short list of numbers to remember.
 - **Part 5** lists what not to say, and what to say instead.
 - Don't read the script word for word. Learn the first sentence of each slide and the number you point at.
-- For four speakers, split the slides 1–3, 4–6, 7–9 and 10–12.
-- If you are given only five minutes, present slides 2, 3, 7, 9 and 11 and skip the rest.
+- For four speakers, split the slides 1–3, 4–7, 8–10 and 11–13.
+- If you are given only five minutes, present slides 2, 3, 8, 10 and 12 and skip the rest.
+- The speaker notes under each slide in PowerPoint are the same words as Part 1.
 
 ## The whole story in one minute
 
@@ -19,7 +20,7 @@
 >
 > The models did not beat guessing once we corrected for running 9 tests. We also found a trap: the word people choose is itself linked to how they feel, and the computer can tell which word was said. So a model can look smart by recognising the word, not the emotion.
 >
-> Our honest conclusion: with 40 noisy one-word recordings, the data do not support a claim that post-class affect can be recognised from speech. What we built is a complete, tested pipeline that re-runs everything with one command when better data arrives.
+> Our honest conclusion: with 40 noisy one-word recordings, our data do not show that post-class feelings can be recognised from the voice. What we built is a complete, tested pipeline that re-runs everything with one command when better data arrives.
 
 ## Part 1 · What to say, slide by slide
 
@@ -29,35 +30,35 @@
 
 > Good day. We are Group 3. Our project asks one simple question: can a single spoken word, said right after class, tell us how a student feels?
 >
-> We studied second-year Computer Science students. We will show what we collected, how we analysed it, what we found, and, honestly, what we could not show.
+> We studied second-year Computer Science students. We will show what we collected, how we analysed it, what we found, and what we could not show.
 
 **Point at:** Nothing yet. Look at the audience.
 
-### Slide 2 · The question and how we asked it
+### Slide 2 · What we asked
 
 **Say** (about 60 seconds)
 
 > Right after class, each participant said one Bisaya word that matched their reaction, for example Kapoy, Salamat or Lingaw. Then they rated how they felt on two scales from 1 to 5.
 >
-> Valence is how pleasant the feeling is. Arousal is how much energy it has: calm and tired at the low end, excited or tense at the high end.
+> Valence is how pleasant the feeling is. Arousal is how much energy it has: calm or tired at the low end, excited or tense at the high end.
 >
-> Our research question: does the sound of the word, not its meaning, carry information about those ratings? From each recording we measured 108 acoustic features.
+> Our question: can the sound of the word, not its meaning, tell us those ratings? From each recording the computer took 108 voice measurements.
 >
-> And we made the test speaker-independent: the model is always tested on people it has never heard. That is the honest version of the problem, because a real system would meet new students.
+> And we made the test strict. The computer is always tested on people it has never heard, because a real system would meet new students.
 
-**Point at:** The three tiles on the right: 1 word, 2 scales, 108 features.
+**Point at:** The three tiles on the right: 1 word, 2 ratings, 108 measurements.
 
-**In plain words:** The label is the participant's own rating. We never decide the feeling from the meaning of the word. Someone can say *Kapoy* and still report feeling fine.
+**In plain words:** The correct answer is the participant's own rating. We never decide the feeling from the meaning of the word. Someone can say *Kapoy* and still report feeling fine. The technical name for the strict test is *speaker-independent*.
 
 **If asked: “Why use self-report as the correct answer?”** The protocol defines it that way. The feeling belongs to the participant. A listener's impression, or the meaning of the word, would be our own assumption.
 
-### Slide 3 · The data we actually had
+### Slide 3 · The data we had
 
 **Say** (about 75 seconds)
 
 > The sheet lists 40 participants and we analysed all 40, which meets the protocol minimum of 40.
 >
-> We want to be transparent about the audio. By our group's decision, the analysis uses the version-2 audio set: 16 kHz WAV files, one per participant. We audited every file against the original phone recordings. 31 are confirmed trimmed copies of an original. 9 have no verified original, and 3 of those show signs of editing, such as stretches of exact digital silence. We kept them, flagged them, and re-ran the models without them. You will see that result later.
+> We want to be open about the audio. We recorded phone videos, and a group member converted them to short 16 kHz WAV files. Those files are what we analysed. We checked every file against the original recordings. 31 match an original. 9 could not be checked, and 3 of those show signs of editing, such as stretches of exact silence. We kept them, marked them, and ran the models again without them. You will see that result later.
 >
 > 9 spoken words are blank in the sheet. We never guessed a word from the feeling text; those files carry the label UNVERIFIED.
 >
@@ -65,29 +66,29 @@
 >
 > And consent: the sheet says Yes for everyone, but the log of the signed forms still has to be completed.
 
-**Point at:** The four tiles, then the second bullet about the files without a verified original.
+**Point at:** The four tiles, then the first bullet about the audio.
 
-**In plain words:** *No verified original* means we cannot prove when that file was recorded or that it is unedited. *Digital silence* is a stretch of exact zeros. A real phone recording always contains a little noise, so exact zeros mean someone edited the file. *A different recording setting* (5 files) means the original was saved in stereo with a second audio track, unlike the others.
+**In plain words:** *Could not be checked* means we have no original recording to compare with, so we cannot prove when the file was recorded or that it is unedited. *Exact silence* is a stretch of perfect zeros. A real phone recording always contains a little noise, so perfect zeros mean the file was edited.
 
 **If asked: “Why did you analyse copies and not the original recordings?”** We had original recordings for only 32 of the 40 participants. The version-2 set covers all 40, so the group decided to use it for every requirement. We recorded that decision, kept the originals untouched, audited every file against them, and report the results with and without the uncertain files.
 
 **If asked: “Did you use the denoised files?”** No. The protocol forbids denoising, and denoising changes exactly the properties we measure. We analysed only the non-denoised set, and the pipeline passes those files through sample for sample.
 
-### Slide 4 · How the pipeline works
+### Slide 4 · How we analysed it
 
 **Say** (about 70 seconds)
 
-> Everything runs with one command, in eight stages.
+> Everything runs with one command, in eight steps.
 >
-> Audit: every file and every sheet cell is checked and nothing is changed. Clean: only rule-based fixes, each one logged, with the raw value kept beside it. Audio: the computer finds the spoken word inside each clip without ever looking at the labels. Features: 108 numbers per recording.
+> Check: every file and every sheet cell is checked, and nothing is changed. Clean: fixes are made by fixed rules only, and each fix is logged. Find the word: the computer finds the spoken word inside each clip without ever seeing the ratings. Measure: 108 numbers for each voice.
 >
-> Then we explore the data, train the models, test them statistically, and run a lexical control, which asks whether the model hears the voice or just the word.
+> Then we explore the data, train the models, test whether the scores are better than luck, and run the word check, which asks whether the model hears the feeling or only the word.
 >
-> The three safeguards at the bottom are what make the numbers trustworthy. No participant is in both the training and the test data. All preprocessing is fitted inside the training folds only. And the labels are never used to cut or choose audio.
+> The three rules at the bottom keep the test fair. No participant is in both the training and the test data. The model's settings are learned from the training data only. And the ratings are never used to cut or choose audio.
 
-**Point at:** Walk along the eight boxes with your hand, then point at the safeguards line.
+**Point at:** Walk along the eight boxes with your hand, then point at the three rules.
 
-**In plain words:** The safeguards prevent *data leakage*: the model must not see the answers before the exam. If we scaled the features using all the data, a little information about the test students would leak into training.
+**In plain words:** The three rules prevent *data leakage*: the model must not see the answers before the exam. If we prepared the measurements using all the data, a little information about the test participants would leak into training.
 
 **If asked: “What are the 108 features?”** MFCC (26); delta MFCC (26); delta-delta MFCC (26); F0 (pitch) (9); energy (6); zero-crossing rate (6); spectral (6); duration/voicing (3). Pitch is how high the voice is, energy is loudness, and the MFCCs describe the shape of the sound spectrum, which is what makes voices and vowels sound different.
 
@@ -95,89 +96,107 @@
 
 **Say** (about 45 seconds)
 
-> Most students reported neutral-to-pleasant feelings and moderate-to-high energy. Valence and arousal move together: the Spearman correlation is 0.71.
+> Most participants reported neutral to pleasant feelings and moderate to high energy. The two ratings rise together: the correlation is 0.71.
 >
-> Some rating levels were chosen by only one to three people, so we cannot model all five levels. We grouped the ratings, and we fixed the groups before modelling: arousal into low, moderate and high; valence into pleasant versus not pleasant; and arousal into high versus not high.
+> Some scores were chosen by very few people, so we cannot model all five scores. We grouped them, and we fixed the groups before modelling: arousal into low, moderate and high; valence into pleasant and not pleasant; and arousal into high and not high.
 >
-> Any grouping with fewer than five people in a class was not modelled.
+> We modelled a grouping only if every group has at least five people.
 
-**Point at:** The two bar charts, then the list of modelled classes.
+**Point at:** The two bar charts, then the groupings on the right.
 
-**In plain words:** Valence 3–5: 37 of 40. Arousal 3–5: 30 of 39. Class sizes: arousal_3: Low: 9 / Moderate: 13 / High: 17; valence_2: NotPleasant: 18 / Pleasant: 22; arousal_2: NotHigh: 22 / High: 17. Arousal has one person fewer because Y2-076's arousal rating is crossed out in the sheet, so we did not use it. In the chart, the blue and orange bars are the same height because every participant in the sheet is analysed.
+**In plain words:** Valence 3–5: 37 of 40. Arousal 3–5: 30 of 39. Group sizes: arousal_3: Low: 9 / Moderate: 13 / High: 17; valence_2: NotPleasant: 18 / Pleasant: 22; arousal_2: NotHigh: 22 / High: 17. Arousal has one person fewer because Y2-076's arousal rating is crossed out in the sheet, so we did not use it. In the chart, the blue and orange bars are the same height because every participant in the sheet is analysed.
 
-**If asked: “Why not predict all 25 combinations of valence and arousal?”** With 40 people, most of the 25 cells would be empty or hold one person. A model cannot learn or be tested on a class with one example.
+**If asked: “Why not predict all 25 combinations of valence and arousal?”** With 40 people, most of the 25 cells would be empty or hold one person. A model cannot learn or be tested on a group with one example.
 
-**If asked: “Did you invent these classes?”** No. They are groupings of the participants' own 1-to-5 ratings. The original ratings stay in the data, and the groupings are marked as derived.
+**If asked: “Did you invent these groups?”** No. They are groupings of the participants' own 1-to-5 ratings. The original ratings stay in the data, and the groupings are marked as derived.
 
-### Slide 6 · Acoustic features and the ratings
+### Slide 6 · Simple voice measures show no clear link
 
 **Say** (about 60 seconds)
 
-> Before any machine learning, we checked simple relationships. We chose six classic voice features in advance: pitch level, pitch range, loudness, duration, brightness and voiced ratio.
+> Before any machine learning, we checked simple links. We chose six well-known voice features in advance: pitch level, pitch range, loudness, duration, brightness and the share of voiced sound.
 >
-> None of them is significantly related to the ratings. The strongest are brightness (spectral centroid) with arousal at +0.26 and loudness (RMS) with valence at +0.26. Those are weak.
+> None of them is significantly linked to the ratings. The strongest are brightness (spectral centroid) with arousal at +0.26 and loudness (RMS) with valence at +0.26. Those are weak.
 >
-> Across all 108 features, 0 pass the correction for multiple testing for arousal and 0 for valence.
+> Across all 108 features, 0 pass the correction for testing many features at once for arousal, and 0 for valence.
 >
-> With 40 people, only correlations of about 0.44 or stronger can be detected reliably. A moderate correlation of 0.3 would need about 90 participants.
+> With 40 people, only links of about 0.44 or stronger can be found reliably. A moderate link of 0.3 would need about 90 participants.
 
 **Point at:** The table, then the last bullet about sample size.
 
-**In plain words:** The symbol ρ (rho) is the Spearman correlation: +1 means the two rise together perfectly, 0 means no relationship, −1 means one rises as the other falls. We use Spearman because the ratings are ranks from 1 to 5.
+**In plain words:** The symbol ρ (rho) is the Spearman correlation: +1 means the two rise together perfectly, 0 means no link, −1 means one rises as the other falls. We use Spearman because the ratings are ranks from 1 to 5.
 
-**If asked: “Why choose six features in advance?”** If you test many features and report only the best ones, you will always find something by luck. Choosing in advance keeps us honest. We still report all of them, with a correction for multiple testing.
+**If asked: “Why choose six features in advance?”** If you test many features and report only the best ones, you will always find something by luck. Choosing in advance keeps us honest. We still report all of them, with a correction for testing many features.
 
-### Slide 7 · Speaker-independent classification
+### Slide 7 · How to read our results
 
-**Say** (about 80 seconds)
+**Say** (about 50 seconds)
+
+> Before the results, five ideas.
+>
+> Chance is the score you get by pure guessing: 0.33 with 3 groups, 0.50 with 2 groups.
+>
+> Balanced accuracy is the average of the scores for each group. A model cannot look good by always giving the most common answer.
+>
+> The 95% interval is the range where the true score probably lies. Ours are wide, because 40 people is few.
+>
+> The p-value tells us how often shuffled ratings, which mean nothing, score as high as the real ones. A small p-value means the score is unlikely to be luck.
+>
+> And the correction. We ran 9 tests, and with 9 tries a lucky result is expected. The Holm correction accounts for that.
+
+**Point at:** Each row, as you explain it.
+
+**If asked: “Why is the limit 0.05?”** It is the usual limit in research. It means we accept a 5% risk of calling luck a real effect.
+
+### Slide 8 · The models did not beat chance
+
+**Say** (about 70 seconds)
 
 > Now the main test. For each target we show the best of three models.
 >
-> Balanced accuracy is the average of how well the model does on each class. Pure guessing gives one divided by the number of classes: 0.33 for three classes and 0.50 for two.
->
 > The random forest was best: 0.48 for three-level arousal (low, moderate, high), where chance is 0.33; 0.59 for valence (pleasant vs not pleasant), where chance is 0.50; 0.56 for two-level arousal (high vs not high), where chance is 0.50.
 >
-> Is that better than luck? We shuffled the labels 500 times and re-ran the whole procedure each time. 1 of 9 tests has a p-value below 0.05: the smallest is 0.022, for the random forest on three-level arousal (low, moderate, high).
+> Is that better than luck? We shuffled the ratings 500 times and ran the whole procedure again each time. 1 of 9 tests has a p-value below 0.05: the smallest is 0.022, for the random forest on three-level arousal (low, moderate, high).
 >
-> But we ran 9 tests. With 9 tries, about 0.45 false alarms are expected by luck alone. After the Holm correction that p-value becomes 0.198, which is not significant. So no model survives the correction.
+> But we ran 9 tests. With 9 tries, about 0.45 lucky results are expected. After the Holm correction that p-value becomes 0.198, which is not significant. So no model stays significant after the correction.
 
-**Point at:** The Permutation p column, then the Holm p column.
+**Point at:** The p-value column, then the column *p after correction*.
 
-**In plain words:** The *Majority baseline* column is the chance level: what a model scores if it always gives the same answer. Holm in one line: multiply the smallest p-value by the number of tests. 0.0220 × 9 = 0.198.
+**In plain words:** The *Chance* column is what a model scores if it always gives the same answer. Holm in one line: multiply the smallest p-value by the number of tests. 0.0220 × 9 = 0.198.
 
-**If asked: “Isn't 0.48 against 0.33 a good result?”** It looks promising, but three things stop us from claiming it. The 95% interval runs from 0.35 to 0.62, so the low end is close to chance. It does not survive the correction for 9 tests. And without the 9 files that have no verified original, it falls to 0.37.
+**If asked: “Isn't 0.48 against 0.33 a good result?”** It looks promising, but three things stop us from claiming it. The 95% interval runs from 0.35 to 0.62, so the low end is close to chance. It does not survive the correction for 9 tests. And without the 9 files that could not be checked, it falls to 0.37.
 
-**If asked: “That interval starts at 0.35, which is above 0.33. Doesn't that mean it beats chance?”** Only just, and only for this one test. It says the same thing as the raw p-value of 0.022. But it is one of 9 tests, and with that many tests about 0.45 false alarms are expected by luck. After the correction it is not significant, and it drops to 0.37 when the unverified files are left out.
+**If asked: “That interval starts at 0.35, which is above 0.33. Doesn't that mean it beats chance?”** Only just, and only for this one test. It says the same thing as the p-value of 0.022 before correction. But it is one of 9 tests, and with that many tests about 0.45 lucky results are expected. After the correction it is not significant, and it drops to 0.37 when the unchecked files are left out.
 
 **If asked: “Why three models? Which is best?”** A linear model (logistic regression), a kernel model (SVM) and a tree ensemble (random forest) make different assumptions, so together they are a fair test. The random forest scored highest, but only 1 of the pairwise comparisons has p below 0.05, uncorrected, so we do not claim one model is truly better.
 
-### Slide 8 · Model results against chance
+### Slide 9 · The same result as a picture
 
 **Say** (about 40 seconds)
 
-> This figure shows the same result as a picture, with one panel for each target. Each dot is a model's balanced accuracy. The horizontal bar is its 95% confidence interval. The vertical line is chance.
+> This figure shows the same result as a picture, with one panel for each target. Each dot is a model's balanced accuracy. The horizontal bar is its 95% interval. The vertical line is chance.
 >
-> The grey rows are dummy baselines that never listen to the audio. The blue rows are our models.
+> The grey rows are baselines that never listen to the audio. The blue rows are our models.
 >
 > The bars are wide. 8 of the 9 blue bars cross the chance line. The one that just clears it is the random forest for three-level arousal, and that is the result that did not survive the correction. This is what an inconclusive result looks like.
 
 **Point at:** One blue bar that crosses the vertical line.
 
-**In plain words:** A wide bar means the estimate is uncertain. If the bar crosses the chance line, the true performance could be no better than guessing.
+**In plain words:** A wide bar means the score is uncertain. If the bar crosses the chance line, the true score could be no better than guessing.
 
-### Slide 9 · Is it the voice, or just the word?
+### Slide 10 · Is it the voice, or just the word?
 
 **Say** (about 75 seconds)
 
-> This is our most important finding. Is the model hearing emotion, or only recognising the word?
+> This is our most important finding. Is the model hearing the feeling, or only recognising the word?
 >
-> First test: can the audio alone tell Kapoy apart from the other words? Yes. Balanced accuracy 0.85, with p = 0.002.
+> First test: can the computer tell Kapoy from the other words by sound alone? Yes. Balanced accuracy 0.85, with p = 0.002.
 >
 > Second test: is the word linked to the feeling? Yes. Of 10 Kapoy speakers, 8 felt not pleasant. Of 21 speakers of other words, only 5 did.
 >
-> So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any emotion at all.
+> So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any feeling at all.
 >
-> When we look inside Kapoy alone, the same word with different feelings, 0 of 12 voice-to-rating relationships hold up.
+> When we look at Kapoy speakers alone, the same word with different feelings, 0 of 12 links between voice and rating are significant.
 
 **Point at:** The small table: Kapoy 8 and 2, other words 5 and 16.
 
@@ -187,41 +206,41 @@
 
 **If asked: “Why only Kapoy?”** It is the only word said by enough people (10). Every other word was said by three people or fewer, which is too few to analyse.
 
-### Slide 10 · Other confounds and limits
+### Slide 11 · Limits of this study
 
 **Say** (about 55 seconds)
 
-> We want to be clear about the limits. The sample is small. With 40 people only strong relationships are detectable.
+> We want to be clear about the limits. The sample is small. With 40 people only strong links can be found.
 >
-> The audio is trimmed copies, not the original recordings: 9 have no verified original and 3 were edited.
+> The audio is converted copies, not the original recordings: 9 could not be checked and 3 show signs of editing.
 >
-> The recordings are noisy: we detected background voices in 16 of 40, in a hallway right after class. And 5 files come from recordings made with a different audio setting, although that setting shows no significant feature difference here.
+> The recordings are noisy: we detected background voices in 16 of 40, in a hallway right after class. And 5 files come from recordings made with a different audio setting, although that setting shows no significant difference here.
 >
-> Each person said only one word, so we cannot separate a person's normal voice from their state at that moment.
+> Each person said only one word, so we cannot separate a person's normal voice from their feeling at that moment.
 >
-> Everyone came from the same year level, class activity and session, so we cannot compare contexts. And the design is correlational, so we make no causal claims.
+> Everyone came from the same year level, class activity and session, so we cannot compare contexts. And we measured links, not causes.
 
 **Point at:** The first three bullets.
 
-**In plain words:** *Power* is the chance of detecting an effect that really exists. With 40 participants our study can only detect correlations of about 0.44 or more.
+**In plain words:** *Power* is the chance of finding an effect that really exists. With 40 participants our study can only find links of about 0.44 or more. *A different audio setting* (5 files) means the original was saved in stereo with a second audio track, unlike the others.
 
-### Slide 11 · Conclusion
+### Slide 12 · Conclusion
 
 **Say** (about 45 seconds)
 
-> Our conclusion: the data do not support a claim that post-class affect can be recognised from speech.
+> Our conclusion: our data do not show that post-class feelings can be recognised from the voice.
 >
 > That is a real result, not a failure. A careful analysis that finds no reliable signal is more useful than an impressive number that would not hold up.
 >
-> What we contribute is three things. A complete, reproducible and validated pipeline that re-runs everything with one command. The discovery that the chosen word is linked to the feeling and must be controlled. And a clear statement of how much data a real study needs: about 90 participants.
+> We contribute three things. A complete, tested pipeline that repeats the whole analysis with one command. The finding that the chosen word is linked to the feeling and must be controlled. And a clear statement of how much data a real study needs: about 90 participants.
 
 **Point at:** The blue sentence.
 
-### Slide 12 · Next steps
+### Slide 13 · Next steps
 
 **Say** (about 30 seconds)
 
-> Our next steps are concrete. Complete the consent log from the signed forms. Run the blind listening review with two group members. Find the original recordings behind the copies we could not verify. Collect more participants with one device, one setting and one take. Follow the analysis plan we wrote in advance for a larger study. And confirm the open protocol questions with our instructor.
+> Our next steps are concrete. Complete the consent log from the signed forms. Have two group members listen to every clip without seeing the ratings. Find the original recordings for the files we could not check. Record more participants with one device, one setting and one take. Follow the analysis plan we wrote before seeing new data. And confirm the open protocol questions with our instructor.
 >
 > Thank you. We are happy to take your questions.
 
@@ -235,10 +254,10 @@
 - **Examples:** tired is low arousal; excited is high arousal and pleasant; stressed is high arousal and unpleasant.
 - **In our project:** each participant rated both from 1 to 5. The two ratings rise together (ρ = 0.71).
 
-### Derived classes
+### Groups (derived classes)
 
-- **What it is:** groups made from the 1-to-5 ratings, because some single levels have too few people.
-- **The rule:** a grouping is modelled only if every class has at least 5 people.
+- **What it is:** groups made from the 1-to-5 ratings, because some single scores have too few people. The slides say *group*; the technical word is *class*.
+- **The rule:** a grouping is modelled only if every group has at least 5 people.
 - **In our project:** `arousal_3` (Low: 9 / Moderate: 13 / High: 17); `valence_2` (NotPleasant: 18 / Pleasant: 22); `arousal_2` (NotHigh: 22 / High: 17). Not modelled: `valence_5`, `arousal_5`, `valence_3`.
 
 ### Acoustic features
@@ -380,7 +399,7 @@ The sheet records Yes for every participant, but the log of the signed forms is 
 
 **“Did you account for different voices, for example male and female?”**
 
-We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 10, and it is one reason we do not over-read the pitch features.
+We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 11, and it is one reason we do not over-read the pitch features.
 
 **“Who prepared the version-2 audio files, and how?”**
 
