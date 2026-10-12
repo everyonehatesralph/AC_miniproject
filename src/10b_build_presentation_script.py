@@ -20,6 +20,7 @@ import json
 import math
 import re
 import sys
+from collections import Counter
 from datetime import date
 from pathlib import Path
 from statistics import NormalDist
@@ -166,6 +167,12 @@ def facts() -> dict:
                        if copies else None)  # what the audit shows the conversion did to the verified copies
     pending = REPORTS / "sheet_update_pending.json"  # written by step 00b while a newer sheet waits to be analysed
     f["pending_sheet"] = load(pending) if pending.exists() else None
+    applied = REPORTS / "sheet_update_applied.json"  # step 00b: the changes of a completed sheet that is now in use
+    f["applied_sheet"] = load(applied) if applied.exists() else None
+    f["probe_sig"] = probe["permutation_p"] < 0.05  # can the audio alone tell Kapoy from the other words?
+    f["assoc_sig"] = f["assoc_v"]["p_value"] < 0.05
+    others = Counter(w.strip().lower() for w in words if w.strip().lower() != "kapoy")
+    f["max_other_word"] = max(others.values(), default=0)
     return f
 
 
@@ -178,6 +185,17 @@ def pending_text(f: dict) -> dict | None:
     return {"day": day, "words": len(p["words_filled"]), "word_changes": len(p["words_changed"]),
             "ratings": len(p["ratings_changed"]), "codes": ", ".join(p["ratings_changed"]),
             "words_source": p.get("words_source", ""), "ratings_source": p.get("ratings_source", "")}
+
+
+def applied_text(f: dict) -> dict | None:
+    """The same for a completed sheet that is now the sheet in use, with the results the sheet before it gave."""
+    p = f.get("applied_sheet")
+    if not p:
+        return None
+    out = pending_text({"pending_sheet": p})
+    out["before"] = p.get("results_before", {})
+    out["all_unverified"] = bool(p["ratings_changed"]) and set(p["ratings_changed"]) <= set(f["no_orig"])
+    return out
 
 
 def codes(xs) -> str:
@@ -194,7 +212,14 @@ def derive(f: dict) -> SimpleNamespace:
     """Values that both the slide script and the rest of the guide quote."""
     by_task = {t["task"]: t for t in f["tasks"]}
     lead_sens = f["sens"][f["lead"]["task"]]
+    sm = f["smallest"]  # the learned model with the smallest p-value: the result closest to a positive finding
+    top = {"task": sm["task"], "model": sm["model"], "n": int(sm["n"]), "ba": float(sm["pooled_ba"]),
+           "lo": float(sm["pooled_ba_ci_low"]), "hi": float(sm["pooled_ba_ci_high"]), "chance": float(sm["chance_ba"]),
+           "p": float(sm["perm_p"]), "holm": float(sm["perm_p_holm"])}
+    is_task_best = by_task.get(sm["task"], {}).get("model") == sm["model"]  # the sensitivity runs use the task's best model
     return SimpleNamespace(
+        top=top, top_no_src=f["sens"].get(sm["task"], {}).get("no_unverified_source") if is_task_best else None,
+        near=not f["any_holm"] and 0.05 <= top["holm"] < 0.10,
         n=f["n"], a3=by_task.get("arousal_3"), v2=by_task.get("valence_2"), sm=f["smallest"],
         exp_false=0.05 * f["n_tests"], kapoy=f["assoc_v"]["table"]["Kapoy"], other=f["assoc_v"]["table"]["other"],
         probe=f["probe"], lead=f["lead"], lead_sens=lead_sens, val_sens=f["sens"].get("valence_2", {}),
@@ -210,7 +235,8 @@ def slide_script(f: dict) -> list[dict]:
     n, a3, sm, exp_false, kapoy, other, probe, no_src, fg = (d.n, d.a3, d.sm, d.exp_false, d.kapoy, d.other, d.probe,
                                                              d.no_src, d.fg)
     S: list[dict] = []
-    pt = pending_text(f)
+    pt, at = pending_text(f), applied_text(f)
+    top, top_no_src = d.top, d.top_no_src
 
     def add(key, title, seconds, say, point, plain=None, asked=()):
         S.append({"key": key, "title": title, "seconds": seconds, "say": say, "point": point, "plain": plain,
@@ -249,8 +275,13 @@ def slide_script(f: dict) -> list[dict]:
          "again without them. You will see that result later."
          if f["supplied"] else
          "The analysis uses the original phone recordings."),
-        f"{f['words_missing']} spoken words are blank in the sheet. We never guessed a word from the feeling text; those "
-        "files carry the label UNVERIFIED.",
+        (f"{f['words_missing']} spoken words are blank in the sheet. We never guessed a word from the feeling text; "
+         "those files carry the label UNVERIFIED." if f["words_missing"] else
+         "Every participant has a spoken word in the sheet. No word was guessed from the feeling text."),
+        *([f"The group completed the sheet on {at['day']}: {at['words']} blank words were filled in {at['words_source']}, "
+           f"and the ratings of {at['ratings']} participants were corrected {at['ratings_source']}. The results we show "
+           "use the completed sheet. The earlier sheet and its results are kept, so the two can be compared."]
+          if at else []),
         *([f"One update. On {pt['day']} the group completed the sheet: {pt['words']} blank words are now filled in "
            f"{pt['words_source']}, and the ratings of {pt['ratings']} participants were corrected "
            f"{pt['ratings_source']}. The results we show today use the earlier sheet. Running the analysis again "
@@ -344,57 +375,77 @@ def slide_script(f: dict) -> list[dict]:
           "It is the usual limit in research. It means we accept a 5% risk of calling luck a real effect.")])
     task_lines = "; ".join(f"{t['ba']:.2f} for {TASK.get(t['task'], t['task'])}, where chance is {t['chance']:.2f}"
                            for t in f["tasks"])
-    add("models", "The models did not beat chance" if not f["any_holm"] else "Some models beat chance", 70, [
+    same_best = len({t["model"] for t in f["tasks"]}) == 1
+    interval = (f"The 95% interval runs from {top['lo']:.2f} to {top['hi']:.2f}"
+                + (", so the low end is at the chance level." if top["lo"] <= top["chance"] else ", which is wide."))
+    add("models", "No model beats chance after correction" if not f["any_holm"]
+        else "Some models beat chance after correction", 70, [
         "Now the main test. For each target we show the best of three models.",
-        f"The {MODEL[f['tasks'][0]['model']]} was best: {task_lines}.",
+        (f"The {MODEL[f['tasks'][0]['model']]} was best for every target: " if same_best else "The best scores: ")
+        + f"{task_lines}.",
         f"Is that better than luck? We shuffled the ratings {f['n_perm']} times and ran the whole procedure again each "
         f"time. {len(f['raw_sig'])} of {f['n_tests']} tests "
         + ("has" if len(f["raw_sig"]) == 1 else "have") + f" a p-value below 0.05: the smallest is "
-        f"{float(sm['perm_p']):.3f}, for the {MODEL[sm['model']]} on {TASK.get(sm['task'], sm['task'])}.",
+        f"{top['p']:.3f}, for the {MODEL[top['model']]} on {TASK.get(top['task'], top['task'])}.",
         f"But we ran {f['n_tests']} tests. With {f['n_tests']} tries, about {exp_false:.2f} lucky results are expected. "
-        f"After the Holm correction that p-value becomes {float(sm['perm_p_holm']):.3f}, which is "
-        + ("still significant." if float(sm["perm_p_holm"]) < 0.05 else "not significant.")
-        + (" So no model stays significant after the correction." if not f["any_holm"] else "")],
+        f"After the Holm correction that p-value becomes {top['holm']:.3f}, which is "
+        + ("still significant." if top["holm"] < 0.05 else "not significant.")
+        + (" So no model stays significant after the correction." if not f["any_holm"] else ""),
+        *(["That is close to 0.05, and we say so. But the limit was fixed before we looked at the results"
+           + (f", and this score rests on files we could not check: without them it is {top_no_src[0]:.2f}."
+              if top_no_src else ".")] if d.near else [])],
         "The p-value column, then the column *p after correction*.",
         "The *Chance* column is what a model scores if it always gives the same answer. "
         f"Holm in one line: multiply the smallest p-value by the number of tests. "
-        f"{float(sm['perm_p']):.4f} × {f['n_tests']} = {float(sm['perm_p']) * f['n_tests']:.3f}.",
-        [(f"Isn't {a3['ba']:.2f} against {a3['chance']:.2f} a good result?" if a3 else "Isn't the best score a good result?",
-          (f"It looks promising, but three things stop us from claiming it. The 95% interval runs from {a3['lo']:.2f} to "
-           f"{a3['hi']:.2f}, so the low end is close to chance. It does not survive the correction for {f['n_tests']} tests. "
-           + (f"And without the {len(f['no_orig'])} files that could not be checked, it falls to "
-              f"{no_src[0]:.2f}." if no_src else "")) if a3 else "The intervals are wide and the result does not survive correction.")]
-        + ([(f"That interval starts at {a3['lo']:.2f}, which is above {a3['chance']:.2f}. Doesn't that mean it beats chance?",
-             f"Only just, and only for this one test. It says the same thing as the p-value of {a3['p']:.3f} before "
-             f"correction. But it is one of {f['n_tests']} tests, and with that many tests about {exp_false:.2f} lucky "
-             f"results are expected. After the correction it is not significant"
-             + (f", and it drops to {no_src[0]:.2f} when the unchecked files are left out." if no_src else "."))]
-           if a3 and a3["lo"] > a3["chance"] else []) + [
+        f"{top['p']:.4f} × {f['n_tests']} = {top['p'] * f['n_tests']:.3f}.",
+        [(f"Isn't {top['ba']:.2f} against {top['chance']:.2f} a good result?",
+          f"It is our most promising number, but three things stop us from claiming it. {interval} It does not pass the "
+          f"correction for {f['n_tests']} tests: its p-value is {top['holm']:.3f} after it."
+          + (f" And without the {len(f['no_orig'])} files that could not be checked, the score is {top_no_src[0]:.2f}."
+             if top_no_src else ""))]
+        + ([(f"That interval starts at {top['lo']:.2f}, which is above {top['chance']:.2f}. Doesn't that mean it beats "
+             "chance?",
+             f"For this one test, yes: the interval and the p-value before correction ({top['p']:.3f}) say the same "
+             f"thing. But it is one of {f['n_tests']} tests, and with that many tests about {exp_false:.2f} lucky results "
+             f"are expected. After the correction the p-value is {top['holm']:.3f}, which is above 0.05"
+             + (f", and the score is {top_no_src[0]:.2f} when the unchecked files are left out." if top_no_src else "."))]
+           if top["lo"] > top["chance"] and not f["any_holm"] else [])
+        + ([(f"{top['holm']:.3f} is almost 0.05. Why not call it significant?",
+             "Because the limit was set before we saw the results. Moving it afterwards to fit a result is exactly what "
+             "the correction is there to prevent. We report the number as it is: close, but not significant"
+             + (f". It also rests on files we could not check: without them the score is {top_no_src[0]:.2f}."
+                if top_no_src else "."))] if d.near else []) + [
          ("Why three models? Which is best?",
           f"A linear model (logistic regression), a kernel model (SVM) and a tree ensemble (random forest) make different "
-          f"assumptions, so together they are a fair test. The random forest scored highest, but "
+          f"assumptions, so together they are a fair test. The {MODEL[top['model']]} gave our best result, but "
           + (f"only {len(f['pairs_sig'])} of the pairwise comparisons has p below 0.05, uncorrected, so we do not claim one "
              "model is truly better." if f["pairs_sig"] else "no pair of models differs significantly."))])
+    clear = f["n_learned"] - f["crossing"]
     add("figure", "The same result as a picture", 40, [
         "This figure shows the same result as a picture, with one panel for each target. Each dot is a model's "
         "balanced accuracy. The horizontal bar is its 95% interval. The vertical line is chance.",
         "The grey rows are baselines that never listen to the audio. The blue rows are our models.",
         f"The bars are wide. {f['crossing']} of the {f['n_learned']} blue bars cross the chance line."
-        + (f" The one that just clears it is the {MODEL[sm['model']]} for three-level arousal, and that is the result "
-           "that did not survive the correction." if f["n_learned"] - f["crossing"] == 1 and sm["task"] == "arousal_3" else "")
+        + (f" {clear} " + ("bar clears" if clear == 1 else "bars clear") + " it, but none of those results passes the "
+           "correction." if clear and not f["any_holm"] else "")
         + " This is what an inconclusive result looks like."],
         "One blue bar that crosses the vertical line.",
         "A wide bar means the score is uncertain. If the bar crosses the chance line, the true score could be no "
         "better than guessing.")
     add("word", "Is it the voice, or just the word?", 75, [
         "This is our most important finding. Is the model hearing the feeling, or only recognising the word?",
-        f"First test: can the computer tell Kapoy from the other words by sound alone? Yes. Balanced accuracy "
-        f"{probe['balanced_accuracy_mean_10_repeats']:.2f}, with p = {probe['permutation_p']:.3f}.",
-        f"Second test: is the word linked to the feeling? Yes. Of {sum(kapoy.values())} Kapoy speakers, "
-        f"{kapoy['NotPleasant']} felt not pleasant. Of {sum(other.values())} speakers of other words, only "
-        f"{other['NotPleasant']} did.",
-        "So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any "
-        "feeling at all.",
+        "First test: can the computer tell Kapoy from the other words by sound alone? "
+        + (f"Yes. Balanced accuracy {probe['balanced_accuracy_mean_10_repeats']:.2f}, with p = "
+           f"{probe['permutation_p']:.3f}." if f["probe_sig"] else
+           f"Only weakly. Balanced accuracy {probe['balanced_accuracy_mean_10_repeats']:.2f}, with p = "
+           f"{probe['permutation_p']:.3f}, which is not significant."),
+        "Second test: is the word linked to the feeling? " + ("Yes. " if f["assoc_sig"] else "")
+        + f"Of {sum(kapoy.values())} Kapoy speakers, {kapoy['NotPleasant']} felt not pleasant. Of "
+        f"{sum(other.values())} speakers of other words, {other['NotPleasant']} did.",
+        ("So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any "
+         "feeling at all." if f["probe_sig"] else
+         "So the word and the feeling go together. A model that picks up the word even partly could score above "
+         "chance without hearing the feeling, and with this data we cannot separate the two."),
         f"When we look at Kapoy speakers alone, the same word with different feelings, {f['within_sig']} of "
         f"{f['within_tests']} links between voice and rating are significant."],
         f"The small table: Kapoy {kapoy['NotPleasant']} and {kapoy['Pleasant']}, other words {other['NotPleasant']} and "
@@ -405,8 +456,8 @@ def slide_script(f: dict) -> list[dict]:
           "Ask every participant to say the same word, or collect enough recordings of each word to analyse each word "
           "separately. Both are in our plan for a larger study."),
          ("Why only Kapoy?",
-          f"It is the only word said by enough people ({probe['n_kapoy']}). Every other word was said by three people or "
-          "fewer, which is too few to analyse.")])
+          f"It is the only word said by enough people ({probe['n_kapoy']}). Every other word was said by "
+          f"{f['max_other_word']} people or fewer, which is too few to analyse.")])
     add("limits", "Limits of this study", 55, [
         f"We want to be clear about the limits. The sample is small. With {n} people only strong links can be found.",
         (f"The audio is converted copies, not the original recordings: {len(f['no_orig'])} could not be checked and "
@@ -457,7 +508,8 @@ def build(f: dict) -> str:
     slides = slide_script(f)
     num = {s["key"]: i for i, s in enumerate(slides, 1)}
     last = len(slides)
-    pt = pending_text(f)
+    pt, at = pending_text(f), applied_text(f)
+    top, top_no_src = d.top, d.top_no_src
 
     total = sum(s["seconds"] for s in slides)
     L = ["# Presentation script and defense guide", "",
@@ -482,8 +534,10 @@ def build(f: dict) -> str:
          "from the voice alone, always testing on students the model had never heard.",
          ">",
          f"> The models did not beat guessing once we corrected for running {f['n_tests']} tests. We also found a trap: "
-         f"the word people choose is itself linked to how they feel, and the computer can tell which word was said. So "
-         "a model can look smart by recognising the word, not the emotion.",
+         "the word people choose is itself linked to how they feel. "
+         + ("The computer can tell which word was said, so a model can look smart by recognising the word, not the "
+            "emotion." if f["probe_sig"] else
+            "So even a model that picks up the word only partly could look smart without hearing the emotion."),
          ">",
          f"> Our honest conclusion: with {n} noisy one-word recordings, {headline}. What we built is a complete, tested "
          "pipeline that re-runs everything with one command when better data arrives.", "",
@@ -563,8 +617,8 @@ def build(f: dict) -> str:
           "- **What it is:** the range where the true value probably lies.",
           "- **How we get it:** we re-draw the participants at random, with replacement, 2000 times, and recompute the "
           "score each time. The middle 95% of those scores is the interval. This is called a bootstrap.",
-          (f"- **In our project:** the best model's interval is {a3['lo']:.2f} to {a3['hi']:.2f}. That is wide, because "
-           f"{a3['n']} people is few." if a3 else "- **In our project:** the intervals are wide."), "",
+          f"- **In our project:** our best result has an interval from {top['lo']:.2f} to {top['hi']:.2f}. That is wide, "
+          f"because {top['n']} people is few.", "",
           "### p-value and the permutation test", "",
           "- **What it is:** we shuffle the labels so they no longer belong to the right recordings, then run the whole "
           f"procedure again. We do that {f['n_perm']} times.",
@@ -582,7 +636,9 @@ def build(f: dict) -> str:
           "### The lexical confound", "",
           "- **What it is:** the word explains both the sound and the feeling, so the model may learn the word.",
           f"- **Evidence 1:** the audio identifies Kapoy with balanced accuracy {probe['balanced_accuracy_mean_10_repeats']:.2f} "
-          f"(p = {probe['permutation_p']:.3f}).",
+          f"(p = {probe['permutation_p']:.3f})."
+          + ("" if f["probe_sig"] else " That is not significant: in this data the sound alone does not reliably give "
+             "the word away."),
           f"- **Evidence 2:** Kapoy speakers felt not pleasant {kapoy['NotPleasant']} times out of {sum(kapoy.values())}; "
           f"others {other['NotPleasant']} out of {sum(other.values())} (Fisher p = {f['assoc_v']['p_value']:.3f}).",
           (f"- **Evidence 3:** on two-level arousal the models are right {f['kapoy_acc'].get('Kapoy', 0):.0%} of the time on "
@@ -634,7 +690,8 @@ def build(f: dict) -> str:
           ("Some of your files were edited. Is your data valid?",
            (f"We do not hide that. {len(f['edited'])} files contain inserted digital silence and {len(f['no_orig'])} have no "
             f"verified original. We flagged each one and re-ran the models without them"
-            + (f": the main arousal score moves from {lead['ba']:.2f} to {no_src[0]:.2f} without the unverified files" if no_src else "")
+            + (f": our best score moves from {top['ba']:.2f} to {top_no_src[0]:.2f} without the unverified files"
+               if top_no_src else "")
             + ". Our conclusion does not depend on those files. The clean fix is to find the original recordings.")
            if f["supplied"] else "The pipeline never edits a recording; it only converts the format."),
           ("How do you know there is no data leakage?",
@@ -653,6 +710,21 @@ def build(f: dict) -> str:
            "We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no "
            "personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the "
            f"*one word per person* limit on slide {num['limits']}, and it is one reason we do not over-read the pitch features.")]
+    if at and at["ratings"]:
+        moves = "; ".join(f"{TASK.get(t['task'], t['task']).split(' (')[0]} went from {at['before'][t['task']]['ba']:.2f} to "
+                          f"{t['ba']:.2f}" for t in f["tasks"] if t["task"] in at["before"])
+        none_before = all(r["holm"] >= 0.05 for r in at["before"].values())
+        qa.append((f"The ratings of {at['ratings']} participants were changed after the first analysis. Did you change the "
+                   "data to get a better result?",
+                   f"No. On {at['day']} the group corrected the sheet {at['ratings_source']}, for {at['codes']}. We kept "
+                   "the earlier sheet and the earlier results, so anyone can compare the two. "
+                   + (f"With the corrected sheet, the best scores changed like this: {moves}. " if moves else "")
+                   + ("No model passes the correction in either analysis. " if none_before and not f["any_holm"] else "")
+                   + ("Those participants are all among the files we could not check, so the scores without those files "
+                      "are exactly the same before and after the correction"
+                      + (f" ({top_no_src[0]:.2f} for our best result)" if top_no_src else "") + ". "
+                      if at["all_unverified"] else "")
+                   + "Bring the answer forms: they are the evidence for the corrected ratings."))
     if pt:
         qa.append(("The sheet now has all the words, and some ratings are different. Why do your slides not match it?",
                    f"The group completed the sheet on {pt['day']}, after this analysis. {pt['words']} blank words were "
@@ -732,9 +804,10 @@ def build(f: dict) -> str:
           "## Part 5 · What not to say", "",
           "| Don't say | Say instead |", "|---|---|",
           "| “Our model detects emotions.” | “Our models did not beat chance after correction.” |",
-          (f"| “We got {a3['ba']:.0%} accuracy.” | “Balanced accuracy {a3['ba']:.2f} where chance is {a3['chance']:.2f}, "
-           "with a wide interval.” |" if a3 else "| “We got high accuracy.” | “The scores are close to chance.” |"),
-          "| “The result is significant.” | “One raw p-value is below 0.05, but it does not survive correction.” |",
+          f"| “We got {top['ba']:.0%} accuracy.” | “Balanced accuracy {top['ba']:.2f} where chance is {top['chance']:.2f}, "
+          "with a wide interval.” |",
+          ("| “The result is significant.” | “No result passes the correction for " + str(f["n_tests"]) + " tests.” |"
+           if not f["any_holm"] else "| “Everything is significant.” | “Only the results that pass the correction count.” |"),
           "| “Kapoy means the student is sad.” | “Kapoy speakers more often reported not-pleasant feelings.” |",
           "| “The class caused the feeling.” | “These are associations. The design cannot show causes.” |",
           "| “The data is clean.” | “We flagged every doubtful file and tested the results without them.” |",

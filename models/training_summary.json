@@ -5,7 +5,7 @@
   "n_permutations": 500,
   "min_class_size": 5,
   "n_features": 108,
-  "features_sha256": "2dd12b5b4b499e468c92120764380a4c7ec08a2d0b09229b7f8420989fb95281",
+  "features_sha256": "c09979c78e07eab1cd78566c964c031add29e3988093a14a0c32948c582a7418",
   "tasks": {
     "valence_5": {
       "role": "attempted",
@@ -13,9 +13,9 @@
       "class_counts": {
         "1": 1,
         "2": 2,
-        "3": 15,
+        "3": 17,
         "4": 11,
-        "5": 11
+        "5": 9
       },
       "viable": false,
       "outer_folds": null,
@@ -23,13 +23,13 @@
     },
     "arousal_5": {
       "role": "attempted",
-      "n": 39,
+      "n": 40,
       "class_counts": {
         "1": 3,
         "2": 6,
-        "3": 13,
+        "3": 15,
         "4": 12,
-        "5": 5
+        "5": 4
       },
       "viable": false,
       "outer_folds": null,
@@ -40,8 +40,8 @@
       "n": 40,
       "class_counts": {
         "Unpleasant": 3,
-        "Neutral": 15,
-        "Pleasant": 22
+        "Neutral": 17,
+        "Pleasant": 20
       },
       "viable": false,
       "outer_folds": null,
@@ -49,11 +49,11 @@
     },
     "arousal_3": {
       "role": "primary",
-      "n": 39,
+      "n": 40,
       "class_counts": {
         "Low": 9,
-        "Moderate": 13,
-        "High": 17
+        "Moderate": 15,
+        "High": 16
       },
       "viable": true,
       "outer_folds": 5,
@@ -63,8 +63,8 @@
       "role": "primary",
       "n": 40,
       "class_counts": {
-        "NotPleasant": 18,
-        "Pleasant": 22
+        "NotPleasant": 20,
+        "Pleasant": 20
       },
       "viable": true,
       "outer_folds": 5,
@@ -72,10 +72,10 @@
     },
     "arousal_2": {
       "role": "secondary",
-      "n": 39,
+      "n": 40,
       "class_counts": {
-        "NotHigh": 22,
-        "High": 17
+        "NotHigh": 24,
+        "High": 16
       },
       "viable": true,
       "outer_folds": 5,
@@ -84,7 +84,7 @@
     "sensitivity": {
       "no_config_B": {
         "arousal_3": {
-          "n": 34,
+          "n": 35,
           "removed": [
             "Y2-050",
             "Y2-063",
@@ -94,8 +94,8 @@
           ],
           "class_counts": {
             "Low": 8,
-            "Moderate": 10,
-            "High": 16
+            "Moderate": 12,
+            "High": 15
           },
           "viable": true,
           "outer_folds": 5
@@ -110,8 +110,8 @@
             "Y2-070"
           ],
           "class_counts": {
-            "NotPleasant": 15,
-            "Pleasant": 20
+            "NotPleasant": 17,
+            "Pleasant": 18
           },
           "viable": true,
           "outer_folds": 5
@@ -119,7 +119,7 @@
       },
       "high_confidence_segmentation": {
         "arousal_3": {
-          "n": 27,
+          "n": 26,
           "removed": [
             "Y2-045",
             "Y2-046",
@@ -130,21 +130,22 @@
             "Y2-055",
             "Y2-057",
             "Y2-062",
+            "Y2-073",
             "Y2-075",
             "Y2-076",
             "Y2-078",
             "Y2-079"
           ],
           "class_counts": {
-            "Low": 7,
-            "Moderate": 7,
-            "High": 13
+            "Low": 6,
+            "Moderate": 8,
+            "High": 12
           },
           "viable": true,
           "outer_folds": 5
         },
         "valence_2": {
-          "n": 27,
+          "n": 26,
           "removed": [
             "Y2-045",
             "Y2-046",
@@ -155,6 +156,7 @@
             "Y2-055",
             "Y2-057",
             "Y2-062",
+            "Y2-073",
             "Y2-075",
             "Y2-076",
             "Y2-078",
@@ -162,7 +164,7 @@
           ],
           "class_counts": {
             "NotPleasant": 12,
-            "Pleasant": 15
+            "Pleasant": 14
           },
           "viable": true,
           "outer_folds": 5
@@ -220,9 +222,9 @@
             "Y2-078"
           ],
           "class_counts": {
-            "Low": 8,
+            "Low": 9,
             "Moderate": 13,
-            "High": 16
+            "High": 15
           },
           "viable": true,
           "outer_folds": 5
@@ -235,8 +237,8 @@
             "Y2-078"
           ],
           "class_counts": {
-            "NotPleasant": 17,
-            "Pleasant": 20
+            "NotPleasant": 18,
+            "Pleasant": 19
           },
           "viable": true,
           "outer_folds": 5
@@ -252,37 +254,37 @@
       "best_params": {
         "clf__C": 0.01
       },
-      "inner_cv_balanced_accuracy": 0.39814814814814814,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.4037037037037037,
+      "n_train": 40
     },
     {
       "task": "arousal_3",
       "model": "svm_rbf",
       "file": "models/final/arousal_3__svm_rbf.joblib",
       "best_params": {
-        "clf__C": 10.0
+        "clf__C": 0.1
       },
-      "inner_cv_balanced_accuracy": 0.3611111111111111,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.3333333333333333,
+      "n_train": 40
     },
     {
       "task": "arousal_3",
       "model": "random_forest",
       "file": "models/final/arousal_3__random_forest.joblib",
       "best_params": {
-        "clf__min_samples_leaf": 3
+        "clf__min_samples_leaf": 1
       },
-      "inner_cv_balanced_accuracy": 0.45740740740740743,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.4518518518518518,
+      "n_train": 40
     },
     {
       "task": "valence_2",
       "model": "logistic_regression",
       "file": "models/final/valence_2__logistic_regression.joblib",
       "best_params": {
-        "clf__C": 0.1
+        "clf__C": 0.01
       },
-      "inner_cv_balanced_accuracy": 0.7073412698412698,
+      "inner_cv_balanced_accuracy": 0.6031746031746031,
       "n_train": 40
     },
     {
@@ -292,7 +294,7 @@
       "best_params": {
         "clf__C": 1.0
       },
-      "inner_cv_balanced_accuracy": 0.6517857142857143,
+      "inner_cv_balanced_accuracy": 0.5357142857142857,
       "n_train": 40
     },
     {
@@ -300,9 +302,9 @@
       "model": "random_forest",
       "file": "models/final/valence_2__random_forest.joblib",
       "best_params": {
-        "clf__min_samples_leaf": 3
+        "clf__min_samples_leaf": 1
       },
-      "inner_cv_balanced_accuracy": 0.7033730158730158,
+      "inner_cv_balanced_accuracy": 0.5793650793650794,
       "n_train": 40
     },
     {
@@ -310,30 +312,30 @@
       "model": "logistic_regression",
       "file": "models/final/arousal_2__logistic_regression.joblib",
       "best_params": {
-        "clf__C": 0.01
+        "clf__C": 0.1
       },
-      "inner_cv_balanced_accuracy": 0.4694444444444444,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.5055555555555555,
+      "n_train": 40
     },
     {
       "task": "arousal_2",
       "model": "svm_rbf",
       "file": "models/final/arousal_2__svm_rbf.joblib",
       "best_params": {
-        "clf__C": 0.1
+        "clf__C": 10.0
       },
-      "inner_cv_balanced_accuracy": 0.44166666666666665,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.5152777777777777,
+      "n_train": 40
     },
     {
       "task": "arousal_2",
       "model": "random_forest",
       "file": "models/final/arousal_2__random_forest.joblib",
       "best_params": {
-        "clf__min_samples_leaf": 1
+        "clf__min_samples_leaf": 3
       },
-      "inner_cv_balanced_accuracy": 0.49583333333333335,
-      "n_train": 39
+      "inner_cv_balanced_accuracy": 0.5013888888888889,
+      "n_train": 40
     }
   ],
   "grids": {
@@ -361,6 +363,6 @@
       ]
     }
   },
-  "runtime_s": 5103.4,
+  "runtime_s": 25920.7,
   "quick_mode": false
 }

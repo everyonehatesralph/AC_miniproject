@@ -31,5 +31,5 @@
   "n_mels": 40,
   "librosa_version": "1.0.0",
   "output": "data/acoustic_features.csv",
-  "output_sha256": "2dd12b5b4b499e468c92120764380a4c7ec08a2d0b09229b7f8420989fb95281"
+  "output_sha256": "c09979c78e07eab1cd78566c964c031add29e3988093a14a0c32948c582a7418"
 }

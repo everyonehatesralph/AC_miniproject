@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-04T07:09:14+08:00",
+  "generated_at": "2026-10-12T06:57:59+08:00",
   "total_files": 40,
   "participants_with_recordings": 40,
   "metadata_participants": 40,
@@ -13,7 +13,7 @@
   "nonselected_retakes": 0,
   "unusable_files": 0,
   "selected_with_flags": 40,
-  "selected_segmentation_critical": 13,
+  "selected_segmentation_critical": 14,
   "included_primary": 40,
   "majority_config": "mono, 1 audio stream(s)",
   "median_capture": "",
@@ -21,8 +21,8 @@
     "NO_CAPTURE_TIME": 40,
     "BACKGROUND_VOICES": 16,
     "LOW_SBR": 10,
+    "TOO_SHORT_FOR_WORD": 6,
     "COMPETING_EVENT": 6,
-    "TOO_SHORT_FOR_WORD": 5,
     "EDGE_END": 3,
     "DIGITAL_SILENCE": 3,
     "EDGE_START": 1,
@@ -32,7 +32,7 @@
   "subsets": {
     "subset_retake": 0,
     "subset_config_or_time_anomaly": 5,
-    "subset_segmentation_critical": 13,
+    "subset_segmentation_critical": 14,
     "subset_no_original": 9,
     "subset_edited_or_clipped": 3
   },

@@ -4,143 +4,143 @@
   "n_features": 108,
   "valence_arousal_spearman": {
     "analysis": [
-      0.7106380773242148,
-      4.008814149141989e-07,
-      39
+      0.7235462377608101,
+      1.327974071480924e-07,
+      40
     ],
     "metadata": [
-      0.7106380773242148,
-      4.008814149141989e-07,
-      39
+      0.7235462377608101,
+      1.327974071480924e-07,
+      40
     ]
   },
   "significant_features_fdr05": {
-    "valence": 0,
+    "valence": 1,
     "arousal": 0
   },
   "top_features": {
     "valence": [
       {
         "feature": "rms_db_iqr",
-        "spearman_rho": -0.42632601011288485,
-        "p_value": 0.006086386625360827,
-        "q_value_bh": 0.2655421989263577
-      },
-      {
-        "feature": "delta2_mfcc_10_std",
-        "spearman_rho": 0.40858706378363857,
-        "p_value": 0.008856636630161055,
-        "q_value_bh": 0.2655421989263577
-      },
-      {
-        "feature": "delta_mfcc_13_std",
-        "spearman_rho": 0.4071088182562014,
-        "p_value": 0.009129869740579742,
-        "q_value_bh": 0.2655421989263577
-      },
-      {
-        "feature": "delta_mfcc_4_std",
-        "spearman_rho": 0.40346247928852297,
-        "p_value": 0.009834896256531767,
-        "q_value_bh": 0.2655421989263577
-      },
-      {
-        "feature": "delta2_mfcc_13_std",
-        "spearman_rho": 0.3636483997495481,
-        "p_value": 0.021078129159123,
-        "q_value_bh": 0.45528758983705686
-      },
-      {
-        "feature": "mfcc_13_std",
-        "spearman_rho": 0.3322110448660506,
-        "p_value": 0.036228323494395774,
-        "q_value_bh": 0.6317990892015839
-      },
-      {
-        "feature": "delta_mfcc_3_mean",
-        "spearman_rho": -0.3157532446605832,
-        "p_value": 0.04716941001774542,
-        "q_value_bh": 0.6317990892015839
-      },
-      {
-        "feature": "delta2_mfcc_9_std",
-        "spearman_rho": 0.30579972477583944,
-        "p_value": 0.05498815328155758,
-        "q_value_bh": 0.6317990892015839
-      },
-      {
-        "feature": "delta_mfcc_7_mean",
-        "spearman_rho": -0.2920027665197591,
-        "p_value": 0.0675043421815199,
-        "q_value_bh": 0.6317990892015839
+        "spearman_rho": -0.543076062289182,
+        "p_value": 0.00029356520570843154,
+        "q_value_bh": 0.031705042216510604
       },
       {
         "feature": "rms_db_std",
-        "spearman_rho": -0.2915100180106133,
-        "p_value": 0.06798978689093355,
-        "q_value_bh": 0.6317990892015839
+        "spearman_rho": -0.3982160368926164,
+        "p_value": 0.010930686272008446,
+        "q_value_bh": 0.370590256608826
+      },
+      {
+        "feature": "delta_mfcc_3_mean",
+        "spearman_rho": -0.3958315097255947,
+        "p_value": 0.01146214873460701,
+        "q_value_bh": 0.370590256608826
+      },
+      {
+        "feature": "mfcc_1_mean",
+        "spearman_rho": 0.3810275702303353,
+        "p_value": 0.015278648934269225,
+        "q_value_bh": 0.370590256608826
+      },
+      {
+        "feature": "rms_db_mean",
+        "spearman_rho": 0.3748675417155294,
+        "p_value": 0.017156956324482685,
+        "q_value_bh": 0.370590256608826
+      },
+      {
+        "feature": "mfcc_2_mean",
+        "spearman_rho": -0.3479422557879098,
+        "p_value": 0.027803103245448973,
+        "q_value_bh": 0.4333209547936597
+      },
+      {
+        "feature": "rms_db_min",
+        "spearman_rho": 0.3418976194215438,
+        "p_value": 0.03082498048991932,
+        "q_value_bh": 0.4333209547936597
+      },
+      {
+        "feature": "rms_db_median",
+        "spearman_rho": 0.33949705540470815,
+        "p_value": 0.03209784850323405,
+        "q_value_bh": 0.4333209547936597
+      },
+      {
+        "feature": "delta_mfcc_7_mean",
+        "spearman_rho": -0.32499118180532643,
+        "p_value": 0.040740402053849795,
+        "q_value_bh": 0.45954564569751366
+      },
+      {
+        "feature": "delta_mfcc_4_std",
+        "spearman_rho": 0.31992406157540537,
+        "p_value": 0.044172180837467115,
+        "q_value_bh": 0.45954564569751366
       }
     ],
     "arousal": [
       {
-        "feature": "delta2_mfcc_10_std",
-        "spearman_rho": 0.5098277521235924,
-        "p_value": 0.0009153545845016795,
-        "q_value_bh": 0.09885829512618138
-      },
-      {
         "feature": "delta_mfcc_13_std",
-        "spearman_rho": 0.418535702546959,
-        "p_value": 0.008009300040685556,
-        "q_value_bh": 0.43250220219702
+        "spearman_rho": 0.3903872095770898,
+        "p_value": 0.012758604848818618,
+        "q_value_bh": 0.36458094926043005
       },
       {
-        "feature": "delta2_mfcc_9_std",
-        "spearman_rho": 0.385443647752207,
-        "p_value": 0.015382890184392548,
-        "q_value_bh": 0.4422683045304632
+        "feature": "delta2_mfcc_10_std",
+        "spearman_rho": 0.3901911828587483,
+        "p_value": 0.012807516587621496,
+        "q_value_bh": 0.36458094926043005
       },
       {
-        "feature": "mfcc_10_std",
-        "spearman_rho": 0.382081915201629,
-        "p_value": 0.01638030757520234,
-        "q_value_bh": 0.4422683045304632
+        "feature": "delta2_mfcc_4_std",
+        "spearman_rho": 0.36813817704533,
+        "p_value": 0.019427351891710205,
+        "q_value_bh": 0.36458094926043005
+      },
+      {
+        "feature": "delta_mfcc_3_mean",
+        "spearman_rho": -0.3668640033761103,
+        "p_value": 0.019884422409342836,
+        "q_value_bh": 0.36458094926043005
       },
       {
         "feature": "mfcc_13_std",
-        "spearman_rho": 0.3626468988936,
-        "p_value": 0.023274529645183485,
-        "q_value_bh": 0.5027298403359634
+        "spearman_rho": 0.3658838697844028,
+        "p_value": 0.020242115205539594,
+        "q_value_bh": 0.36458094926043005
+      },
+      {
+        "feature": "zcr_mean",
+        "spearman_rho": 0.354906373557279,
+        "p_value": 0.024629732926719935,
+        "q_value_bh": 0.36458094926043005
       },
       {
         "feature": "delta2_mfcc_13_std",
-        "spearman_rho": 0.3451028571452712,
-        "p_value": 0.031425901310399504,
-        "q_value_bh": 0.5348062332116658
+        "spearman_rho": 0.34922159872537556,
+        "p_value": 0.027196038582373017,
+        "q_value_bh": 0.36458094926043005
       },
       {
-        "feature": "delta_mfcc_12_std",
-        "spearman_rho": 0.33816928375970406,
-        "p_value": 0.035236059464690966,
-        "q_value_bh": 0.5348062332116658
+        "feature": "spectral_centroid_hz_mean",
+        "spearman_rho": 0.3488295452886926,
+        "p_value": 0.0273808950598543,
+        "q_value_bh": 0.36458094926043005
       },
       {
         "feature": "delta_mfcc_4_std",
-        "spearman_rho": 0.33092054794752035,
-        "p_value": 0.03961527653419746,
-        "q_value_bh": 0.5348062332116658
+        "spearman_rho": 0.3427527170201062,
+        "p_value": 0.030381745771702506,
+        "q_value_bh": 0.36458094926043005
       },
       {
-        "feature": "delta_mfcc_10_std",
-        "spearman_rho": 0.3153725349010972,
-        "p_value": 0.05050617425992616,
-        "q_value_bh": 0.6060740911191139
-      },
-      {
-        "feature": "mfcc_10_mean",
-        "spearman_rho": -0.29488697717101253,
-        "p_value": 0.06839196497479803,
-        "q_value_bh": 0.6108193156539269
+        "feature": "delta2_mfcc_9_std",
+        "spearman_rho": 0.3294229001728845,
+        "p_value": 0.03791972549599172,
+        "q_value_bh": 0.4095330353567106
       }
     ]
   },
@@ -149,8 +149,8 @@
     "valence_2": {
       "table": {
         "A: mono": {
-          "NotPleasant": 15,
-          "Pleasant": 20
+          "NotPleasant": 17,
+          "Pleasant": 18
         },
         "B: stereo + 2nd track": {
           "NotPleasant": 3,
@@ -158,13 +158,13 @@
         }
       },
       "test": "Fisher exact",
-      "p_value": 0.6419192471824051
+      "p_value": 1.0
     },
     "arousal_2": {
       "table": {
         "A: mono": {
-          "High": 16,
-          "NotHigh": 18
+          "High": 15,
+          "NotHigh": 20
         },
         "B: stereo + 2nd track": {
           "High": 1,
@@ -172,14 +172,14 @@
         }
       },
       "test": "Fisher exact",
-      "p_value": 0.36341199499094246
+      "p_value": 0.6308859466754203
     },
     "arousal_3": {
       "table": {
         "A: mono": {
-          "High": 16,
+          "High": 15,
           "Low": 8,
-          "Moderate": 10
+          "Moderate": 12
         },
         "B: stereo + 2nd track": {
           "High": 1,
@@ -188,59 +188,59 @@
         }
       },
       "test": "permutation chi-square (20,000)",
-      "p_value": 0.4151292435378231
+      "p_value": 0.6168691565421729
     }
   },
   "sbr_vs_rating_spearman": {
     "valence": [
-      -0.09017720697300811,
-      0.5800066012099405
+      -0.17497288805618677,
+      0.2801901675057992
     ],
     "arousal": [
-      0.048064702544814784,
-      0.7713833156605061
+      0.05944789076506117,
+      0.7155730334839046
     ]
   },
   "sbr_by_word_kruskal": {
-    "H": 10.635457445266052,
-    "p_value": 0.1003179110207495,
-    "n_words": 7
+    "H": 7.828402696529055,
+    "p_value": 0.4504094334088674,
+    "n_words": 9
   },
   "derived_targets": [
     {
       "task": "valence_5",
-      "classes": "1: 1 / 2: 2 / 3: 15 / 4: 11 / 5: 11",
+      "classes": "1: 1 / 2: 2 / 3: 17 / 4: 11 / 5: 9",
       "min_class": 1,
       "viable": false
     },
     {
       "task": "arousal_5",
-      "classes": "1: 3 / 2: 6 / 3: 13 / 4: 12 / 5: 5",
+      "classes": "1: 3 / 2: 6 / 3: 15 / 4: 12 / 5: 4",
       "min_class": 3,
       "viable": false
     },
     {
       "task": "valence_3",
-      "classes": "Unpleasant: 3 / Neutral: 15 / Pleasant: 22",
+      "classes": "Unpleasant: 3 / Neutral: 17 / Pleasant: 20",
       "min_class": 3,
       "viable": false
     },
     {
       "task": "arousal_3",
-      "classes": "Low: 9 / Moderate: 13 / High: 17",
+      "classes": "Low: 9 / Moderate: 15 / High: 16",
       "min_class": 9,
       "viable": true
     },
     {
       "task": "valence_2",
-      "classes": "NotPleasant: 18 / Pleasant: 22",
-      "min_class": 18,
+      "classes": "NotPleasant: 20 / Pleasant: 20",
+      "min_class": 20,
       "viable": true
     },
     {
       "task": "arousal_2",
-      "classes": "NotHigh: 22 / High: 17",
-      "min_class": 17,
+      "classes": "NotHigh: 24 / High: 16",
+      "min_class": 16,
       "viable": true
     }
   ],
@@ -262,7 +262,7 @@
     },
     {
       "variable": "Subject",
-      "values": "Environmental Science: 30; (blank): 10",
+      "values": "Environmental Science: 40",
       "distinct_non_blank": 1
     }
   ],

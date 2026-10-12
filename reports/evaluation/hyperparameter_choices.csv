@@ -2,33 +2,33 @@ task,model,best_params,outer_folds_chosen,share
 arousal_3,dummy_majority,{},50,1.0
 arousal_3,dummy_stratified,{},50,1.0
 arousal_3,logistic_regression,"{""clf__C"": 0.01}",20,0.4
-arousal_3,logistic_regression,"{""clf__C"": 0.1}",11,0.22
-arousal_3,logistic_regression,"{""clf__C"": 1.0}",11,0.22
-arousal_3,logistic_regression,"{""clf__C"": 10.0}",8,0.16
-arousal_3,svm_rbf,"{""clf__C"": 0.1}",27,0.54
-arousal_3,svm_rbf,"{""clf__C"": 10.0}",14,0.28
-arousal_3,svm_rbf,"{""clf__C"": 1.0}",9,0.18
-arousal_3,random_forest,"{""clf__min_samples_leaf"": 3}",29,0.58
-arousal_3,random_forest,"{""clf__min_samples_leaf"": 1}",21,0.42
+arousal_3,logistic_regression,"{""clf__C"": 0.1}",12,0.24
+arousal_3,logistic_regression,"{""clf__C"": 1.0}",9,0.18
+arousal_3,logistic_regression,"{""clf__C"": 10.0}",9,0.18
+arousal_3,svm_rbf,"{""clf__C"": 1.0}",23,0.46
+arousal_3,svm_rbf,"{""clf__C"": 0.1}",19,0.38
+arousal_3,svm_rbf,"{""clf__C"": 10.0}",8,0.16
+arousal_3,random_forest,"{""clf__min_samples_leaf"": 3}",26,0.52
+arousal_3,random_forest,"{""clf__min_samples_leaf"": 1}",24,0.48
 valence_2,dummy_majority,{},50,1.0
 valence_2,dummy_stratified,{},50,1.0
-valence_2,logistic_regression,"{""clf__C"": 0.01}",15,0.3
-valence_2,logistic_regression,"{""clf__C"": 10.0}",13,0.26
-valence_2,logistic_regression,"{""clf__C"": 1.0}",13,0.26
+valence_2,logistic_regression,"{""clf__C"": 0.01}",21,0.42
+valence_2,logistic_regression,"{""clf__C"": 10.0}",11,0.22
 valence_2,logistic_regression,"{""clf__C"": 0.1}",9,0.18
-valence_2,svm_rbf,"{""clf__C"": 10.0}",23,0.46
-valence_2,svm_rbf,"{""clf__C"": 1.0}",22,0.44
-valence_2,svm_rbf,"{""clf__C"": 0.1}",5,0.1
-valence_2,random_forest,"{""clf__min_samples_leaf"": 1}",37,0.74
-valence_2,random_forest,"{""clf__min_samples_leaf"": 3}",13,0.26
+valence_2,logistic_regression,"{""clf__C"": 1.0}",9,0.18
+valence_2,svm_rbf,"{""clf__C"": 1.0}",28,0.56
+valence_2,svm_rbf,"{""clf__C"": 10.0}",21,0.42
+valence_2,svm_rbf,"{""clf__C"": 0.1}",1,0.02
+valence_2,random_forest,"{""clf__min_samples_leaf"": 1}",36,0.72
+valence_2,random_forest,"{""clf__min_samples_leaf"": 3}",14,0.28
 arousal_2,dummy_majority,{},50,1.0
 arousal_2,dummy_stratified,{},50,1.0
-arousal_2,logistic_regression,"{""clf__C"": 0.01}",26,0.52
-arousal_2,logistic_regression,"{""clf__C"": 0.1}",11,0.22
-arousal_2,logistic_regression,"{""clf__C"": 1.0}",8,0.16
-arousal_2,logistic_regression,"{""clf__C"": 10.0}",5,0.1
-arousal_2,svm_rbf,"{""clf__C"": 0.1}",24,0.48
-arousal_2,svm_rbf,"{""clf__C"": 1.0}",20,0.4
-arousal_2,svm_rbf,"{""clf__C"": 10.0}",6,0.12
-arousal_2,random_forest,"{""clf__min_samples_leaf"": 1}",27,0.54
-arousal_2,random_forest,"{""clf__min_samples_leaf"": 3}",23,0.46
+arousal_2,logistic_regression,"{""clf__C"": 0.01}",27,0.54
+arousal_2,logistic_regression,"{""clf__C"": 1.0}",12,0.24
+arousal_2,logistic_regression,"{""clf__C"": 0.1}",7,0.14
+arousal_2,logistic_regression,"{""clf__C"": 10.0}",4,0.08
+arousal_2,svm_rbf,"{""clf__C"": 1.0}",19,0.38
+arousal_2,svm_rbf,"{""clf__C"": 0.1}",16,0.32
+arousal_2,svm_rbf,"{""clf__C"": 10.0}",15,0.3
+arousal_2,random_forest,"{""clf__min_samples_leaf"": 1}",30,0.6
+arousal_2,random_forest,"{""clf__min_samples_leaf"": 3}",20,0.4

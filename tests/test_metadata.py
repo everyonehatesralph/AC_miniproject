@@ -36,8 +36,20 @@ def x00(script):
 
 
 @pytest.fixture(scope="module")
-def pdf_rows(x00):
-    df, _ = x00.extract(x00.DEFAULT_PDF)
+def sheet_pdf(x00):
+    """A sheet with a struck-through cell: these tests are about carrying that mark into a CSV export.
+
+    The sheet in use had one until the completed sheet of 2026-10-12 replaced it, so the earlier sheet in
+    data/metadata_raw/archive/ is used when the current one has none."""
+    for pdf in [x00.DEFAULT_PDF, *sorted((x00.DEFAULT_PDF.parent / "archive").glob("*.pdf"))]:
+        if (x00.extract(pdf)[0]["_struck_fields"] != "").any():
+            return pdf
+    pytest.skip("no sheet with a struck-through cell is in this checkout")
+
+
+@pytest.fixture(scope="module")
+def pdf_rows(x00, sheet_pdf):
+    df, _ = x00.extract(sheet_pdf)
     return df
 
 
@@ -46,9 +58,9 @@ def export_from(rows: pd.DataFrame, header, path):
     return path
 
 
-def test_csv_export_keeps_values_and_carries_the_strike_forward(x00, pdf_rows, tmp_path):
+def test_csv_export_keeps_values_and_carries_the_strike_forward(x00, sheet_pdf, pdf_rows, tmp_path):
     path = export_from(pdf_rows, x00.EXPECTED_HEADER, tmp_path / "export.csv")
-    df, prov = x00.from_csv_export(path, x00.DEFAULT_PDF)
+    df, prov = x00.from_csv_export(path, sheet_pdf)
     assert (df[x00.EXPECTED_HEADER] == pdf_rows[x00.EXPECTED_HEADER]).all().all()
     struck_pdf = pdf_rows.loc[pdf_rows["_struck_fields"] != "", ["Participant Code", "_struck_fields"]]
     struck_csv = df.loc[df["_struck_fields"] != "", ["Participant Code", "_struck_fields"]]
@@ -56,28 +68,28 @@ def test_csv_export_keeps_values_and_carries_the_strike_forward(x00, pdf_rows, t
     assert prov["struck_cells_changed_in_export"] == []
 
 
-def test_csv_export_uses_a_changed_struck_cell_and_logs_it(x00, pdf_rows, tmp_path):
+def test_csv_export_uses_a_changed_struck_cell_and_logs_it(x00, sheet_pdf, pdf_rows, tmp_path):
     rows = pdf_rows.copy()
     i = rows.index[rows["_struck_fields"] != ""][0]
     field = rows.at[i, "_struck_fields"].split(";")[0]
     rows.at[i, field] = "3 — Moderate"
-    df, prov = x00.from_csv_export(export_from(rows, x00.EXPECTED_HEADER, tmp_path / "export.csv"), x00.DEFAULT_PDF)
+    df, prov = x00.from_csv_export(export_from(rows, x00.EXPECTED_HEADER, tmp_path / "export.csv"), sheet_pdf)
     assert (df["_struck_fields"] != "").sum() == 0
     assert prov["struck_cells_changed_in_export"][0]["export_value"] == "3 — Moderate"
 
 
-def test_csv_export_refuses_unknown_columns_with_values(x00, pdf_rows, tmp_path):
+def test_csv_export_refuses_unknown_columns_with_values(x00, sheet_pdf, pdf_rows, tmp_path):
     rows = pdf_rows[x00.EXPECTED_HEADER].copy()
     rows["Extra"] = ""
     rows.loc[rows.index[0], "Extra"] = "x"
     with pytest.raises(ValueError, match="outside the template"):
-        x00.from_csv_export(export_from(rows, list(rows.columns), tmp_path / "export.csv"), x00.DEFAULT_PDF)
+        x00.from_csv_export(export_from(rows, list(rows.columns), tmp_path / "export.csv"), sheet_pdf)
 
 
-def test_csv_export_refuses_a_changed_header(x00, pdf_rows, tmp_path):
+def test_csv_export_refuses_a_changed_header(x00, sheet_pdf, pdf_rows, tmp_path):
     rows = pdf_rows[x00.EXPECTED_HEADER].rename(columns={"Spoken Word": "Word"})
     with pytest.raises(ValueError, match="must be exactly"):
-        x00.from_csv_export(export_from(rows, list(rows.columns), tmp_path / "export.csv"), x00.DEFAULT_PDF)
+        x00.from_csv_export(export_from(rows, list(rows.columns), tmp_path / "export.csv"), sheet_pdf)
 
 
 def test_leakage_guard_rejects_non_acoustic_columns(script):

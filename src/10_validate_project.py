@@ -116,12 +116,18 @@ def main() -> int:
         supplied_changed = [f.file for f in files.itertuples() if sha256_of(src["folder"] / f.file) != f.sha256]
         supplied_note = (f"; analysed delivery {src['delivery']}: {len(files)} files match their SHA-256: "
                          f"{not supplied_changed}")
-    root_pdf = PROJECT_ROOT / "G3 - mini project - TEmplate.pdf"
-    pdf_ok = (sha256_of(root_pdf) == sha256_of(DATA / "metadata_raw" / "G3 - mini project - TEmplate.pdf")
-              if root_pdf.is_file() else True)  # the root copy exists only on the original machine
+    # The sheet in use must be an exact copy of a sheet the group supplied: the first one (kept at the project root)
+    # or a later one in data/metadata_raw/received/. A later sheet never replaces the first: both stay in the project.
+    sheets = DATA / "metadata_raw"
+    supplied_sheets = [p for p in [PROJECT_ROOT / "G3 - mini project - TEmplate.pdf",
+                                   *sorted((sheets / "received").glob("*.pdf"))] if p.is_file()]
+    in_use = sha256_of(sheets / "G3 - mini project - TEmplate.pdf")
+    same_as = [p.relative_to(PROJECT_ROOT).as_posix() for p in supplied_sheets if sha256_of(p) == in_use]
+    pdf_ok = bool(same_as) or not supplied_sheets  # no supplied copy at hand (a fresh clone without them): not checkable
     check("raw files preserved", "PASS" if not changed and not supplied_changed and pdf_ok else "FAIL",
           f"{len(present)} of {len(dl)} original recordings present and matching their download SHA-256: "
-          f"{not changed}{supplied_note}; metadata PDF copy identical: {pdf_ok}")
+          f"{not changed}{supplied_note}; metadata PDF in use is an exact copy of a supplied sheet: {pdf_ok}"
+          + (f" ({same_as[-1]}; {len(supplied_sheets)} supplied sheets kept)" if same_as else ""))
 
     # 8. processed WAVs
     wav_problems = []

@@ -1,15 +1,17 @@
 spoken_word,n,valence_distinct,arousal_distinct,valence_values,arousal_values,eligible
-Kapoy,10,3,4,"1, 3, 3, 3, 3, 3, 3, 3, 4, 4","1, 2, 2, 3, 3, 3, 3, 3, 3, 4",True
-Salamat,3,2,1,"4, 5, 5","4, 4, 4",False
+Kapoy,15,4,4,"1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4","1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4",True
+Salamat,3,2,2,"4, 4, 5","3, 4, 4",False
 Nalipay,3,2,1,"4, 5, 5","5, 5, 5",False
-Katulgon,2,1,2,"3, 3","2, 3",False
-Lingaw,2,2,1,"3, 5","4, 4",False
 Gutom,2,2,1,"3, 4","3, 3",False
+Lipay,2,1,1,"4, 4","4, 4",False
 Nalingaw,2,2,2,"4, 5","3, 5",False
-Hangak,1,1,1,3,2,False
+Lingaw,2,2,1,"3, 5","4, 4",False
+Katulgon,2,1,2,"3, 3","2, 3",False
+Okay,2,2,1,"3, 4","3, 3",False
 Liboga,1,1,1,5,3,False
-Lipay,1,1,1,4,4,False
+Grabe,1,1,1,3,4,False
+Hangak,1,1,1,3,2,False
 Milamdag,1,1,1,5,4,False
 Malipay,1,1,1,5,4,False
 Maayo,1,1,1,4,3,False
-Okay,1,1,1,4,3,False
+Tsadahan,1,1,1,5,4,False

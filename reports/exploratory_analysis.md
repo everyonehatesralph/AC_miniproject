@@ -10,16 +10,16 @@
 |---|---|---|---|---|---|
 | valence | 1 | 1 | 2.5 | 1 | 2.5 |
 | valence | 2 | 2 | 5.0 | 2 | 5.0 |
-| valence | 3 | 15 | 37.5 | 15 | 37.5 |
+| valence | 3 | 17 | 42.5 | 17 | 42.5 |
 | valence | 4 | 11 | 27.5 | 11 | 27.5 |
-| valence | 5 | 11 | 27.5 | 11 | 27.5 |
-| arousal | 1 | 3 | 7.7 | 3 | 7.7 |
-| arousal | 2 | 6 | 15.4 | 6 | 15.4 |
-| arousal | 3 | 13 | 33.3 | 13 | 33.3 |
-| arousal | 4 | 12 | 30.8 | 12 | 30.8 |
-| arousal | 5 | 5 | 12.8 | 5 | 12.8 |
+| valence | 5 | 9 | 22.5 | 9 | 22.5 |
+| arousal | 1 | 3 | 7.5 | 3 | 7.5 |
+| arousal | 2 | 6 | 15.0 | 6 | 15.0 |
+| arousal | 3 | 15 | 37.5 | 15 | 37.5 |
+| arousal | 4 | 12 | 30.0 | 12 | 30.0 |
+| arousal | 5 | 4 | 10.0 | 4 | 10.0 |
 
-Metadata arousal counts exclude Y2-076, whose struck-through rating is not used. In the analysis set, valence and arousal are positively associated: Spearman ρ = 0.71, p = 4.01e-07, n = 39. Across all metadata rows with both ratings, ρ = 0.71, p = 4.01e-07, n = 39.
+Metadata arousal counts exclude , whose struck-through rating is not used. In the analysis set, valence and arousal are positively associated: Spearman ρ = 0.72, p = 1.33e-07, n = 40. Across all metadata rows with both ratings, ρ = 0.72, p = 1.33e-07, n = 40.
 
 ![valence x arousal](../figures/eda/fig02_valence_arousal_heatmap.png)
 
@@ -29,12 +29,12 @@ The original 1–5 ratings are kept. Derived groupings are *not* collected varia
 
 | task | classes | min_class | viable |
 |---|---|---|---|
-| valence_5 | 1: 1 / 2: 2 / 3: 15 / 4: 11 / 5: 11 | 1 | False |
-| arousal_5 | 1: 3 / 2: 6 / 3: 13 / 4: 12 / 5: 5 | 3 | False |
-| valence_3 | Unpleasant: 3 / Neutral: 15 / Pleasant: 22 | 3 | False |
-| arousal_3 | Low: 9 / Moderate: 13 / High: 17 | 9 | True |
-| valence_2 | NotPleasant: 18 / Pleasant: 22 | 18 | True |
-| arousal_2 | NotHigh: 22 / High: 17 | 17 | True |
+| valence_5 | 1: 1 / 2: 2 / 3: 17 / 4: 11 / 5: 9 | 1 | False |
+| arousal_5 | 1: 3 / 2: 6 / 3: 15 / 4: 12 / 5: 4 | 3 | False |
+| valence_3 | Unpleasant: 3 / Neutral: 17 / Pleasant: 20 | 3 | False |
+| arousal_3 | Low: 9 / Moderate: 15 / High: 16 | 9 | True |
+| valence_2 | NotPleasant: 20 / Pleasant: 20 | 20 | True |
+| arousal_2 | NotHigh: 24 / High: 16 | 16 | True |
 
 ![classes](../figures/eda/fig03_derived_target_classes.png)
 
@@ -45,7 +45,7 @@ The original 1–5 ratings are kept. Derived groupings are *not* collected varia
 | Year Level | 2: 40 | 1 |
 | Class Activity | Lecture: 40 | 1 |
 | Session | Afternoon–Evening: 40 | 1 |
-| Subject | Environmental Science: 30; (blank): 10 | 1 |
+| Subject | Environmental Science: 40 | 1 |
 
 Year level, class activity and session each take **one value** for every Group 3 participant, and subject is one value or blank. Their association with affect (Protocol §XIII: Year Level × Affect, Class Activity × Affect, Session × Affect) **cannot be estimated from Group 3 data**. It needs the consolidated class dataset, where these variables vary.
 
@@ -55,22 +55,24 @@ Year level, class activity and session each take **one value** for every Group 3
 
 | spoken_word | n | valence_values | arousal_values | on_protocol_list |
 |---|---|---|---|---|
-| Kapoy | 10 | 1, 3, 3, 3, 3, 3, 3, 3, 4, 4 | 1, 2, 2, 3, 3, 3, 3, 3, 3, 4 | True |
-| Salamat | 3 | 4, 5, 5 | 4, 4, 4 | True |
+| Kapoy | 15 | 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4 | 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4 | True |
+| Salamat | 3 | 4, 4, 5 | 3, 4, 4 | True |
 | Nalipay | 3 | 4, 5, 5 | 5, 5, 5 | False |
-| Katulgon | 2 | 3, 3 | 2, 3 | False |
-| Lingaw | 2 | 3, 5 | 4, 4 | True |
 | Gutom | 2 | 3, 4 | 3, 3 | False |
+| Lipay | 2 | 4, 4 | 4, 4 | False |
 | Nalingaw | 2 | 4, 5 | 3, 5 | False |
-| Hangak | 1 | 3 | 2 | False |
+| Lingaw | 2 | 3, 5 | 4, 4 | True |
+| Katulgon | 2 | 3, 3 | 2, 3 | False |
+| Okay | 2 | 3, 4 | 3, 3 | False |
 | Liboga | 1 | 5 | 3 | False |
-| Lipay | 1 | 4 | 4 | False |
+| Grabe | 1 | 3 | 4 | True |
+| Hangak | 1 | 3 | 2 | False |
 | Milamdag | 1 | 5 | 4 | False |
 | Malipay | 1 | 5 | 4 | False |
 | Maayo | 1 | 4 | 3 | False |
-| Okay | 1 | 4 | 3 | False |
+| Tsadahan | 1 | 5 | 4 | False |
 
-Words with ≥ 8 occurrences (needed for a within-word comparison): Kapoy (10); every other word occurs at most 3 times (see `reports/lexical_control_analysis.md`).
+Words with ≥ 8 occurrences (needed for a within-word comparison): Kapoy (15); every other word occurs at most 3 times (see `reports/lexical_control_analysis.md`).
 
 ![ratings by word](../figures/eda/fig12_valence_arousal_by_word.png)
 
@@ -94,7 +96,7 @@ Per-participant F0 mostly reflects voice type (for example sex), and the RMS lev
 
 ## 6. Acoustic features vs self-reported affect (RQ3)
 
-Spearman correlation of each of the 108 features with the raw ratings (n = 40), Benjamini–Hochberg FDR within each rating. **Features passing q < 0.05: valence 0, arousal 0.**
+Spearman correlation of each of the 108 features with the raw ratings (n = 40), Benjamini–Hochberg FDR within each rating. **Features passing q < 0.05: valence 1, arousal 0.**
 
 ![associations](../figures/eda/fig08_feature_rating_associations.png)
 
@@ -102,31 +104,31 @@ Ten smallest p-values, valence:
 
 | feature | spearman_rho | p_value | q_value_bh |
 |---|---|---|---|
-| rms_db_iqr | -0.426 | 0.006 | 0.266 |
-| delta2_mfcc_10_std | 0.409 | 0.009 | 0.266 |
-| delta_mfcc_13_std | 0.407 | 0.009 | 0.266 |
-| delta_mfcc_4_std | 0.403 | 0.010 | 0.266 |
-| delta2_mfcc_13_std | 0.364 | 0.021 | 0.455 |
-| mfcc_13_std | 0.332 | 0.036 | 0.632 |
-| delta_mfcc_3_mean | -0.316 | 0.047 | 0.632 |
-| delta2_mfcc_9_std | 0.306 | 0.055 | 0.632 |
-| delta_mfcc_7_mean | -0.292 | 0.068 | 0.632 |
-| rms_db_std | -0.292 | 0.068 | 0.632 |
+| rms_db_iqr | -0.543 | 0.000 | 0.032 |
+| rms_db_std | -0.398 | 0.011 | 0.371 |
+| delta_mfcc_3_mean | -0.396 | 0.011 | 0.371 |
+| mfcc_1_mean | 0.381 | 0.015 | 0.371 |
+| rms_db_mean | 0.375 | 0.017 | 0.371 |
+| mfcc_2_mean | -0.348 | 0.028 | 0.433 |
+| rms_db_min | 0.342 | 0.031 | 0.433 |
+| rms_db_median | 0.339 | 0.032 | 0.433 |
+| delta_mfcc_7_mean | -0.325 | 0.041 | 0.460 |
+| delta_mfcc_4_std | 0.320 | 0.044 | 0.460 |
 
 Ten smallest p-values, arousal:
 
 | feature | spearman_rho | p_value | q_value_bh |
 |---|---|---|---|
-| delta2_mfcc_10_std | 0.510 | 0.001 | 0.099 |
-| delta_mfcc_13_std | 0.419 | 0.008 | 0.433 |
-| delta2_mfcc_9_std | 0.385 | 0.015 | 0.442 |
-| mfcc_10_std | 0.382 | 0.016 | 0.442 |
-| mfcc_13_std | 0.363 | 0.023 | 0.503 |
-| delta2_mfcc_13_std | 0.345 | 0.031 | 0.535 |
-| delta_mfcc_12_std | 0.338 | 0.035 | 0.535 |
-| delta_mfcc_4_std | 0.331 | 0.040 | 0.535 |
-| delta_mfcc_10_std | 0.315 | 0.051 | 0.606 |
-| mfcc_10_mean | -0.295 | 0.068 | 0.611 |
+| delta_mfcc_13_std | 0.390 | 0.013 | 0.365 |
+| delta2_mfcc_10_std | 0.390 | 0.013 | 0.365 |
+| delta2_mfcc_4_std | 0.368 | 0.019 | 0.365 |
+| delta_mfcc_3_mean | -0.367 | 0.020 | 0.365 |
+| mfcc_13_std | 0.366 | 0.020 | 0.365 |
+| zcr_mean | 0.355 | 0.025 | 0.365 |
+| delta2_mfcc_13_std | 0.349 | 0.027 | 0.365 |
+| spectral_centroid_hz_mean | 0.349 | 0.027 | 0.365 |
+| delta_mfcc_4_std | 0.343 | 0.030 | 0.365 |
+| delta2_mfcc_9_std | 0.329 | 0.038 | 0.410 |
 
 Six features fixed in advance (pitch level and range, loudness, duration, spectral balance, voicing), by derived class:
 
@@ -159,14 +161,14 @@ Association of configuration with the labels:
 
 | target | test | p_value | counts |
 |---|---|---|---|
-| valence_2 | Fisher exact | 0.642 | A: mono: {'NotPleasant': 15, 'Pleasant': 20}; B: stereo + 2nd track: {'NotPleasant': 3, 'Pleasant': 2} |
-| arousal_2 | Fisher exact | 0.363 | A: mono: {'High': 16, 'NotHigh': 18}; B: stereo + 2nd track: {'High': 1, 'NotHigh': 4} |
-| arousal_3 | permutation chi-square (20,000) | 0.415 | A: mono: {'High': 16, 'Low': 8, 'Moderate': 10}; B: stereo + 2nd track: {'High': 1, 'Low': 1, 'Moderate': 3} |
+| valence_2 | Fisher exact | 1.000 | A: mono: {'NotPleasant': 17, 'Pleasant': 18}; B: stereo + 2nd track: {'NotPleasant': 3, 'Pleasant': 2} |
+| arousal_2 | Fisher exact | 0.631 | A: mono: {'High': 15, 'NotHigh': 20}; B: stereo + 2nd track: {'High': 1, 'NotHigh': 4} |
+| arousal_3 | permutation chi-square (20,000) | 0.617 | A: mono: {'High': 15, 'Low': 8, 'Moderate': 12}; B: stereo + 2nd track: {'High': 1, 'Low': 1, 'Moderate': 3} |
 
-Utterance-to-background ratio vs ratings (Spearman): valence ρ = -0.09 (p = 0.58); arousal ρ = 0.05 (p = 0.771).
+Utterance-to-background ratio vs ratings (Spearman): valence ρ = -0.17 (p = 0.28); arousal ρ = 0.06 (p = 0.716).
 
 ![noise by word](../figures/eda/fig13_sbr_by_word.png)
 
-Across the 7 words with at least two recordings, the utterance-to-background ratio does not differ significantly between words (Kruskal–Wallis H = 10.64, p = 0.100).
+Across the 9 words with at least two recordings, the utterance-to-background ratio does not differ significantly between words (Kruskal–Wallis H = 7.83, p = 0.450).
 
 Any acoustic feature that separates the configurations can produce a spurious affect association whenever configuration and labels are unevenly distributed. The model evaluation therefore includes a sensitivity analysis without config-B recordings.

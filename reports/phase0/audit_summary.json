@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-10-03T23:08:35+00:00",
+  "generated_at_utc": "2026-10-11T22:57:32+00:00",
   "inputs": {
     "metadata_csv": "data/metadata_raw/G3_metadata_extracted_raw.csv",
-    "metadata_sha256": "9b756707dec72e5a34496d95334d3825fedb95719af7c1d94a00251940d50f6e"
+    "metadata_sha256": "0d8143a4b019b06ce75f441db5261ca3562e4168b161905e53f222cd06e00363"
   },
   "tool_availability": {
     "ffmpeg": true,
@@ -44,19 +44,8 @@
       "required_by_section_XI": true
     },
     "Subject": {
-      "n_missing": 10,
-      "codes": [
-        "Y2-071",
-        "Y2-072",
-        "Y2-073",
-        "Y2-074",
-        "Y2-075",
-        "Y2-076",
-        "Y2-077",
-        "Y2-078",
-        "Y2-079",
-        "Y2-080"
-      ],
+      "n_missing": 0,
+      "codes": [],
       "required_by_section_XI": false
     },
     "Session": {
@@ -65,26 +54,13 @@
       "required_by_section_XI": true
     },
     "Spoken Word": {
-      "n_missing": 9,
-      "codes": [
-        "Y2-053",
-        "Y2-071",
-        "Y2-073",
-        "Y2-074",
-        "Y2-076",
-        "Y2-077",
-        "Y2-078",
-        "Y2-079",
-        "Y2-080"
-      ],
+      "n_missing": 0,
+      "codes": [],
       "required_by_section_XI": true
     },
     "Self-Reported Feeling": {
-      "n_missing": 2,
-      "codes": [
-        "Y2-071",
-        "Y2-080"
-      ],
+      "n_missing": 0,
+      "codes": [],
       "required_by_section_XI": true
     },
     "Valence (1-5)": {
@@ -287,18 +263,11 @@
       "required_by_section_XI": false
     }
   },
-  "H_invalid_or_out_of_range_values": [
-    {
-      "participant_code": "Y2-076",
-      "field": "Arousal (1-5)",
-      "status": "STRUCK_THROUGH",
-      "raw": "5 — Very High"
-    }
-  ],
+  "H_invalid_or_out_of_range_values": [],
   "I_naming": {
     "metadata_rows_without_audio_filename": 40,
     "raw_files_not_following_convention": 1,
-    "rows_with_proposed_filename": 31
+    "rows_with_proposed_filename": 40
   },
   "J_formats": {
     "WAV": 40
@@ -357,7 +326,7 @@
     "Y2-073": "AUDIO_QA_PENDING",
     "Y2-074": "AUDIO_QA_PENDING",
     "Y2-075": "AUDIO_QA_PENDING",
-    "Y2-076": "AUDIO_QA_PENDING;AROUSAL_STRUCK_THROUGH",
+    "Y2-076": "AUDIO_QA_PENDING",
     "Y2-077": "AUDIO_QA_PENDING",
     "Y2-078": "AUDIO_QA_PENDING",
     "Y2-079": "AUDIO_QA_PENDING",
@@ -368,7 +337,6 @@
   },
   "issue_counts_by_code": {
     "ACTIVITY_NOT_PROTOCOL_LABEL": 40,
-    "AROUSAL_STRUCK_THROUGH": 1,
     "AUDIO_FILENAME_MISSING": 40,
     "AUDIO_QA_PENDING": 40,
     "CODE_WHITESPACE": 1,
@@ -380,21 +348,18 @@
     "CONSTANT_YEAR": 1,
     "DATE_COLLECTED_MISSING": 40,
     "EDGE_WHITESPACE": 4,
-    "FEELING_IDENTICAL_TO_WORD": 16,
+    "FEELING_IDENTICAL_TO_WORD": 20,
     "MEDIA_OUTSIDE_DATA_RAW": 40,
     "METADATA_SOURCE_IS_PDF_EXPORT": 1,
-    "SELF_REPORT_TEXT_MISSING": 2,
     "SESSION_SPELLING_VARIANT": 40,
     "SESSION_TOKEN_ASSUMED": 1,
-    "SPOKEN_WORD_MISSING": 9,
-    "SUBJECT_MISSING": 10,
-    "WORD_NOT_IN_PROTOCOL_LIST": 16
+    "WORD_NOT_IN_PROTOCOL_LIST": 19
   },
   "issue_counts_by_severity": {
-    "BLOCKER": 42,
+    "BLOCKER": 41,
     "INFO": 3,
-    "MAJOR": 67,
+    "MAJOR": 59,
     "MINOR": 165,
-    "REVIEW": 108
+    "REVIEW": 102
   }
 }

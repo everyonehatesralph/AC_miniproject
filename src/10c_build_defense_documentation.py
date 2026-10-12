@@ -134,8 +134,13 @@ def build(ps, f: dict) -> str:
     perm_floor = 1 / (f["n_perm"] + 1)
     hits = lambda p: round(float(p) * (f["n_perm"] + 1)) - 1  # noqa: E731  shuffles that scored at least as high
     kapoy_n, other_n = sum(kapoy.values()), sum(other.values())
-    best_line = (f"The best score was {a3['ba']:.2f}, where pure guessing gives {a3['chance']:.2f}. After the correction for "
-                 f"{f['n_tests']} tests its p-value is {a3['holm']:.3f}, so it is not significant." if a3 else "")
+    top = d.top
+    best_line = (f"The best result was {top['ba']:.2f} for {ps.TASK.get(top['task'], top['task'])}, where pure guessing gives "
+                 f"{top['chance']:.2f}. After the correction for {f['n_tests']} tests its p-value is {top['holm']:.3f}, so it "
+                 + ("is significant." if top["holm"] < 0.05 else "is not significant.")
+                 + (f" Without the {len(f['no_orig'])} files we could not check, that score is {d.top_no_src[0]:.2f}."
+                    if d.top_no_src else ""))
+    at = ps.applied_text(f)
 
     L = ["# Defense documentation: the project explained", "",
          f"*Group 3 · Bisaya post-class speech and self-reported affect · {n} participants. Built by "
@@ -158,9 +163,13 @@ def build(ps, f: dict) -> str:
          "always tested on participants it had not learned from.",
          f"- **The result.** {d.headline}. {best_line}",
          f"- **The trap we found.** The word is linked to the feeling: {kapoy['NotPleasant']} of {kapoy_n} Kapoy speakers "
-         f"felt not pleasant, against {other['NotPleasant']} of {other_n} speakers of other words. The computer can also "
-         f"tell Kapoy from other words by sound (balanced accuracy {probe['balanced_accuracy_mean_10_repeats']:.2f}). So a "
-         "model can score above chance by recognising the word, not the feeling.",
+         f"felt not pleasant, against {other['NotPleasant']} of {other_n} speakers of other words. "
+         + (f"The computer can also tell Kapoy from other words by sound (balanced accuracy "
+            f"{probe['balanced_accuracy_mean_10_repeats']:.2f}). So a model can score above chance by recognising the word, "
+            "not the feeling." if f["probe_sig"] else
+            f"By sound alone the computer tells Kapoy from other words only weakly (balanced accuracy "
+            f"{probe['balanced_accuracy_mean_10_repeats']:.2f}, not significant). Still, a model that picks up the word even "
+            "partly could score above chance without hearing the feeling, and this data cannot separate the two."),
          f"- **Why the project is still useful.** The whole analysis is complete, tested and repeatable. We know the word "
          f"must be controlled in a future study. And we know how many participants such a study needs: about "
          f"{f['n_for_03']}.", "",
@@ -232,6 +241,12 @@ def build(ps, f: dict) -> str:
              f"{pt['ratings_source']}. It is stored beside the sheet in use and is not analysed yet. Every changed "
              "cell is listed in `reports/sheet_update_pending.md`. A rating is what the models learn from, so the "
              "whole analysis must be run again before any number may be quoted from the new sheet."] if pt else []),
+          *([f"- **The sheet was completed on {at['day']}:** {at['words']} blank words were filled in "
+             f"{at['words_source']}, and the ratings of {at['codes']} were corrected {at['ratings_source']}. The results "
+             "come from the completed sheet. The sheet before it is kept in `data/metadata_raw/archive/`, and every "
+             "changed cell, with the best results the earlier sheet gave, is in `reports/sheet_update_applied.md`."
+             + (" Those participants are all among the files we could not check, so the scores without those files are "
+                "the same for both sheets." if at["all_unverified"] else "")] if at else []),
           "- **Why this way:** no cell is edited by hand, so every change can be traced. The original value stays in the "
           "data beside the cleaned one, and each change is a line in `reports/phase1/cleaning_log.csv`.",
           "- **If asked “How do we know you did not edit the data?”** Every change is one of the rules above and is "
@@ -332,7 +347,8 @@ def build(ps, f: dict) -> str:
           f"- **Check 2, can the computer hear the word:** the same models tell Kapoy from other words with balanced "
           f"accuracy {probe['balanced_accuracy_mean_10_repeats']:.2f} (p = {probe['permutation_p']:.3f}"
           + (", the smallest possible value: no shuffle did as well" if abs(probe["permutation_p"] - perm_floor) < 1e-6 else "")
-          + ").",
+          + ")." + ("" if f["probe_sig"] else " That is not significant: in this data the sound alone does not reliably "
+                    "give the word away."),
           f"- **Check 3, is the word linked to the feeling:** not pleasant for {kapoy['NotPleasant']} of {kapoy_n} Kapoy "
           f"speakers and for {other['NotPleasant']} of {other_n} speakers of other words (Fisher test, p = "
           f"{f['assoc_v']['p_value']:.3f}).",

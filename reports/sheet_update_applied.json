@@ -71,5 +71,28 @@
   ],
   "ratings_source": "from the participants' answer forms, because the first sheet had typing mistakes",
   "words_source": "by a group member who listened to each recording",
-  "reported_on": "2026-10-12"
+  "reported_on": "2026-10-12",
+  "results_before": {
+    "arousal_3": {
+      "model": "random_forest",
+      "n": 39,
+      "ba": 0.47640355287414116,
+      "p": 0.0219560878243512,
+      "holm": 0.19760479041916082
+    },
+    "valence_2": {
+      "model": "random_forest",
+      "n": 40,
+      "ba": 0.594949494949495,
+      "p": 0.1197604790419161,
+      "holm": 0.9580838323353288
+    },
+    "arousal_2": {
+      "model": "random_forest",
+      "n": 39,
+      "ba": 0.5594919786096257,
+      "p": 0.1896207584830339,
+      "holm": 1.0
+    }
+  }
 }

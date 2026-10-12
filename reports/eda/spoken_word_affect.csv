@@ -1,15 +1,17 @@
 spoken_word,n,valence_values,arousal_values,on_protocol_list
-Kapoy,10,"1, 3, 3, 3, 3, 3, 3, 3, 4, 4","1, 2, 2, 3, 3, 3, 3, 3, 3, 4",True
-Salamat,3,"4, 5, 5","4, 4, 4",True
+Kapoy,15,"1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4","1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4",True
+Salamat,3,"4, 4, 5","3, 4, 4",True
 Nalipay,3,"4, 5, 5","5, 5, 5",False
-Katulgon,2,"3, 3","2, 3",False
-Lingaw,2,"3, 5","4, 4",True
 Gutom,2,"3, 4","3, 3",False
+Lipay,2,"4, 4","4, 4",False
 Nalingaw,2,"4, 5","3, 5",False
-Hangak,1,3,2,False
+Lingaw,2,"3, 5","4, 4",True
+Katulgon,2,"3, 3","2, 3",False
+Okay,2,"3, 4","3, 3",False
 Liboga,1,5,3,False
-Lipay,1,4,4,False
+Grabe,1,3,4,True
+Hangak,1,3,2,False
 Milamdag,1,5,4,False
 Malipay,1,5,4,False
 Maayo,1,4,3,False
-Okay,1,4,3,False
+Tsadahan,1,5,4,False

@@ -97,7 +97,7 @@ all outputs --09_build_final_report--> final_group_research_report.md --09b/09c-
 |---|---|---|---|
 | 00 | `00_fetch_recordings.py` | data acquisition | `data/raw/*.mov`, `download_log.csv`, `recording_map.csv` |
 | 00 | `00_extract_metadata_pdf.py` | Phase 0 helper | `data/metadata_raw/G3_metadata_extracted_raw.csv` (+ provenance JSON) |
-| 00b | `00b_compare_sheet_versions.py` | Phase 0 helper | `reports/sheet_update_pending.md` and `.json`, only while a newer sheet is waiting |
+| 00b | `00b_compare_sheet_versions.py` | Phase 0 helper | `reports/sheet_update_pending.md` and `.json` while a newer sheet is waiting; `reports/sheet_update_applied.md` and `.json` once it is in use |
 | 01 | `01_audit_data.py` | Phase 0 | `reports/phase0_data_audit.md`, `reports/phase0/*` |
 | 01b | `01b_merge_listening_reviews.py` | human verification | `data/review/*_from_review.csv`, `reports/listening_review_report.md` |
 | 02 | `02_clean_metadata.py` | Phase 1 | `data/metadata_cleaned.csv`, `reports/phase1/cleaning_log.csv` |

@@ -32,7 +32,7 @@
   {
     "item": "raw files preserved",
     "status": "PASS",
-    "evidence": "38 of 38 original recordings present and matching their download SHA-256: True; analysed delivery CS2B_v2_wav_16k: 40 files match their SHA-256: True; metadata PDF copy identical: True"
+    "evidence": "38 of 38 original recordings present and matching their download SHA-256: True; analysed delivery CS2B_v2_wav_16k: 40 files match their SHA-256: True; metadata PDF in use is an exact copy of a supplied sheet: True (data/metadata_raw/received/G3 - mini project - TEmplate (2026-10-12).pdf; 2 supplied sheets kept)"
   },
   {
     "item": "processed WAV files generated",
@@ -42,7 +42,7 @@
   {
     "item": "filenames follow convention",
     "status": "PASS",
-    "evidence": "40 names match ParticipantCode_YearLevel_Session_Word.wav; code consistent: True; word token UNVERIFIED (not inferred): ['Y2-053_Y2_PM_UNVERIFIED.wav', 'Y2-071_Y2_PM_UNVERIFIED.wav', 'Y2-073_Y2_PM_UNVERIFIED.wav', 'Y2-074_Y2_PM_UNVERIFIED.wav', 'Y2-076_Y2_PM_UNVERIFIED.wav', 'Y2-077_Y2_PM_UNVERIFIED.wav', 'Y2-078_Y2_PM_UNVERIFIED.wav', 'Y2-079_Y2_PM_UNVERIFIED.wav', 'Y2-080_Y2_PM_UNVERIFIED.wav']; session token PM is an assumption"
+    "evidence": "40 names match ParticipantCode_YearLevel_Session_Word.wav; code consistent: True; word token UNVERIFIED (not inferred): none; session token PM is an assumption"
   },
   {
     "item": "features extracted successfully",

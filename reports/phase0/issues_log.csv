@@ -84,6 +84,7 @@ participant,Y2-045,Y2-045,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed t
 participant,Y2-045,Y2-045,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-046,Y2-046,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-046,Y2-046,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
+participant,Y2-046,Y2-046,Spoken Word,WORD_NOT_IN_PROTOCOL_LIST,MAJOR,Tsadahan,Section VIII lists 7 words; whether off-list words are acceptable needs an instructor ruling
 participant,Y2-046,Y2-046,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-046,Y2-046,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-046,Y2-046,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
@@ -135,7 +136,6 @@ participant,Y2-052,Y2-052,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed t
 participant,Y2-052,Y2-052,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-053,Y2-053,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-053,Y2-053,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-053,Y2-053,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
 participant,Y2-053,Y2-053,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-053,Y2-053,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-053,Y2-053,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
@@ -262,16 +262,14 @@ participant,Y2-070,Y2-070,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,
 participant,Y2-070,Y2-070,Spoken Word,EDGE_WHITESPACE,MINOR,Kapoy ,leading/trailing space; Phase 1 strips it and keeps the raw value
 participant,Y2-071,Y2-071,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-071,Y2-071,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-071,Y2-071,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-071,Y2-071,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
-participant,Y2-071,Y2-071,Self-Reported Feeling,SELF_REPORT_TEXT_MISSING,MAJOR,,Section IX records the participant's own description; whether a missing description invalidates the observation needs an instructor ruling
+participant,Y2-071,Y2-071,Spoken Word,WORD_NOT_IN_PROTOCOL_LIST,MAJOR,Lipay,Section VIII lists 7 words; whether off-list words are acceptable needs an instructor ruling
+participant,Y2-071,Y2-071,Self-Reported Feeling,FEELING_IDENTICAL_TO_WORD,REVIEW,Lipay,may be genuine; confirm the description was given independently and not copied from the Spoken Word column
 participant,Y2-071,Y2-071,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-071,Y2-071,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-071,Y2-071,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-071,Y2-071,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-072,Y2-072,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-072,Y2-072,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-072,Y2-072,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
 participant,Y2-072,Y2-072,Spoken Word,WORD_NOT_IN_PROTOCOL_LIST,MAJOR,Nalipay,Section VIII lists 7 words; whether off-list words are acceptable needs an instructor ruling
 participant,Y2-072,Y2-072,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-072,Y2-072,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
@@ -279,23 +277,20 @@ participant,Y2-072,Y2-072,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed t
 participant,Y2-072,Y2-072,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-073,Y2-073,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-073,Y2-073,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-073,Y2-073,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-073,Y2-073,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
+participant,Y2-073,Y2-073,Self-Reported Feeling,FEELING_IDENTICAL_TO_WORD,REVIEW,Kapoy,may be genuine; confirm the description was given independently and not copied from the Spoken Word column
 participant,Y2-073,Y2-073,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-073,Y2-073,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-073,Y2-073,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-073,Y2-073,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-074,Y2-074,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-074,Y2-074,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-074,Y2-074,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-074,Y2-074,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
+participant,Y2-074,Y2-074,Self-Reported Feeling,FEELING_IDENTICAL_TO_WORD,REVIEW,Kapoy,may be genuine; confirm the description was given independently and not copied from the Spoken Word column
 participant,Y2-074,Y2-074,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-074,Y2-074,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-074,Y2-074,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-074,Y2-074,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-075,Y2-075,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-075,Y2-075,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-075,Y2-075,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
 participant,Y2-075,Y2-075,Spoken Word,WORD_NOT_IN_PROTOCOL_LIST,MAJOR,Hangak,Section VIII lists 7 words; whether off-list words are acceptable needs an instructor ruling
 participant,Y2-075,Y2-075,Self-Reported Feeling,FEELING_IDENTICAL_TO_WORD,REVIEW,Hangak,may be genuine; confirm the description was given independently and not copied from the Spoken Word column
 participant,Y2-075,Y2-075,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
@@ -304,42 +299,32 @@ participant,Y2-075,Y2-075,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed t
 participant,Y2-075,Y2-075,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-076,Y2-076,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-076,Y2-076,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-076,Y2-076,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-076,Y2-076,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
-participant,Y2-076,Y2-076,Arousal (1-5),AROUSAL_STRUCK_THROUGH,BLOCKER,5 — Very High,cell text is formatted with strikethrough and no replacement value is present; unclear whether the rating was retracted. Collector must confirm from the original record
+participant,Y2-076,Y2-076,Spoken Word,WORD_NOT_IN_PROTOCOL_LIST,MAJOR,Okay,Section VIII lists 7 words; whether off-list words are acceptable needs an instructor ruling
+participant,Y2-076,Y2-076,Self-Reported Feeling,FEELING_IDENTICAL_TO_WORD,REVIEW,Okay,may be genuine; confirm the description was given independently and not copied from the Spoken Word column
 participant,Y2-076,Y2-076,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-076,Y2-076,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-076,Y2-076,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-076,Y2-076,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-077,Y2-077,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-077,Y2-077,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-077,Y2-077,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-077,Y2-077,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
 participant,Y2-077,Y2-077,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-077,Y2-077,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-077,Y2-077,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-077,Y2-077,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-078,Y2-078,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-078,Y2-078,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-078,Y2-078,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-078,Y2-078,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
 participant,Y2-078,Y2-078,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-078,Y2-078,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-078,Y2-078,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-078,Y2-078,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-079,Y2-079,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-079,Y2-079,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-079,Y2-079,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-079,Y2-079,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
 participant,Y2-079,Y2-079,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-079,Y2-079,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-079,Y2-079,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing
 participant,Y2-079,Y2-079,Collector Initials,COLLECTOR_INITIALS_MISSING,REVIEW,,needed to route data queries to the person who collected this observation
 participant,Y2-080,Y2-080,Class Activity,ACTIVITY_NOT_PROTOCOL_LABEL,MINOR,Lecture,not an exact Section VII category; Phase 1 candidate 'Lecture/Discussion' (confirm)
 participant,Y2-080,Y2-080,Session,SESSION_SPELLING_VARIANT,MINOR,Afternoon-Evening,punctuation differs from protocol; Phase 1 candidate 'Afternoon–Evening'
-participant,Y2-080,Y2-080,Subject,SUBJECT_MISSING,REVIEW,,optional template field; confirm the class context for this row
-participant,Y2-080,Y2-080,Spoken Word,SPOKEN_WORD_MISSING,MAJOR,,"blocks Section XII filename and lexical-control analysis; recoverable only by a Bisaya-speaking group member listening to the recording, never from the feeling column"
-participant,Y2-080,Y2-080,Self-Reported Feeling,SELF_REPORT_TEXT_MISSING,MAJOR,,Section IX records the participant's own description; whether a missing description invalidates the observation needs an instructor ruling
 participant,Y2-080,Y2-080,Audio Filename,AUDIO_FILENAME_MISSING,MAJOR,,Section XI requires the corresponding WAV filename (assigned in Phase 4)
 participant,Y2-080,Y2-080,Consent Obtained (Y/N),CONSENT_CODING_NOT_Y_N,MINOR,Yes,header asks for Y/N; Phase 1 candidate 'Y'
 participant,Y2-080,Y2-080,Date Collected,DATE_COLLECTED_MISSING,REVIEW,,needed to verify session classification and collection timing

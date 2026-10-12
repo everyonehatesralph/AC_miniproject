@@ -258,7 +258,7 @@ def main() -> int:
     script = ps.slide_script(facts)
     by_key = {entry["key"]: entry for entry in script}
     headline = ps.headline(any_sig)
-    pending = ps.pending_text(facts)
+    pending, applied, d = ps.pending_text(facts), ps.applied_text(facts), ps.derive(facts)
 
     prs = Presentation()
     prs.slide_width, prs.slide_height = Inches(W), Inches(H)
@@ -323,7 +323,11 @@ def main() -> int:
            *([(f"A later delivery has converted copies for {len(supplied_new)} of them, "
                f"{int((supplied_new['flags'] != '').sum())} edited or damaged. They are not counted until the originals "
                "are supplied", 2)] if len(supplied_new) else [])]),
-        (f"{missing_words} spoken words are blank in the sheet. We never guess a word from the feeling text", 1),
+        (f"{missing_words} spoken words are blank in the sheet. We never guess a word from the feeling text"
+         if missing_words else "Every participant has a spoken word in the sheet. No word was guessed from the feeling text", 1),
+        *([(f"The group completed the sheet on {applied['day']}: {applied['words']} blank words filled in and the ratings "
+            f"of {applied['ratings']} participants corrected. The earlier sheet and its results are kept", 2)]
+          if applied else []),
         *([(f"Since then ({pending['day']}) the group completed the sheet: the words are filled in and the ratings of "
             f"{pending['ratings']} participants are corrected. These slides use the earlier sheet", 2)]
           if pending else []),
@@ -445,15 +449,23 @@ def main() -> int:
     ], size=16)
 
     # the word confound
-    s = start("word", "The chosen word is linked to the feeling. This is called a lexical confound")
+    s = start("word", "The chosen word is linked to the feeling. This is called a lexical confound"
+              if facts["assoc_sig"] else "Is the chosen word linked to the feeling?")
     v2 = assoc["valence_2"]["table"]
     kapoy_n, other_n = sum(v2["Kapoy"].values()), sum(v2["other"].values())
     text_box(s, MARGIN, 1.95, 6.9, 4.8, [
-        (f"The computer can tell “Kapoy” from the other words by sound alone: balanced accuracy "
-         f"{probe['balanced_accuracy_mean_10_repeats']:.2f} (chance 0.50, p = {probe['permutation_p']:.3f})", 1),
+        ((f"The computer can tell “Kapoy” from the other words by sound alone: balanced accuracy "
+          f"{probe['balanced_accuracy_mean_10_repeats']:.2f} (chance 0.50, p = {probe['permutation_p']:.3f})")
+         if facts["probe_sig"] else
+         (f"By sound alone the computer tells “Kapoy” from the other words only weakly: balanced accuracy "
+          f"{probe['balanced_accuracy_mean_10_repeats']:.2f} (chance 0.50, p = {probe['permutation_p']:.3f}, not "
+          "significant)"), 1),
         (f"Not pleasant: {v2['Kapoy']['NotPleasant']} of {kapoy_n} Kapoy speakers, against {v2['other']['NotPleasant']} "
          f"of {other_n} speakers of other words (Fisher test, p = {assoc['valence_2']['p_value']:.3f})", 1),
-        ("So a model can score above chance by recognising the word, without hearing any feeling", 1),
+        ("So a model can score above chance by recognising the word, without hearing any feeling"
+         if facts["probe_sig"] else
+         "The word and the feeling go together, so a model that picks up the word even partly could score above "
+         "chance. With this data we cannot separate the two", 1),
         (f"Among Kapoy speakers alone, {lex['within_word_significant_q05']} of {lex['within_word_tests']} links between "
          "voice and rating are significant after correction", 1),
     ], size=17)
@@ -494,6 +506,10 @@ def main() -> int:
         ("The pipeline is complete, tested and repeatable: new data can be analysed with one command", 1),
         ("The chosen word is linked to the feeling, so a future study must control the word", 1),
         (f"The sample is too small: a real study needs about {n_for_rho(0.3)} participants", 1),
+        *([(f"The closest result is {TASK_SHORT.get(d.top['task'], d.top['task'])}: {d.top['ba']:.2f} against "
+            f"{d.top['chance']:.2f}, p = {d.top['holm']:.3f} after correction"
+            + (f". Without the {no_orig} files we could not check, it is {d.top_no_src[0]:.2f}" if d.top_no_src else ""), 1)]
+          if d.near else []),
     ], size=20)
 
     # next steps

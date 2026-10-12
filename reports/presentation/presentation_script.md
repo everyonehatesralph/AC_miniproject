@@ -18,7 +18,7 @@
 
 > We asked 40 second-year CS students to say one Bisaya word right after class and to rate how they felt. We measured 108 properties of each voice clip and trained three kinds of models to guess the feeling from the voice alone, always testing on students the model had never heard.
 >
-> The models did not beat guessing once we corrected for running 9 tests. We also found a trap: the word people choose is itself linked to how they feel, and the computer can tell which word was said. So a model can look smart by recognising the word, not the emotion.
+> The models did not beat guessing once we corrected for running 9 tests. We also found a trap: the word people choose is itself linked to how they feel. So even a model that picks up the word only partly could look smart without hearing the emotion.
 >
 > Our honest conclusion: with 40 noisy one-word recordings, our data do not show that post-class feelings can be recognised from the voice. What we built is a complete, tested pipeline that re-runs everything with one command when better data arrives.
 
@@ -60,9 +60,9 @@
 >
 > We want to be open about the audio. We recorded phone videos, and a group member converted them to short 16 kHz WAV files. Those files are what we analysed. We checked every file against the original recordings. 31 match an original. 9 could not be checked, and 3 of those show signs of editing, such as stretches of exact silence. We kept them, marked them, and ran the models again without them. You will see that result later.
 >
-> 9 spoken words are blank in the sheet. We never guessed a word from the feeling text; those files carry the label UNVERIFIED.
+> Every participant has a spoken word in the sheet. No word was guessed from the feeling text.
 >
-> One update. On 12 October the group completed the sheet: 9 blank words are now filled in by a group member who listened to each recording, and the ratings of 3 participants were corrected from the participants' answer forms, because the first sheet had typing mistakes. The results we show today use the earlier sheet. Running the analysis again with the completed sheet is our first next step.
+> The group completed the sheet on 12 October: 9 blank words were filled in by a group member who listened to each recording, and the ratings of 3 participants were corrected from the participants' answer forms, because the first sheet had typing mistakes. The results we show use the completed sheet. The earlier sheet and its results are kept, so the two can be compared.
 >
 > The recordings were made in a hallway right after class, so they are noisy: we detected background voices in 16 of 40.
 >
@@ -98,7 +98,7 @@
 
 **Say** (about 45 seconds)
 
-> Most participants reported neutral to pleasant feelings and moderate to high energy. The two ratings rise together: the correlation is 0.71.
+> Most participants reported neutral to pleasant feelings and moderate to high energy. The two ratings rise together: the correlation is 0.72.
 >
 > Some scores were chosen by very few people, so we cannot model all five scores. We grouped them, and we fixed the groups before modelling: arousal into low, moderate and high; valence into pleasant and not pleasant; and arousal into high and not high.
 >
@@ -106,21 +106,21 @@
 
 **Point at:** The two bar charts, then the groupings on the right.
 
-**In plain words:** Valence 3–5: 37 of 40. Arousal 3–5: 30 of 39. Group sizes: arousal_3: Low: 9 / Moderate: 13 / High: 17; valence_2: NotPleasant: 18 / Pleasant: 22; arousal_2: NotHigh: 22 / High: 17. Arousal has one person fewer because Y2-076's arousal rating is crossed out in the sheet, so we did not use it. In the chart, the blue and orange bars are the same height because every participant in the sheet is analysed.
+**In plain words:** Valence 3–5: 37 of 40. Arousal 3–5: 31 of 40. Group sizes: arousal_3: Low: 9 / Moderate: 15 / High: 16; valence_2: NotPleasant: 20 / Pleasant: 20; arousal_2: NotHigh: 24 / High: 16. In the chart, the blue and orange bars are the same height because every participant in the sheet is analysed.
 
 **If asked: “Why not predict all 25 combinations of valence and arousal?”** With 40 people, most of the 25 cells would be empty or hold one person. A model cannot learn or be tested on a group with one example.
 
 **If asked: “Did you invent these groups?”** No. They are groupings of the participants' own 1-to-5 ratings. The original ratings stay in the data, and the groupings are marked as derived.
 
-### Slide 6 · Simple voice measures show no clear link
+### Slide 6 · Voice measures and the ratings
 
 **Say** (about 60 seconds)
 
 > Before any machine learning, we checked simple links. We chose six well-known voice features in advance: pitch level, pitch range, loudness, duration, brightness and the share of voiced sound.
 >
-> None of them is significantly linked to the ratings. The strongest are brightness (spectral centroid) with arousal at +0.26 and loudness (RMS) with valence at +0.26. Those are weak.
+> None of them is significantly linked to the ratings. The strongest are brightness (spectral centroid) with arousal at +0.35 and loudness (RMS) with valence at +0.37. Those are weak.
 >
-> Across all 108 features, 0 pass the correction for testing many features at once for arousal, and 0 for valence.
+> Across all 108 features, 0 pass the correction for testing many features at once for arousal, and 1 for valence.
 >
 > With 40 people, only links of about 0.44 or stronger can be found reliably. A moderate link of 0.3 would need about 90 participants.
 
@@ -150,27 +150,31 @@
 
 **If asked: “Why is the limit 0.05?”** It is the usual limit in research. It means we accept a 5% risk of calling luck a real effect.
 
-### Slide 8 · The models did not beat chance
+### Slide 8 · No model beats chance after correction
 
 **Say** (about 70 seconds)
 
 > Now the main test. For each target we show the best of three models.
 >
-> The random forest was best: 0.48 for three-level arousal (low, moderate, high), where chance is 0.33; 0.59 for valence (pleasant vs not pleasant), where chance is 0.50; 0.56 for two-level arousal (high vs not high), where chance is 0.50.
+> The random forest was best for every target: 0.41 for three-level arousal (low, moderate, high), where chance is 0.33; 0.70 for valence (pleasant vs not pleasant), where chance is 0.50; 0.55 for two-level arousal (high vs not high), where chance is 0.50.
 >
-> Is that better than luck? We shuffled the ratings 500 times and ran the whole procedure again each time. 1 of 9 tests has a p-value below 0.05: the smallest is 0.022, for the random forest on three-level arousal (low, moderate, high).
+> Is that better than luck? We shuffled the ratings 500 times and ran the whole procedure again each time. 1 of 9 tests has a p-value below 0.05: the smallest is 0.006, for the random forest on valence (pleasant vs not pleasant).
 >
-> But we ran 9 tests. With 9 tries, about 0.45 lucky results are expected. After the Holm correction that p-value becomes 0.198, which is not significant. So no model stays significant after the correction.
+> But we ran 9 tests. With 9 tries, about 0.45 lucky results are expected. After the Holm correction that p-value becomes 0.054, which is not significant. So no model stays significant after the correction.
+>
+> That is close to 0.05, and we say so. But the limit was fixed before we looked at the results, and this score rests on files we could not check: without them it is 0.63.
 
 **Point at:** The p-value column, then the column *p after correction*.
 
-**In plain words:** The *Chance* column is what a model scores if it always gives the same answer. Holm in one line: multiply the smallest p-value by the number of tests. 0.0220 × 9 = 0.198.
+**In plain words:** The *Chance* column is what a model scores if it always gives the same answer. Holm in one line: multiply the smallest p-value by the number of tests. 0.0060 × 9 = 0.054.
 
-**If asked: “Isn't 0.48 against 0.33 a good result?”** It looks promising, but three things stop us from claiming it. The 95% interval runs from 0.35 to 0.62, so the low end is close to chance. It does not survive the correction for 9 tests. And without the 9 files that could not be checked, it falls to 0.37.
+**If asked: “Isn't 0.70 against 0.50 a good result?”** It is our most promising number, but three things stop us from claiming it. The 95% interval runs from 0.58 to 0.82, which is wide. It does not pass the correction for 9 tests: its p-value is 0.054 after it. And without the 9 files that could not be checked, the score is 0.63.
 
-**If asked: “That interval starts at 0.35, which is above 0.33. Doesn't that mean it beats chance?”** Only just, and only for this one test. It says the same thing as the p-value of 0.022 before correction. But it is one of 9 tests, and with that many tests about 0.45 lucky results are expected. After the correction it is not significant, and it drops to 0.37 when the unchecked files are left out.
+**If asked: “That interval starts at 0.58, which is above 0.50. Doesn't that mean it beats chance?”** For this one test, yes: the interval and the p-value before correction (0.006) say the same thing. But it is one of 9 tests, and with that many tests about 0.45 lucky results are expected. After the correction the p-value is 0.054, which is above 0.05, and the score is 0.63 when the unchecked files are left out.
 
-**If asked: “Why three models? Which is best?”** A linear model (logistic regression), a kernel model (SVM) and a tree ensemble (random forest) make different assumptions, so together they are a fair test. The random forest scored highest, but only 1 of the pairwise comparisons has p below 0.05, uncorrected, so we do not claim one model is truly better.
+**If asked: “0.054 is almost 0.05. Why not call it significant?”** Because the limit was set before we saw the results. Moving it afterwards to fit a result is exactly what the correction is there to prevent. We report the number as it is: close, but not significant. It also rests on files we could not check: without them the score is 0.63.
+
+**If asked: “Why three models? Which is best?”** A linear model (logistic regression), a kernel model (SVM) and a tree ensemble (random forest) make different assumptions, so together they are a fair test. The random forest gave our best result, but no pair of models differs significantly.
 
 ### Slide 9 · The same result as a picture
 
@@ -180,7 +184,7 @@
 >
 > The grey rows are baselines that never listen to the audio. The blue rows are our models.
 >
-> The bars are wide. 8 of the 9 blue bars cross the chance line. The one that just clears it is the random forest for three-level arousal, and that is the result that did not survive the correction. This is what an inconclusive result looks like.
+> The bars are wide. 6 of the 9 blue bars cross the chance line. 3 bars clear it, but none of those results passes the correction. This is what an inconclusive result looks like.
 
 **Point at:** One blue bar that crosses the vertical line.
 
@@ -192,21 +196,21 @@
 
 > This is our most important finding. Is the model hearing the feeling, or only recognising the word?
 >
-> First test: can the computer tell Kapoy from the other words by sound alone? Yes. Balanced accuracy 0.85, with p = 0.002.
+> First test: can the computer tell Kapoy from the other words by sound alone? Only weakly. Balanced accuracy 0.69, with p = 0.072, which is not significant.
 >
-> Second test: is the word linked to the feeling? Yes. Of 10 Kapoy speakers, 8 felt not pleasant. Of 21 speakers of other words, only 5 did.
+> Second test: is the word linked to the feeling? Yes. Of 15 Kapoy speakers, 13 felt not pleasant. Of 25 speakers of other words, 7 did.
 >
-> So a model can score above chance by recognising Kapoy and answering *not pleasant*, without hearing any feeling at all.
+> So the word and the feeling go together. A model that picks up the word even partly could score above chance without hearing the feeling, and with this data we cannot separate the two.
 >
 > When we look at Kapoy speakers alone, the same word with different feelings, 0 of 12 links between voice and rating are significant.
 
-**Point at:** The small table: Kapoy 8 and 2, other words 5 and 16.
+**Point at:** The small table: Kapoy 13 and 2, other words 7 and 18.
 
 **In plain words:** This is called a *confound*: a hidden third thing that explains the link. Here the word explains both the sound and the feeling. It is like concluding that umbrellas cause rain because they appear together.
 
 **If asked: “How would you fix the word problem?”** Ask every participant to say the same word, or collect enough recordings of each word to analyse each word separately. Both are in our plan for a larger study.
 
-**If asked: “Why only Kapoy?”** It is the only word said by enough people (10). Every other word was said by three people or fewer, which is too few to analyse.
+**If asked: “Why only Kapoy?”** It is the only word said by enough people (15). Every other word was said by 3 people or fewer, which is too few to analyse.
 
 ### Slide 11 · Limits of this study
 
@@ -242,7 +246,7 @@
 
 **Say** (about 30 seconds)
 
-> Our next steps are concrete. First, run the analysis again with the completed sheet. Complete the consent log from the signed forms. Have two group members listen to every clip without seeing the ratings. Find the original recordings for the files we could not check. Record more participants with one device, one setting and one take. Follow the analysis plan we wrote before seeing new data. And confirm the open protocol questions with our instructor.
+> Our next steps are concrete. Complete the consent log from the signed forms. Have two group members listen to every clip without seeing the ratings. Find the original recordings for the files we could not check. Record more participants with one device, one setting and one take. Follow the analysis plan we wrote before seeing new data. And confirm the open protocol questions with our instructor.
 >
 > Thank you. We are happy to take your questions.
 
@@ -254,13 +258,13 @@
 
 - **What it is:** two ways to describe a feeling. Valence is unpleasant to pleasant. Arousal is low energy to high energy.
 - **Examples:** tired is low arousal; excited is high arousal and pleasant; stressed is high arousal and unpleasant.
-- **In our project:** each participant rated both from 1 to 5. The two ratings rise together (ρ = 0.71).
+- **In our project:** each participant rated both from 1 to 5. The two ratings rise together (ρ = 0.72).
 
 ### Groups (derived classes)
 
 - **What it is:** groups made from the 1-to-5 ratings, because some single scores have too few people. The slides say *group*; the technical word is *class*.
 - **The rule:** a grouping is modelled only if every group has at least 5 people.
-- **In our project:** `arousal_3` (Low: 9 / Moderate: 13 / High: 17); `valence_2` (NotPleasant: 18 / Pleasant: 22); `arousal_2` (NotHigh: 22 / High: 17). Not modelled: `valence_5`, `arousal_5`, `valence_3`.
+- **In our project:** `arousal_3` (Low: 9 / Moderate: 15 / High: 16); `valence_2` (NotPleasant: 20 / Pleasant: 20); `arousal_2` (NotHigh: 24 / High: 16). Not modelled: `valence_5`, `arousal_5`, `valence_3`.
 
 ### Acoustic features
 
@@ -277,7 +281,7 @@
 
 - **What it is:** each clip also contains hallway noise, so the computer looks for the loudest short event and treats that as the word.
 - **Why it matters:** it never uses the labels, so it cannot cheat.
-- **In our project:** 13 of 40 recordings are flagged as uncertain, for example because the word touches the edge of the file. Nobody has yet checked them by listening.
+- **In our project:** 14 of 40 recordings are flagged as uncertain, for example because the word touches the edge of the file. Nobody has yet checked them by listening.
 
 ### Speaker-independent testing and cross-validation
 
@@ -303,44 +307,44 @@
 ### Balanced accuracy
 
 - **What it is:** the average of the scores for each class.
-- **Why not plain accuracy:** in our three-level arousal task, always answering the most common class is right 44% of the time without learning anything. Balanced accuracy gives that lazy model exactly the chance level, 0.33.
+- **Why not plain accuracy:** in our three-level arousal task, always answering the most common class is right 40% of the time without learning anything. Balanced accuracy gives that lazy model exactly the chance level, 0.33.
 - **Chance level:** 1 ÷ number of classes. 0.33 for three classes, 0.50 for two.
 
 ### Confidence interval
 
 - **What it is:** the range where the true value probably lies.
 - **How we get it:** we re-draw the participants at random, with replacement, 2000 times, and recompute the score each time. The middle 95% of those scores is the interval. This is called a bootstrap.
-- **In our project:** the best model's interval is 0.35 to 0.62. That is wide, because 39 people is few.
+- **In our project:** our best result has an interval from 0.58 to 0.82. That is wide, because 40 people is few.
 
 ### p-value and the permutation test
 
 - **What it is:** we shuffle the labels so they no longer belong to the right recordings, then run the whole procedure again. We do that 500 times.
 - **The p-value:** the share of shuffles that score as high as the real data. A small p means the real score would be rare by luck.
-- **In our project:** the smallest p is 0.022: about 2 in 100 shuffles did as well.
+- **In our project:** the smallest p is 0.006: about 1 in 100 shuffles did as well.
 
 ### Multiple testing: Holm and FDR
 
 - **The problem:** if you run many tests, some will look significant by luck. Roll a die many times and a six is no surprise.
-- **Holm:** the correction we use for the 9 model tests. The smallest p is multiplied by 9: 0.0220 × 9 = 0.198.
+- **Holm:** the correction we use for the 9 model tests. The smallest p is multiplied by 9: 0.0060 × 9 = 0.054.
 - **FDR (Benjamini–Hochberg):** the correction we use for the 108 feature correlations.
 - **Expected false alarms:** 0.05 × 9 = 0.45 tests would pass by luck even if nothing were there.
 
 ### The lexical confound
 
 - **What it is:** the word explains both the sound and the feeling, so the model may learn the word.
-- **Evidence 1:** the audio identifies Kapoy with balanced accuracy 0.85 (p = 0.002).
-- **Evidence 2:** Kapoy speakers felt not pleasant 8 times out of 10; others 5 out of 21 (Fisher p = 0.006).
-- **Evidence 3:** on two-level arousal the models are right 68% of the time on Kapoy recordings and 49% on other words.
+- **Evidence 1:** the audio identifies Kapoy with balanced accuracy 0.69 (p = 0.072). That is not significant: in this data the sound alone does not reliably give the word away.
+- **Evidence 2:** Kapoy speakers felt not pleasant 13 times out of 15; others 7 out of 25 (Fisher p = 0.001).
+- **Evidence 3:** on two-level arousal the models are right 66% of the time on Kapoy recordings and 42% on other words.
 
 ### Sensitivity analysis
 
 - **What it is:** repeating the analysis without a doubtful part of the data, to see whether the result holds.
-- **In our project, three-level arousal (low, moderate, high), random forest** (all data: 0.48):
-  - without the recordings whose word location is uncertain: 0.41 (n = 27)
-  - without the copies of recordings made with a different setting: 0.46 (n = 34)
-  - without the edited or clipped files: 0.44 (n = 37)
+- **In our project, three-level arousal (low, moderate, high), random forest** (all data: 0.41):
+  - without the recordings whose word location is uncertain: 0.38 (n = 26)
+  - without the copies of recordings made with a different setting: 0.47 (n = 35)
+  - without the edited or clipped files: 0.47 (n = 37)
   - without the files that have no verified original: 0.37 (n = 31)
-- **Valence, random forest** (all data: 0.59): between 0.58 and 0.67 across the same scenarios.
+- **Valence, random forest** (all data: 0.70): between 0.63 and 0.74 across the same scenarios.
 - **What it tells us:** the scores move up and down depending on which files are included. That is a sign the sample is too small for a stable answer.
 
 ### Statistical power
@@ -369,7 +373,7 @@ The point was to find out whether it works, and to find out properly. We built a
 
 **“Your best p-value is below 0.05. Why do you say nothing is significant?”**
 
-Because we ran 9 tests. If you run 9 tests on pure noise, about 0.45 of them pass by luck. After the Holm correction, 0.022 becomes 0.198.
+Because we ran 9 tests. If you run 9 tests on pure noise, about 0.45 of them pass by luck. After the Holm correction, 0.006 becomes 0.054.
 
 **“Why did you not use deep learning?”**
 
@@ -381,11 +385,11 @@ With this few people, artificial samples would be copies of the same few voices,
 
 **“Why are some spoken words UNVERIFIED?”**
 
-9 words are blank in the data sheet. The protocol forbids guessing the word from the feeling text, so we left them blank. The word is not a model input, so the models are not affected. Only the word analysis leaves those participants out.
+0 words are blank in the data sheet. The protocol forbids guessing the word from the feeling text, so we left them blank. The word is not a model input, so the models are not affected. Only the word analysis leaves those participants out.
 
 **“Some of your files were edited. Is your data valid?”**
 
-We do not hide that. 3 files contain inserted digital silence and 9 have no verified original. We flagged each one and re-ran the models without them: the main arousal score moves from 0.48 to 0.37 without the unverified files. Our conclusion does not depend on those files. The clean fix is to find the original recordings.
+We do not hide that. 3 files contain inserted digital silence and 9 have no verified original. We flagged each one and re-ran the models without them: our best score moves from 0.70 to 0.63 without the unverified files. Our conclusion does not depend on those files. The clean fix is to find the original recordings.
 
 **“How do you know there is no data leakage?”**
 
@@ -393,7 +397,7 @@ Three checks. Only acoustic columns may enter the model, and the code stops othe
 
 **“How did you choose which part of the audio is the word?”**
 
-Automatically, from loudness alone: the dominant short event in the clip. The rule never sees the labels. 13 recordings are flagged as uncertain, and a blind listening review by two group members is the next step.
+Automatically, from loudness alone: the dominant short event in the clip. The rule never sees the labels. 14 recordings are flagged as uncertain, and a blind listening review by two group members is the next step.
 
 **“Is consent documented?”**
 
@@ -403,13 +407,13 @@ The sheet records Yes for every participant, but the log of the signed forms is 
 
 We could not. The sheet has no sex or gender column, and each person gave one recording, so there is no personal baseline to subtract. Pitch in Hz therefore mostly reflects the natural voice. That is the *one word per person* limit on slide 11, and it is one reason we do not over-read the pitch features.
 
-**“The sheet now has all the words, and some ratings are different. Why do your slides not match it?”**
+**“The ratings of 3 participants were changed after the first analysis. Did you change the data to get a better result?”**
 
-The group completed the sheet on 12 October, after this analysis. 9 blank words were filled in by a group member who listened to each recording, 1 word was corrected, and the ratings of Y2-076, Y2-077, Y2-080 were corrected from the participants' answer forms, because the first sheet had typing mistakes. A rating is what the models learn from, so the whole analysis must be run again, and that could not be done and checked before today. We did not mix the two: the results use the earlier sheet, the new sheet is stored beside it, and every changed cell is listed in `reports/sheet_update_pending.md`. Bring the answer forms of those participants: they are the evidence for the corrected ratings.
+No. On 12 October the group corrected the sheet from the participants' answer forms, because the first sheet had typing mistakes, for Y2-076, Y2-077, Y2-080. We kept the earlier sheet and the earlier results, so anyone can compare the two. With the corrected sheet, the best scores changed like this: three-level arousal went from 0.48 to 0.41; valence went from 0.59 to 0.70; two-level arousal went from 0.56 to 0.55. No model passes the correction in either analysis. Those participants are all among the files we could not check, so the scores without those files are exactly the same before and after the correction (0.63 for our best result). Bring the answer forms: they are the evidence for the corrected ratings.
 
 **“The figure of the two recording settings shows a clear difference. Why do you say it is not significant?”**
 
-Because of the correction. We compared 108 features. 18 differ before the correction, and the closest corrected p-value is 0.053, just above 0.05. With only 5 files the test is weak, so we do not claim a difference and we do not rule one out. That is why we also ran the models without those files: the main arousal score moves from 0.48 to 0.46.
+Because of the correction. We compared 108 features. 18 differ before the correction, and the closest corrected p-value is 0.053, just above 0.05. With only 5 files the test is weak, so we do not claim a difference and we do not rule one out. That is why we also ran the models without those files: the main arousal score moves from 0.41 to 0.47.
 
 **“Who prepared the version-2 audio files, and how?”**
 
@@ -436,17 +440,16 @@ Answer this truthfully. The pipeline was implemented with an AI coding assistant
 | Models | 3, plus 2 dummy baselines |
 | Cross-validation | 5 folds × 10 repeats, nested |
 | Permutations per test | 500 |
-| Best score, three-level arousal (low, moderate, high) | 0.48 (chance 0.33), interval 0.35–0.62 |
-| Best score, valence (pleasant vs not pleasant) | 0.59 (chance 0.50), interval 0.47–0.71 |
-| Best score, two-level arousal (high vs not high) | 0.56 (chance 0.50), interval 0.43–0.69 |
-| Smallest p-value | 0.022 → 0.198 after Holm (9 tests) |
-| Features passing correction | 0 for arousal, 0 for valence |
-| Kapoy recognised from audio | 0.85 balanced accuracy, p = 0.002 |
-| Kapoy and feeling | 8 of 10 not pleasant; others 5 of 21 |
+| Best score, three-level arousal (low, moderate, high) | 0.41 (chance 0.33), interval 0.29–0.54 |
+| Best score, valence (pleasant vs not pleasant) | 0.70 (chance 0.50), interval 0.58–0.82 |
+| Best score, two-level arousal (high vs not high) | 0.55 (chance 0.50), interval 0.43–0.68 |
+| Smallest p-value | 0.006 → 0.054 after Holm (9 tests) |
+| Features passing correction | 0 for arousal, 1 for valence |
+| Kapoy recognised from audio | 0.69 balanced accuracy, p = 0.072 |
+| Kapoy and feeling | 13 of 15 not pleasant; others 7 of 25 |
 | Files without a verified original | 9 (Y2-053, Y2-071, Y2-074, Y2-075, Y2-076, Y2-077, Y2-078, Y2-079, Y2-080) |
 | Edited or clipped files | 3 (Y2-076, Y2-077, Y2-078) |
-| Words missing in the sheet | 9 |
-| Completed sheet, not analysed yet | received 12 October: 9 words filled in, ratings of 3 participants corrected |
+| Words missing in the sheet | 0 |
 | Smallest detectable correlation | about 0.44; 0.3 needs about 90 people |
 | Validation | 24 pass, 1 blocked (consent) |
 
@@ -455,8 +458,8 @@ Answer this truthfully. The pipeline was implemented with an AI coding assistant
 | Don't say | Say instead |
 |---|---|
 | “Our model detects emotions.” | “Our models did not beat chance after correction.” |
-| “We got 48% accuracy.” | “Balanced accuracy 0.48 where chance is 0.33, with a wide interval.” |
-| “The result is significant.” | “One raw p-value is below 0.05, but it does not survive correction.” |
+| “We got 70% accuracy.” | “Balanced accuracy 0.70 where chance is 0.50, with a wide interval.” |
+| “The result is significant.” | “No result passes the correction for 9 tests.” |
 | “Kapoy means the student is sad.” | “Kapoy speakers more often reported not-pleasant feelings.” |
 | “The class caused the feeling.” | “These are associations. The design cannot show causes.” |
 | “The data is clean.” | “We flagged every doubtful file and tested the results without them.” |

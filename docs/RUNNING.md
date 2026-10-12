@@ -222,9 +222,11 @@ A newer export of the sheet never goes over the sheet in use.
    and what the change means for the analysis. Nothing is applied.
 5. To use the new sheet: move the PDF in use to `data/metadata_raw/archive/` (do not delete it), put the new PDF
    in its place under the name step 00 reads, and run the whole pipeline. If any rating changed, step 06
-   (training) must run. Afterwards the pending report disappears by itself.
+   (training) must run. At the start of that run the pending report turns into `reports/sheet_update_applied.md`:
+   the same list of changes, kept as a record, with the best results the sheet before gave.
 
-While a newer sheet is waiting, the slides, the presenter script and the defense documentation say so.
+While a newer sheet is waiting, the slides, the presenter script and the defense documentation say so. Once it
+is in use they say when the sheet was completed and what changed.
 
 **Converted copies are not recordings.**
 - Files that someone converted or trimmed (such as the `CS2B_v2` 16 kHz WAVs) are audited by step 03c

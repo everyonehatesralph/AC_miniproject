@@ -15,12 +15,12 @@
 
 | task | role | n | classes | modelled | reason / outer folds |
 |---|---|---|---|---|---|
-| valence_5 | attempted | 40 | 1: 1; 2: 2; 3: 15; 4: 11; 5: 11 | no | smallest class has 1 < 5 participants |
-| arousal_5 | attempted | 39 | 1: 3; 2: 6; 3: 13; 4: 12; 5: 5 | no | smallest class has 3 < 5 participants |
-| valence_3 | attempted | 40 | Unpleasant: 3; Neutral: 15; Pleasant: 22 | no | smallest class has 3 < 5 participants |
-| arousal_3 | primary | 39 | Low: 9; Moderate: 13; High: 17 | yes | 5 |
-| valence_2 | primary | 40 | NotPleasant: 18; Pleasant: 22 | yes | 5 |
-| arousal_2 | secondary | 39 | NotHigh: 22; High: 17 | yes | 5 |
+| valence_5 | attempted | 40 | 1: 1; 2: 2; 3: 17; 4: 11; 5: 9 | no | smallest class has 1 < 5 participants |
+| arousal_5 | attempted | 40 | 1: 3; 2: 6; 3: 15; 4: 12; 5: 4 | no | smallest class has 3 < 5 participants |
+| valence_3 | attempted | 40 | Unpleasant: 3; Neutral: 17; Pleasant: 20 | no | smallest class has 3 < 5 participants |
+| arousal_3 | primary | 40 | Low: 9; Moderate: 15; High: 16 | yes | 5 |
+| valence_2 | primary | 40 | NotPleasant: 20; Pleasant: 20 | yes | 5 |
+| arousal_2 | secondary | 40 | NotHigh: 24; High: 16 | yes | 5 |
 
 Not modelled: **valence_5, arousal_5, valence_3**. Each has at least one class with fewer than 5 participants, so stratified test folds and per-class metrics would be meaningless. This is reported rather than forced (Phase 8).
 
@@ -28,41 +28,41 @@ Not modelled: **valence_5, arousal_5, valence_3**. Each has at least one class w
 
 | task | model | BA pooled [95% CI] | macro-F1 pooled [95% CI] | accuracy pooled | BA folds mean ± SD (min–max) | perm. p | perm. p (Holm) |
 |---|---|---|---|---|---|---|---|
-| arousal_3 | Dummy (majority) | 0.333 [0.333, 0.333] | 0.202 [0.202, 0.202] | 0.436 | 0.333 ± 0.000 (0.33–0.33) | — | — |
-| arousal_3 | Dummy (stratified random) | 0.310 [0.259, 0.366] | 0.294 [0.242, 0.343] | 0.331 | 0.311 ± 0.182 (0.00–0.83) | — | — |
-| arousal_3 | Logistic regression | 0.396 [0.266, 0.530] | 0.399 [0.264, 0.527] | 0.415 | 0.398 ± 0.130 (0.11–0.67) | 0.146 | 1.000 |
-| arousal_3 | SVM (RBF) | 0.327 [0.266, 0.387] | 0.275 [0.210, 0.336] | 0.344 | 0.326 ± 0.092 (0.11–0.67) | 0.287 | 1.000 |
-| arousal_3 | Random forest | 0.476 [0.346, 0.615] | 0.479 [0.341, 0.611] | 0.490 | 0.483 ± 0.144 (0.17–0.83) | 0.022 | 0.198 |
-| valence_2 | Dummy (majority) | 0.500 [0.500, 0.500] | 0.355 [0.355, 0.355] | 0.550 | 0.500 ± 0.000 (0.50–0.50) | — | — |
-| valence_2 | Dummy (stratified random) | 0.449 [0.362, 0.537] | 0.449 [0.357, 0.532] | 0.450 | 0.450 ± 0.209 (0.00–0.90) | — | — |
-| valence_2 | Logistic regression | 0.574 [0.449, 0.694] | 0.572 [0.444, 0.693] | 0.580 | 0.577 ± 0.142 (0.12–0.75) | 0.253 | 1.000 |
-| valence_2 | SVM (RBF) | 0.547 [0.441, 0.650] | 0.545 [0.435, 0.647] | 0.555 | 0.558 ± 0.147 (0.25–0.90) | 0.397 | 1.000 |
-| valence_2 | Random forest | 0.595 [0.474, 0.714] | 0.593 [0.468, 0.711] | 0.600 | 0.598 ± 0.175 (0.20–1.00) | 0.120 | 0.958 |
-| arousal_2 | Dummy (majority) | 0.500 [0.500, 0.500] | 0.361 [0.361, 0.361] | 0.564 | 0.500 ± 0.000 (0.50–0.50) | — | — |
-| arousal_2 | Dummy (stratified random) | 0.491 [0.406, 0.578] | 0.489 [0.400, 0.575] | 0.492 | 0.488 ± 0.190 (0.12–1.00) | — | — |
-| arousal_2 | Logistic regression | 0.504 [0.378, 0.635] | 0.502 [0.371, 0.628] | 0.508 | 0.513 ± 0.165 (0.25–0.88) | 0.685 | 1.000 |
-| arousal_2 | SVM (RBF) | 0.470 [0.402, 0.543] | 0.410 [0.335, 0.493] | 0.515 | 0.470 ± 0.121 (0.17–0.75) | 0.792 | 1.000 |
-| arousal_2 | Random forest | 0.559 [0.427, 0.692] | 0.558 [0.421, 0.688] | 0.564 | 0.566 ± 0.175 (0.17–1.00) | 0.190 | 1.000 |
+| arousal_3 | Dummy (majority) | 0.333 [0.333, 0.333] | 0.190 [0.190, 0.190] | 0.400 | 0.333 ± 0.000 (0.33–0.33) | — | — |
+| arousal_3 | Dummy (stratified random) | 0.329 [0.259, 0.409] | 0.313 [0.242, 0.383] | 0.332 | 0.321 ± 0.138 (0.00–0.61) | — | — |
+| arousal_3 | Logistic regression | 0.344 [0.226, 0.470] | 0.343 [0.216, 0.468] | 0.363 | 0.339 ± 0.150 (0.00–0.69) | 0.503 | 1.000 |
+| arousal_3 | SVM (RBF) | 0.346 [0.259, 0.440] | 0.323 [0.236, 0.409] | 0.335 | 0.332 ± 0.117 (0.11–0.78) | 0.707 | 1.000 |
+| arousal_3 | Random forest | 0.410 [0.289, 0.541] | 0.410 [0.284, 0.539] | 0.422 | 0.417 ± 0.150 (0.00–0.72) | 0.134 | 0.802 |
+| valence_2 | Dummy (majority) | 0.500 [0.500, 0.500] | 0.333 [0.333, 0.333] | 0.500 | 0.500 ± 0.000 (0.50–0.50) | — | — |
+| valence_2 | Dummy (stratified random) | 0.485 [0.388, 0.580] | 0.485 [0.383, 0.577] | 0.485 | 0.485 ± 0.163 (0.25–0.75) | — | — |
+| valence_2 | Logistic regression | 0.670 [0.545, 0.785] | 0.668 [0.541, 0.783] | 0.670 | 0.670 ± 0.167 (0.25–1.00) | 0.076 | 0.607 |
+| valence_2 | SVM (RBF) | 0.668 [0.545, 0.785] | 0.667 [0.543, 0.783] | 0.668 | 0.667 ± 0.178 (0.25–1.00) | 0.084 | 0.607 |
+| valence_2 | Random forest | 0.703 [0.580, 0.815] | 0.702 [0.578, 0.814] | 0.703 | 0.703 ± 0.169 (0.25–1.00) | 0.006 | 0.054 |
+| arousal_2 | Dummy (majority) | 0.500 [0.500, 0.500] | 0.375 [0.375, 0.375] | 0.600 | 0.500 ± 0.000 (0.50–0.50) | — | — |
+| arousal_2 | Dummy (stratified random) | 0.464 [0.380, 0.550] | 0.462 [0.377, 0.545] | 0.470 | 0.468 ± 0.236 (0.10–0.90) | — | — |
+| arousal_2 | Logistic regression | 0.479 [0.360, 0.602] | 0.473 [0.353, 0.590] | 0.480 | 0.480 ± 0.165 (0.17–0.80) | 0.838 | 1.000 |
+| arousal_2 | SVM (RBF) | 0.456 [0.361, 0.557] | 0.448 [0.352, 0.542] | 0.468 | 0.472 ± 0.132 (0.10–0.83) | 0.741 | 1.000 |
+| arousal_2 | Random forest | 0.554 [0.432, 0.683] | 0.554 [0.430, 0.683] | 0.575 | 0.557 ± 0.149 (0.20–1.00) | 0.271 | 1.000 |
 
 BA = balanced accuracy. *Pooled* means all participants' out-of-fold predictions within a repeat, averaged over repeats; the 95% interval is a participant-level stratified bootstrap. Fold-level metrics (mean ± SD over all test folds):
 
 | task | model | fold_accuracy_mean | fold_balanced_accuracy_mean | fold_macro_precision_mean | fold_macro_recall_mean | fold_macro_f1_mean | fold_accuracy_sd | fold_balanced_accuracy_sd | fold_macro_precision_sd | fold_macro_recall_sd | fold_macro_f1_sd |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| arousal_3 | Dummy (majority) | 0.436 | 0.333 | 0.145 | 0.333 | 0.202 | 0.057 | 0.000 | 0.019 | 0.000 | 0.018 |
-| arousal_3 | Dummy (stratified random) | 0.330 | 0.311 | 0.317 | 0.311 | 0.292 | 0.166 | 0.182 | 0.202 | 0.182 | 0.166 |
-| arousal_3 | Logistic regression | 0.415 | 0.398 | 0.348 | 0.398 | 0.345 | 0.120 | 0.130 | 0.178 | 0.130 | 0.136 |
-| arousal_3 | SVM (RBF) | 0.344 | 0.326 | 0.175 | 0.326 | 0.211 | 0.096 | 0.092 | 0.133 | 0.092 | 0.102 |
-| arousal_3 | Random forest | 0.488 | 0.483 | 0.462 | 0.483 | 0.438 | 0.124 | 0.144 | 0.174 | 0.144 | 0.141 |
-| valence_2 | Dummy (majority) | 0.550 | 0.500 | 0.275 | 0.500 | 0.354 | 0.062 | 0.000 | 0.031 | 0.000 | 0.025 |
-| valence_2 | Dummy (stratified random) | 0.450 | 0.450 | 0.450 | 0.450 | 0.447 | 0.205 | 0.209 | 0.205 | 0.209 | 0.205 |
-| valence_2 | Logistic regression | 0.580 | 0.577 | 0.572 | 0.577 | 0.558 | 0.140 | 0.142 | 0.165 | 0.142 | 0.152 |
-| valence_2 | SVM (RBF) | 0.555 | 0.558 | 0.534 | 0.558 | 0.523 | 0.156 | 0.147 | 0.199 | 0.147 | 0.172 |
-| valence_2 | Random forest | 0.600 | 0.598 | 0.609 | 0.598 | 0.582 | 0.171 | 0.175 | 0.192 | 0.175 | 0.179 |
-| arousal_2 | Dummy (majority) | 0.564 | 0.500 | 0.282 | 0.500 | 0.360 | 0.057 | 0.000 | 0.028 | 0.000 | 0.023 |
-| arousal_2 | Dummy (stratified random) | 0.489 | 0.488 | 0.487 | 0.488 | 0.484 | 0.184 | 0.190 | 0.187 | 0.190 | 0.187 |
-| arousal_2 | Logistic regression | 0.507 | 0.513 | 0.514 | 0.513 | 0.475 | 0.162 | 0.165 | 0.223 | 0.165 | 0.172 |
-| arousal_2 | SVM (RBF) | 0.515 | 0.470 | 0.349 | 0.470 | 0.381 | 0.142 | 0.121 | 0.177 | 0.121 | 0.127 |
-| arousal_2 | Random forest | 0.563 | 0.566 | 0.564 | 0.566 | 0.535 | 0.175 | 0.175 | 0.218 | 0.175 | 0.189 |
+| arousal_3 | Dummy (majority) | 0.400 | 0.333 | 0.133 | 0.333 | 0.190 | 0.047 | 0.000 | 0.016 | 0.000 | 0.015 |
+| arousal_3 | Dummy (stratified random) | 0.332 | 0.321 | 0.332 | 0.321 | 0.305 | 0.135 | 0.138 | 0.176 | 0.138 | 0.131 |
+| arousal_3 | Logistic regression | 0.362 | 0.339 | 0.321 | 0.339 | 0.313 | 0.153 | 0.150 | 0.194 | 0.150 | 0.155 |
+| arousal_3 | SVM (RBF) | 0.334 | 0.332 | 0.259 | 0.332 | 0.262 | 0.122 | 0.117 | 0.179 | 0.117 | 0.134 |
+| arousal_3 | Random forest | 0.422 | 0.417 | 0.408 | 0.417 | 0.384 | 0.140 | 0.150 | 0.207 | 0.150 | 0.159 |
+| valence_2 | Dummy (majority) | 0.500 | 0.500 | 0.250 | 0.500 | 0.333 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| valence_2 | Dummy (stratified random) | 0.485 | 0.485 | 0.485 | 0.485 | 0.485 | 0.163 | 0.163 | 0.163 | 0.163 | 0.163 |
+| valence_2 | Logistic regression | 0.670 | 0.670 | 0.697 | 0.670 | 0.659 | 0.167 | 0.167 | 0.180 | 0.167 | 0.172 |
+| valence_2 | SVM (RBF) | 0.667 | 0.667 | 0.690 | 0.667 | 0.658 | 0.178 | 0.178 | 0.190 | 0.178 | 0.182 |
+| valence_2 | Random forest | 0.703 | 0.703 | 0.732 | 0.703 | 0.694 | 0.169 | 0.169 | 0.183 | 0.169 | 0.172 |
+| arousal_2 | Dummy (majority) | 0.600 | 0.500 | 0.300 | 0.500 | 0.374 | 0.051 | 0.000 | 0.025 | 0.000 | 0.021 |
+| arousal_2 | Dummy (stratified random) | 0.470 | 0.468 | 0.470 | 0.468 | 0.462 | 0.225 | 0.236 | 0.229 | 0.236 | 0.229 |
+| arousal_2 | Logistic regression | 0.480 | 0.480 | 0.473 | 0.480 | 0.452 | 0.162 | 0.165 | 0.197 | 0.165 | 0.170 |
+| arousal_2 | SVM (RBF) | 0.468 | 0.472 | 0.367 | 0.472 | 0.385 | 0.147 | 0.132 | 0.201 | 0.132 | 0.149 |
+| arousal_2 | Random forest | 0.575 | 0.557 | 0.565 | 0.557 | 0.539 | 0.141 | 0.149 | 0.182 | 0.149 | 0.153 |
 
 ![balanced accuracy](../figures/evaluation/fig_eval_balanced_accuracy.png)
 
@@ -71,40 +71,40 @@ BA = balanced accuracy. *Pooled* means all participants' out-of-fold predictions
 | task | model | class | support | precision | recall | f1 |
 |---|---|---|---|---|---|---|
 | arousal_3 | Dummy (majority) | Low | 9 | 0.000 | 0.000 | 0.000 |
-| arousal_3 | Dummy (majority) | Moderate | 13 | 0.000 | 0.000 | 0.000 |
-| arousal_3 | Dummy (majority) | High | 17 | 0.436 | 1.000 | 0.607 |
-| arousal_3 | Dummy (stratified random) | Low | 9 | 0.193 | 0.300 | 0.235 |
-| arousal_3 | Dummy (stratified random) | Moderate | 13 | 0.340 | 0.131 | 0.189 |
-| arousal_3 | Dummy (stratified random) | High | 17 | 0.425 | 0.500 | 0.459 |
-| arousal_3 | Logistic regression | Low | 9 | 0.331 | 0.278 | 0.300 |
-| arousal_3 | Logistic regression | Moderate | 13 | 0.469 | 0.438 | 0.452 |
-| arousal_3 | Logistic regression | High | 17 | 0.425 | 0.471 | 0.446 |
-| arousal_3 | SVM (RBF) | Low | 9 | 0.145 | 0.078 | 0.099 |
-| arousal_3 | SVM (RBF) | Moderate | 13 | 0.336 | 0.662 | 0.441 |
-| arousal_3 | SVM (RBF) | High | 17 | 0.380 | 0.241 | 0.286 |
-| arousal_3 | Random forest | Low | 9 | 0.382 | 0.411 | 0.394 |
-| arousal_3 | Random forest | Moderate | 13 | 0.604 | 0.477 | 0.531 |
-| arousal_3 | Random forest | High | 17 | 0.486 | 0.541 | 0.512 |
-| valence_2 | Dummy (majority) | NotPleasant | 18 | 0.000 | 0.000 | 0.000 |
-| valence_2 | Dummy (majority) | Pleasant | 22 | 0.550 | 1.000 | 0.710 |
-| valence_2 | Dummy (stratified random) | NotPleasant | 18 | 0.400 | 0.444 | 0.421 |
-| valence_2 | Dummy (stratified random) | Pleasant | 22 | 0.500 | 0.455 | 0.476 |
-| valence_2 | Logistic regression | NotPleasant | 18 | 0.535 | 0.511 | 0.521 |
-| valence_2 | Logistic regression | Pleasant | 22 | 0.615 | 0.636 | 0.624 |
-| valence_2 | SVM (RBF) | NotPleasant | 18 | 0.508 | 0.472 | 0.486 |
-| valence_2 | SVM (RBF) | Pleasant | 22 | 0.591 | 0.623 | 0.604 |
-| valence_2 | Random forest | NotPleasant | 18 | 0.557 | 0.544 | 0.548 |
-| valence_2 | Random forest | Pleasant | 22 | 0.636 | 0.645 | 0.639 |
-| arousal_2 | Dummy (majority) | NotHigh | 22 | 0.564 | 1.000 | 0.721 |
-| arousal_2 | Dummy (majority) | High | 17 | 0.000 | 0.000 | 0.000 |
-| arousal_2 | Dummy (stratified random) | NotHigh | 22 | 0.555 | 0.505 | 0.529 |
-| arousal_2 | Dummy (stratified random) | High | 17 | 0.426 | 0.476 | 0.450 |
-| arousal_2 | Logistic regression | NotHigh | 22 | 0.568 | 0.532 | 0.548 |
-| arousal_2 | Logistic regression | High | 17 | 0.440 | 0.476 | 0.456 |
-| arousal_2 | SVM (RBF) | NotHigh | 22 | 0.547 | 0.823 | 0.656 |
-| arousal_2 | SVM (RBF) | High | 17 | 0.308 | 0.118 | 0.164 |
-| arousal_2 | Random forest | NotHigh | 22 | 0.618 | 0.595 | 0.605 |
-| arousal_2 | Random forest | High | 17 | 0.502 | 0.524 | 0.510 |
+| arousal_3 | Dummy (majority) | Moderate | 15 | 0.000 | 0.000 | 0.000 |
+| arousal_3 | Dummy (majority) | High | 16 | 0.400 | 1.000 | 0.571 |
+| arousal_3 | Dummy (stratified random) | Low | 9 | 0.200 | 0.333 | 0.250 |
+| arousal_3 | Dummy (stratified random) | Moderate | 15 | 0.412 | 0.173 | 0.243 |
+| arousal_3 | Dummy (stratified random) | High | 16 | 0.413 | 0.481 | 0.445 |
+| arousal_3 | Logistic regression | Low | 9 | 0.297 | 0.244 | 0.267 |
+| arousal_3 | Logistic regression | Moderate | 15 | 0.386 | 0.313 | 0.345 |
+| arousal_3 | Logistic regression | High | 16 | 0.374 | 0.475 | 0.418 |
+| arousal_3 | SVM (RBF) | Low | 9 | 0.305 | 0.411 | 0.332 |
+| arousal_3 | SVM (RBF) | Moderate | 15 | 0.319 | 0.320 | 0.313 |
+| arousal_3 | SVM (RBF) | High | 16 | 0.367 | 0.306 | 0.325 |
+| arousal_3 | Random forest | Low | 9 | 0.359 | 0.344 | 0.350 |
+| arousal_3 | Random forest | Moderate | 15 | 0.453 | 0.380 | 0.412 |
+| arousal_3 | Random forest | High | 16 | 0.436 | 0.506 | 0.467 |
+| valence_2 | Dummy (majority) | NotPleasant | 20 | 0.500 | 1.000 | 0.667 |
+| valence_2 | Dummy (majority) | Pleasant | 20 | 0.000 | 0.000 | 0.000 |
+| valence_2 | Dummy (stratified random) | NotPleasant | 20 | 0.485 | 0.485 | 0.485 |
+| valence_2 | Dummy (stratified random) | Pleasant | 20 | 0.485 | 0.485 | 0.485 |
+| valence_2 | Logistic regression | NotPleasant | 20 | 0.689 | 0.615 | 0.649 |
+| valence_2 | Logistic regression | Pleasant | 20 | 0.655 | 0.725 | 0.688 |
+| valence_2 | SVM (RBF) | NotPleasant | 20 | 0.666 | 0.675 | 0.670 |
+| valence_2 | SVM (RBF) | Pleasant | 20 | 0.671 | 0.660 | 0.664 |
+| valence_2 | Random forest | NotPleasant | 20 | 0.710 | 0.690 | 0.698 |
+| valence_2 | Random forest | Pleasant | 20 | 0.699 | 0.715 | 0.705 |
+| arousal_2 | Dummy (majority) | NotHigh | 24 | 0.600 | 1.000 | 0.750 |
+| arousal_2 | Dummy (majority) | High | 16 | 0.000 | 0.000 | 0.000 |
+| arousal_2 | Dummy (stratified random) | NotHigh | 24 | 0.567 | 0.496 | 0.529 |
+| arousal_2 | Dummy (stratified random) | High | 16 | 0.363 | 0.431 | 0.394 |
+| arousal_2 | Logistic regression | NotHigh | 24 | 0.577 | 0.483 | 0.524 |
+| arousal_2 | Logistic regression | High | 16 | 0.383 | 0.475 | 0.422 |
+| arousal_2 | SVM (RBF) | NotHigh | 24 | 0.557 | 0.512 | 0.528 |
+| arousal_2 | SVM (RBF) | High | 16 | 0.353 | 0.400 | 0.369 |
+| arousal_2 | Random forest | NotHigh | 24 | 0.642 | 0.658 | 0.650 |
+| arousal_2 | Random forest | High | 16 | 0.468 | 0.450 | 0.459 |
 
 ### Confusion matrices
 
@@ -120,24 +120,24 @@ Corrected repeated k-fold t-test on fold-level balanced accuracy (Nadeau & Bengi
 
 | task | model_a | model_b | mean_ba_difference | corrected_t | p_value |
 |---|---|---|---|---|---|
-| arousal_3 | Logistic regression | SVM (RBF) | 0.073 | 1.170 | 0.248 |
-| arousal_3 | Logistic regression | Random forest | -0.085 | -1.117 | 0.270 |
-| arousal_3 | SVM (RBF) | Random forest | -0.158 | -2.023 | 0.049 |
-| arousal_3 | Logistic regression | Dummy (majority) | 0.065 | 0.960 | 0.342 |
-| arousal_3 | SVM (RBF) | Dummy (majority) | -0.008 | -0.163 | 0.871 |
-| arousal_3 | Random forest | Dummy (majority) | 0.150 | 1.999 | 0.051 |
-| valence_2 | Logistic regression | SVM (RBF) | 0.019 | 0.269 | 0.789 |
-| valence_2 | Logistic regression | Random forest | -0.021 | -0.263 | 0.793 |
-| valence_2 | SVM (RBF) | Random forest | -0.040 | -0.423 | 0.674 |
-| valence_2 | Logistic regression | Dummy (majority) | 0.077 | 1.044 | 0.301 |
-| valence_2 | SVM (RBF) | Dummy (majority) | 0.058 | 0.760 | 0.451 |
-| valence_2 | Random forest | Dummy (majority) | 0.098 | 1.076 | 0.287 |
-| arousal_2 | Logistic regression | SVM (RBF) | 0.043 | 0.623 | 0.536 |
-| arousal_2 | Logistic regression | Random forest | -0.052 | -0.718 | 0.476 |
-| arousal_2 | SVM (RBF) | Random forest | -0.096 | -1.196 | 0.238 |
-| arousal_2 | Logistic regression | Dummy (majority) | 0.013 | 0.158 | 0.875 |
-| arousal_2 | SVM (RBF) | Dummy (majority) | -0.030 | -0.477 | 0.636 |
-| arousal_2 | Random forest | Dummy (majority) | 0.066 | 0.725 | 0.472 |
+| arousal_3 | Logistic regression | SVM (RBF) | 0.008 | 0.114 | 0.910 |
+| arousal_3 | Logistic regression | Random forest | -0.078 | -1.017 | 0.314 |
+| arousal_3 | SVM (RBF) | Random forest | -0.086 | -1.038 | 0.304 |
+| arousal_3 | Logistic regression | Dummy (majority) | 0.006 | 0.078 | 0.938 |
+| arousal_3 | SVM (RBF) | Dummy (majority) | -0.002 | -0.027 | 0.978 |
+| arousal_3 | Random forest | Dummy (majority) | 0.084 | 1.077 | 0.287 |
+| valence_2 | Logistic regression | SVM (RBF) | 0.003 | 0.041 | 0.967 |
+| valence_2 | Logistic regression | Random forest | -0.033 | -0.393 | 0.696 |
+| valence_2 | SVM (RBF) | Random forest | -0.035 | -0.402 | 0.689 |
+| valence_2 | Logistic regression | Dummy (majority) | 0.170 | 1.958 | 0.056 |
+| valence_2 | SVM (RBF) | Dummy (majority) | 0.168 | 1.812 | 0.076 |
+| valence_2 | Random forest | Dummy (majority) | 0.203 | 2.303 | 0.026 |
+| arousal_2 | Logistic regression | SVM (RBF) | 0.008 | 0.096 | 0.924 |
+| arousal_2 | Logistic regression | Random forest | -0.077 | -1.055 | 0.297 |
+| arousal_2 | SVM (RBF) | Random forest | -0.085 | -1.124 | 0.266 |
+| arousal_2 | Logistic regression | Dummy (majority) | -0.020 | -0.232 | 0.818 |
+| arousal_2 | SVM (RBF) | Dummy (majority) | -0.028 | -0.400 | 0.691 |
+| arousal_2 | Random forest | Dummy (majority) | 0.057 | 0.741 | 0.462 |
 
 ### Hyperparameters chosen in the outer folds
 
@@ -146,36 +146,36 @@ Corrected repeated k-fold t-test on fold-level balanced accuracy (Nadeau & Bengi
 | arousal_3 | Dummy (majority) | {} | 50 | 1.00 |
 | arousal_3 | Dummy (stratified random) | {} | 50 | 1.00 |
 | arousal_3 | Logistic regression | {"clf__C": 0.01} | 20 | 0.40 |
-| arousal_3 | Logistic regression | {"clf__C": 0.1} | 11 | 0.22 |
-| arousal_3 | Logistic regression | {"clf__C": 1.0} | 11 | 0.22 |
-| arousal_3 | Logistic regression | {"clf__C": 10.0} | 8 | 0.16 |
-| arousal_3 | SVM (RBF) | {"clf__C": 0.1} | 27 | 0.54 |
-| arousal_3 | SVM (RBF) | {"clf__C": 10.0} | 14 | 0.28 |
-| arousal_3 | SVM (RBF) | {"clf__C": 1.0} | 9 | 0.18 |
-| arousal_3 | Random forest | {"clf__min_samples_leaf": 3} | 29 | 0.58 |
-| arousal_3 | Random forest | {"clf__min_samples_leaf": 1} | 21 | 0.42 |
+| arousal_3 | Logistic regression | {"clf__C": 0.1} | 12 | 0.24 |
+| arousal_3 | Logistic regression | {"clf__C": 1.0} | 9 | 0.18 |
+| arousal_3 | Logistic regression | {"clf__C": 10.0} | 9 | 0.18 |
+| arousal_3 | SVM (RBF) | {"clf__C": 1.0} | 23 | 0.46 |
+| arousal_3 | SVM (RBF) | {"clf__C": 0.1} | 19 | 0.38 |
+| arousal_3 | SVM (RBF) | {"clf__C": 10.0} | 8 | 0.16 |
+| arousal_3 | Random forest | {"clf__min_samples_leaf": 3} | 26 | 0.52 |
+| arousal_3 | Random forest | {"clf__min_samples_leaf": 1} | 24 | 0.48 |
 | valence_2 | Dummy (majority) | {} | 50 | 1.00 |
 | valence_2 | Dummy (stratified random) | {} | 50 | 1.00 |
-| valence_2 | Logistic regression | {"clf__C": 0.01} | 15 | 0.30 |
-| valence_2 | Logistic regression | {"clf__C": 10.0} | 13 | 0.26 |
-| valence_2 | Logistic regression | {"clf__C": 1.0} | 13 | 0.26 |
+| valence_2 | Logistic regression | {"clf__C": 0.01} | 21 | 0.42 |
+| valence_2 | Logistic regression | {"clf__C": 10.0} | 11 | 0.22 |
 | valence_2 | Logistic regression | {"clf__C": 0.1} | 9 | 0.18 |
-| valence_2 | SVM (RBF) | {"clf__C": 10.0} | 23 | 0.46 |
-| valence_2 | SVM (RBF) | {"clf__C": 1.0} | 22 | 0.44 |
-| valence_2 | SVM (RBF) | {"clf__C": 0.1} | 5 | 0.10 |
-| valence_2 | Random forest | {"clf__min_samples_leaf": 1} | 37 | 0.74 |
-| valence_2 | Random forest | {"clf__min_samples_leaf": 3} | 13 | 0.26 |
+| valence_2 | Logistic regression | {"clf__C": 1.0} | 9 | 0.18 |
+| valence_2 | SVM (RBF) | {"clf__C": 1.0} | 28 | 0.56 |
+| valence_2 | SVM (RBF) | {"clf__C": 10.0} | 21 | 0.42 |
+| valence_2 | SVM (RBF) | {"clf__C": 0.1} | 1 | 0.02 |
+| valence_2 | Random forest | {"clf__min_samples_leaf": 1} | 36 | 0.72 |
+| valence_2 | Random forest | {"clf__min_samples_leaf": 3} | 14 | 0.28 |
 | arousal_2 | Dummy (majority) | {} | 50 | 1.00 |
 | arousal_2 | Dummy (stratified random) | {} | 50 | 1.00 |
-| arousal_2 | Logistic regression | {"clf__C": 0.01} | 26 | 0.52 |
-| arousal_2 | Logistic regression | {"clf__C": 0.1} | 11 | 0.22 |
-| arousal_2 | Logistic regression | {"clf__C": 1.0} | 8 | 0.16 |
-| arousal_2 | Logistic regression | {"clf__C": 10.0} | 5 | 0.10 |
-| arousal_2 | SVM (RBF) | {"clf__C": 0.1} | 24 | 0.48 |
-| arousal_2 | SVM (RBF) | {"clf__C": 1.0} | 20 | 0.40 |
-| arousal_2 | SVM (RBF) | {"clf__C": 10.0} | 6 | 0.12 |
-| arousal_2 | Random forest | {"clf__min_samples_leaf": 1} | 27 | 0.54 |
-| arousal_2 | Random forest | {"clf__min_samples_leaf": 3} | 23 | 0.46 |
+| arousal_2 | Logistic regression | {"clf__C": 0.01} | 27 | 0.54 |
+| arousal_2 | Logistic regression | {"clf__C": 1.0} | 12 | 0.24 |
+| arousal_2 | Logistic regression | {"clf__C": 0.1} | 7 | 0.14 |
+| arousal_2 | Logistic regression | {"clf__C": 10.0} | 4 | 0.08 |
+| arousal_2 | SVM (RBF) | {"clf__C": 1.0} | 19 | 0.38 |
+| arousal_2 | SVM (RBF) | {"clf__C": 0.1} | 16 | 0.32 |
+| arousal_2 | SVM (RBF) | {"clf__C": 10.0} | 15 | 0.30 |
+| arousal_2 | Random forest | {"clf__min_samples_leaf": 1} | 30 | 0.60 |
+| arousal_2 | Random forest | {"clf__min_samples_leaf": 3} | 20 | 0.40 |
 
 ## 5. Sensitivity analyses
 
@@ -183,51 +183,51 @@ Same design on pre-defined subsets: retake participants removed; recordings with
 
 | scenario | task | model | n | pooled_ba | pooled_macro_f1 | primary_pooled_ba | difference_vs_primary |
 |---|---|---|---|---|---|---|---|
-| high_confidence_segmentation | arousal_3 | Dummy (majority) | 27 | 0.333 | 0.217 | 0.333 | 0.000 |
-| high_confidence_segmentation | arousal_3 | Dummy (stratified random) | 27 | 0.390 | 0.389 | 0.310 | 0.080 |
-| high_confidence_segmentation | arousal_3 | Logistic regression | 27 | 0.442 | 0.446 | 0.396 | 0.047 |
-| high_confidence_segmentation | arousal_3 | Random forest | 27 | 0.410 | 0.403 | 0.476 | -0.067 |
-| high_confidence_segmentation | arousal_3 | SVM (RBF) | 27 | 0.284 | 0.280 | 0.327 | -0.043 |
-| high_confidence_segmentation | valence_2 | Dummy (majority) | 27 | 0.500 | 0.357 | 0.500 | 0.000 |
-| high_confidence_segmentation | valence_2 | Dummy (stratified random) | 27 | 0.525 | 0.519 | 0.449 | 0.076 |
-| high_confidence_segmentation | valence_2 | Logistic regression | 27 | 0.593 | 0.590 | 0.574 | 0.020 |
-| high_confidence_segmentation | valence_2 | Random forest | 27 | 0.577 | 0.576 | 0.595 | -0.018 |
-| high_confidence_segmentation | valence_2 | SVM (RBF) | 27 | 0.560 | 0.554 | 0.547 | 0.013 |
-| no_config_B | arousal_3 | Dummy (majority) | 34 | 0.333 | 0.213 | 0.333 | 0.000 |
-| no_config_B | arousal_3 | Dummy (stratified random) | 34 | 0.277 | 0.266 | 0.310 | -0.033 |
-| no_config_B | arousal_3 | Logistic regression | 34 | 0.412 | 0.409 | 0.396 | 0.017 |
-| no_config_B | arousal_3 | Random forest | 34 | 0.456 | 0.459 | 0.476 | -0.021 |
-| no_config_B | arousal_3 | SVM (RBF) | 34 | 0.345 | 0.316 | 0.327 | 0.018 |
-| no_config_B | valence_2 | Dummy (majority) | 35 | 0.500 | 0.364 | 0.500 | 0.000 |
-| no_config_B | valence_2 | Dummy (stratified random) | 35 | 0.434 | 0.434 | 0.449 | -0.015 |
-| no_config_B | valence_2 | Logistic regression | 35 | 0.613 | 0.612 | 0.574 | 0.040 |
-| no_config_B | valence_2 | Random forest | 35 | 0.669 | 0.668 | 0.595 | 0.074 |
-| no_config_B | valence_2 | SVM (RBF) | 35 | 0.548 | 0.541 | 0.547 | 0.001 |
-| no_edited_or_clipped | arousal_3 | Dummy (majority) | 37 | 0.333 | 0.201 | 0.333 | 0.000 |
-| no_edited_or_clipped | arousal_3 | Dummy (stratified random) | 37 | 0.312 | 0.300 | 0.310 | 0.002 |
-| no_edited_or_clipped | arousal_3 | Logistic regression | 37 | 0.430 | 0.434 | 0.396 | 0.035 |
-| no_edited_or_clipped | arousal_3 | Random forest | 37 | 0.438 | 0.441 | 0.476 | -0.038 |
-| no_edited_or_clipped | arousal_3 | SVM (RBF) | 37 | 0.325 | 0.301 | 0.327 | -0.002 |
-| no_edited_or_clipped | valence_2 | Dummy (majority) | 37 | 0.500 | 0.351 | 0.500 | 0.000 |
-| no_edited_or_clipped | valence_2 | Dummy (stratified random) | 37 | 0.461 | 0.461 | 0.449 | 0.012 |
-| no_edited_or_clipped | valence_2 | Logistic regression | 37 | 0.625 | 0.625 | 0.574 | 0.051 |
-| no_edited_or_clipped | valence_2 | Random forest | 37 | 0.655 | 0.654 | 0.595 | 0.060 |
-| no_edited_or_clipped | valence_2 | SVM (RBF) | 37 | 0.612 | 0.608 | 0.547 | 0.065 |
+| high_confidence_segmentation | arousal_3 | Dummy (majority) | 26 | 0.333 | 0.211 | 0.333 | 0.000 |
+| high_confidence_segmentation | arousal_3 | Dummy (stratified random) | 26 | 0.333 | 0.317 | 0.329 | 0.004 |
+| high_confidence_segmentation | arousal_3 | Logistic regression | 26 | 0.353 | 0.346 | 0.344 | 0.009 |
+| high_confidence_segmentation | arousal_3 | Random forest | 26 | 0.382 | 0.353 | 0.410 | -0.028 |
+| high_confidence_segmentation | arousal_3 | SVM (RBF) | 26 | 0.340 | 0.313 | 0.346 | -0.006 |
+| high_confidence_segmentation | valence_2 | Dummy (majority) | 26 | 0.500 | 0.350 | 0.500 | 0.000 |
+| high_confidence_segmentation | valence_2 | Dummy (stratified random) | 26 | 0.452 | 0.445 | 0.485 | -0.033 |
+| high_confidence_segmentation | valence_2 | Logistic regression | 26 | 0.636 | 0.634 | 0.670 | -0.034 |
+| high_confidence_segmentation | valence_2 | Random forest | 26 | 0.632 | 0.629 | 0.703 | -0.070 |
+| high_confidence_segmentation | valence_2 | SVM (RBF) | 26 | 0.612 | 0.606 | 0.668 | -0.056 |
+| no_config_B | arousal_3 | Dummy (majority) | 35 | 0.333 | 0.200 | 0.333 | 0.000 |
+| no_config_B | arousal_3 | Dummy (stratified random) | 35 | 0.296 | 0.269 | 0.329 | -0.033 |
+| no_config_B | arousal_3 | Logistic regression | 35 | 0.324 | 0.323 | 0.344 | -0.020 |
+| no_config_B | arousal_3 | Random forest | 35 | 0.474 | 0.470 | 0.410 | 0.063 |
+| no_config_B | arousal_3 | SVM (RBF) | 35 | 0.297 | 0.283 | 0.346 | -0.048 |
+| no_config_B | valence_2 | Dummy (majority) | 35 | 0.431 | 0.424 | 0.500 | -0.069 |
+| no_config_B | valence_2 | Dummy (stratified random) | 35 | 0.381 | 0.378 | 0.485 | -0.104 |
+| no_config_B | valence_2 | Logistic regression | 35 | 0.658 | 0.656 | 0.670 | -0.012 |
+| no_config_B | valence_2 | Random forest | 35 | 0.715 | 0.714 | 0.703 | 0.013 |
+| no_config_B | valence_2 | SVM (RBF) | 35 | 0.670 | 0.668 | 0.668 | 0.002 |
+| no_edited_or_clipped | arousal_3 | Dummy (majority) | 37 | 0.333 | 0.192 | 0.333 | 0.000 |
+| no_edited_or_clipped | arousal_3 | Dummy (stratified random) | 37 | 0.319 | 0.311 | 0.329 | -0.010 |
+| no_edited_or_clipped | arousal_3 | Logistic regression | 37 | 0.387 | 0.388 | 0.344 | 0.043 |
+| no_edited_or_clipped | arousal_3 | Random forest | 37 | 0.469 | 0.460 | 0.410 | 0.059 |
+| no_edited_or_clipped | arousal_3 | SVM (RBF) | 37 | 0.322 | 0.313 | 0.346 | -0.024 |
+| no_edited_or_clipped | valence_2 | Dummy (majority) | 37 | 0.456 | 0.449 | 0.500 | -0.044 |
+| no_edited_or_clipped | valence_2 | Dummy (stratified random) | 37 | 0.464 | 0.463 | 0.485 | -0.021 |
+| no_edited_or_clipped | valence_2 | Logistic regression | 37 | 0.686 | 0.685 | 0.670 | 0.016 |
+| no_edited_or_clipped | valence_2 | Random forest | 37 | 0.736 | 0.734 | 0.703 | 0.033 |
+| no_edited_or_clipped | valence_2 | SVM (RBF) | 37 | 0.665 | 0.662 | 0.668 | -0.002 |
 | no_unverified_source | arousal_3 | Dummy (majority) | 31 | 0.285 | 0.252 | 0.333 | -0.049 |
-| no_unverified_source | arousal_3 | Dummy (stratified random) | 31 | 0.281 | 0.271 | 0.310 | -0.029 |
-| no_unverified_source | arousal_3 | Logistic regression | 31 | 0.343 | 0.344 | 0.396 | -0.053 |
-| no_unverified_source | arousal_3 | Random forest | 31 | 0.373 | 0.369 | 0.476 | -0.103 |
-| no_unverified_source | arousal_3 | SVM (RBF) | 31 | 0.321 | 0.293 | 0.327 | -0.006 |
+| no_unverified_source | arousal_3 | Dummy (stratified random) | 31 | 0.281 | 0.271 | 0.329 | -0.048 |
+| no_unverified_source | arousal_3 | Logistic regression | 31 | 0.343 | 0.344 | 0.344 | -0.002 |
+| no_unverified_source | arousal_3 | Random forest | 31 | 0.373 | 0.369 | 0.410 | -0.037 |
+| no_unverified_source | arousal_3 | SVM (RBF) | 31 | 0.321 | 0.293 | 0.346 | -0.025 |
 | no_unverified_source | valence_2 | Dummy (majority) | 31 | 0.500 | 0.367 | 0.500 | 0.000 |
-| no_unverified_source | valence_2 | Dummy (stratified random) | 31 | 0.463 | 0.463 | 0.449 | 0.014 |
-| no_unverified_source | valence_2 | Logistic regression | 31 | 0.670 | 0.668 | 0.574 | 0.097 |
-| no_unverified_source | valence_2 | Random forest | 31 | 0.634 | 0.633 | 0.595 | 0.039 |
-| no_unverified_source | valence_2 | SVM (RBF) | 31 | 0.560 | 0.540 | 0.547 | 0.013 |
+| no_unverified_source | valence_2 | Dummy (stratified random) | 31 | 0.463 | 0.463 | 0.485 | -0.022 |
+| no_unverified_source | valence_2 | Logistic regression | 31 | 0.670 | 0.668 | 0.670 | 0.000 |
+| no_unverified_source | valence_2 | Random forest | 31 | 0.634 | 0.633 | 0.703 | -0.068 |
+| no_unverified_source | valence_2 | SVM (RBF) | 31 | 0.560 | 0.540 | 0.668 | -0.107 |
 
 ![sensitivity](../figures/evaluation/fig_eval_sensitivity.png)
 
 ## 6. What the numbers support
 
 - **No learned model exceeded the label-permutation null after Holm correction** (all adjusted p ≥ 0.05). Within this pilot dataset there is no reliable evidence that these acoustic features predict the self-reported affect of unseen speakers.
-- Pairwise model differences with uncorrected p < 0.05: arousal_3: SVM (RBF) vs Random forest (Δ = -0.158).
+- **No pair of learned models differs significantly** (corrected t-test, all p ≥ 0.05). Differences in the table are within resampling noise, so no algorithm can be called best for this dataset.
 - Bootstrap intervals are wide (n ≈ 30), and fold-level scores vary widely between folds. Any single point estimate is fragile.
